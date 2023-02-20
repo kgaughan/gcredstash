@@ -1,6 +1,7 @@
 /*.test
-/gcredstash
+/gcredstash*
 /gcredstash.exe
+bin
 *.gz
 *.zip
 /debian/gcredstash.debhelper.log
