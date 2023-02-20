@@ -10,17 +10,29 @@ UBUNTU_IMAGE=docker-go-pkg-build-ubuntu-trusty
 UBUNTU_CONTAINER_NAME=docker-go-pkg-build-ubuntu-trusty-$(shell date +%s)
 CENTOS_IMAGE=docker-go-pkg-build-centos6
 CENTOS_CONTAINER_NAME=docker-go-pkg-build-centos6-$(shell date +%s)
+GO_BUILD=go build -a -ldflags "-w -s" -tags netgo -installsuffix netgo
 
 all: gcredstash
 
 gcredstash: $(SRC)
-	CGO_ENABLED=0 go build -a -ldflags "-w -s" -tags netgo -installsuffix netgo -o gcredstash
+	CGO_ENABLED=0 $(GO_BUILD) -o gcredstash
+
+cross-compile: clean $(SRC)
+	mkdir -p bin
+	GOOS=linux   GOARCH=amd64 $(GO_BUILD) -o bin/gcredstash-linux-amd64
+	GOOS=linux   GOARCH=arm64 $(GO_BUILD) -o bin/gcredstash-linux-arm64
+	GOOS=darwin  GOARCH=amd64 $(GO_BUILD) -o bin/gcredstash-darwin-amd64
+	GOOS=darwin  GOARCH=arm64 $(GO_BUILD) -o bin/gcredstash-darwin-arm64
+
+version:
+	@echo "$(VERSION)-$(shell git rev-parse --short HEAD)"
 
 test: $(TEST_SRC) $(CMD_TEST_SRC)
 	go test -v $(TEST_SRC)
 	go test -v $(CMD_TEST_SRC)
 
 clean:
+	rm -rf bin
 	rm -f gcredstash{,.exe} *.gz *.zip
 	rm -f pkg/*
 	rm -f debian/gcredstash.debhelper.log

@@ -1,0 +1,44 @@
+
+
+# Name:        release.yaml
+# Author:      Mathew Fleisch <mathew.fleisch@gmail.com>
+# Description: This action will cross-compile and save go binaires as release artifacts 
+name: Release gcredstash
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    name: Release gcredstash
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout gcredstash source
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - 
+        name: Install stuff with asdf
+        uses: asdf-vm/actions/install@v1
+        with:
+          tool_versions: |
+            golang 1.19.4
+      -
+        name: Set tag environment variable
+        run: |
+          echo "RELEASE_VERSION=$(make version)" >> $GITHUB_ENV
+      -
+        name: Build go-binaries
+        run: |
+          make cross-compile
+          echo "Go-Binaries created: $(ls bin -alF)"
+      -
+        name: Cut Github Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          allowUpdates: true
+          artifacts: "bin/*"
+          tag: gcredstash-${{ env.RELEASE_VERSION }}
