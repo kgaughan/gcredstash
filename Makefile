@@ -69,8 +69,7 @@ docker\:build\:centos6:
 	docker build -f docker/Dockerfile.centos6 -t $(CENTOS_IMAGE) .
 
 mock:
-	go get github.com/golang/mock/mockgen
-	go get github.com/aws/aws-sdk-go
+	go install github.com/golang/mock/mockgen@v1.6.0
 	mockgen -package mockaws -destination src/mockaws/dynamodbmock.go github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface DynamoDBAPI
 	mockgen -package mockaws -destination src/mockaws/kmsmock.go github.com/aws/aws-sdk-go/service/kms/kmsiface KMSAPI
 

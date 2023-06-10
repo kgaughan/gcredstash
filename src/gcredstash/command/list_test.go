@@ -1,7 +1,9 @@
-package command
+package command_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/golang/mock/gomock"
@@ -9,7 +11,6 @@ import (
 	. "github.com/kgaughan/gcredstash/src/gcredstash/command"
 	"github.com/kgaughan/gcredstash/src/gcredstash/testutils"
 	"github.com/kgaughan/gcredstash/src/mockaws"
-	"testing"
 )
 
 func TestListCommand(t *testing.T) {

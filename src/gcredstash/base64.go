@@ -6,17 +6,14 @@ import (
 
 func B64Decode(encoded string) []byte {
 	decoded, err := base64.StdEncoding.DecodeString(encoded)
-
 	if err != nil {
 		panic(err)
 	}
-
 	return decoded
 }
 
 func B64DecodeStr(encoded string) string {
-	decoded := B64Decode(encoded)
-	return string(decoded)
+	return string(B64Decode(encoded))
 }
 
 func B64Encode(decoded []byte) string {

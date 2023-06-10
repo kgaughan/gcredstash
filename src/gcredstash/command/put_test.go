@@ -1,6 +1,8 @@
-package command
+package command_test
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
@@ -9,7 +11,6 @@ import (
 	. "github.com/kgaughan/gcredstash/src/gcredstash/command"
 	"github.com/kgaughan/gcredstash/src/gcredstash/testutils"
 	"github.com/kgaughan/gcredstash/src/mockaws"
-	"testing"
 )
 
 func TestPutCommand(t *testing.T) {
@@ -77,7 +78,6 @@ func TestPutCommand(t *testing.T) {
 
 	args := []string{name, secret, "-a"}
 	err := cmd.RunImpl(args)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}

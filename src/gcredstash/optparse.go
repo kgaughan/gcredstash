@@ -1,9 +1,15 @@
 package gcredstash
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
+)
+
+var (
+	ErrArgumentRequired = errors.New("option requires an argument")
+	ErrInvalidContext   = errors.New("invalid context")
 )
 
 func ParseOptionWithValue(args []string, key string) ([]string, string, error) {
@@ -12,22 +18,24 @@ func ParseOptionWithValue(args []string, key string) ([]string, string, error) {
 	nextOpt := false
 
 	for _, arg := range args {
-		if nextOpt {
+		switch {
+		case nextOpt:
 			if strings.HasPrefix(arg, "-") {
-				return nil, "", fmt.Errorf("option requires an argument: %s", key)
+				return nil, "", fmt.Errorf("%w: %s", ErrArgumentRequired, key)
 			}
-
 			val = arg
 			nextOpt = false
-		} else if arg == key {
+
+		case arg == key:
 			nextOpt = true
-		} else {
+
+		default:
 			newArgs = append(newArgs, arg)
 		}
 	}
 
 	if nextOpt {
-		return nil, "", fmt.Errorf("option requires an argument: %s", key)
+		return nil, "", fmt.Errorf("%w: %s", ErrArgumentRequired, key)
 	}
 
 	return newArgs, val, nil
@@ -35,14 +43,12 @@ func ParseOptionWithValue(args []string, key string) ([]string, string, error) {
 
 func ParseVersion(args []string) ([]string, string, error) {
 	newArgs, version, err := ParseOptionWithValue(args, "-v")
-
 	if err != nil {
 		return nil, "", err
 	}
 
 	if version != "" {
 		ver, err := strconv.Atoi(version)
-
 		if err != nil {
 			return nil, "", err
 		}
@@ -60,7 +66,7 @@ func ParseContext(strs []string) (map[string]string, error) {
 		kv := strings.SplitN(ctx, "=", 2)
 
 		if len(kv) < 2 || kv[0] == "" || kv[1] == "" {
-			return nil, fmt.Errorf("invalid context: %s", ctx)
+			return nil, fmt.Errorf("%w: %s", ErrInvalidContext, ctx)
 		}
 
 		context[kv[0]] = kv[1]

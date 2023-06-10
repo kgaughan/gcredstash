@@ -2,15 +2,18 @@ package command
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
-	"github.com/mattn/go-shellwords"
-	"github.com/kgaughan/gcredstash/src/gcredstash"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 	"text/template"
+
+	"github.com/kgaughan/gcredstash/src/gcredstash"
+	"github.com/mattn/go-shellwords"
 )
+
+var ErrCannotCast = errors.New("cannot cast to string")
 
 type TemplateCommand struct {
 	Meta
@@ -20,11 +23,11 @@ func (c *TemplateCommand) parseArgs(args []string) (string, bool, error) {
 	newArgs, inPlace := gcredstash.HasOption(args, "-i")
 
 	if len(newArgs) < 1 {
-		return "", false, fmt.Errorf("too few arguments")
+		return "", false, ErrTooFewArgs
 	}
 
 	if len(newArgs) > 1 {
-		return "", false, fmt.Errorf("too few arguments")
+		return "", false, ErrTooManyArgs
 	}
 
 	tmplFile := newArgs[0]
@@ -42,7 +45,7 @@ func (c *TemplateCommand) readTemplate(filename string) (string, error) {
 		content, err = gcredstash.ReadFile(filename)
 
 		if err != nil {
-			return "", nil
+			return "", err
 		}
 	}
 
@@ -51,7 +54,6 @@ func (c *TemplateCommand) readTemplate(filename string) (string, error) {
 
 func (c *TemplateCommand) getCredential(credential string, context map[string]string) (string, error) {
 	value, err := c.Driver.GetSecret(credential, "", c.Table, context)
-
 	if err != nil {
 		return "", err
 	}
@@ -59,13 +61,13 @@ func (c *TemplateCommand) getCredential(credential string, context map[string]st
 	return value, nil
 }
 
-func (c *TemplateCommand) executeTemplate(name string, content string) (string, error) {
+func (c *TemplateCommand) executeTemplate(name, content string) (string, error) {
 	tmpl := template.New(name)
 
 	tmpl = tmpl.Funcs(template.FuncMap{
 		"get": func(args ...interface{}) (string, error) {
 			if len(args) < 1 {
-				return "", fmt.Errorf("(get error: too few arguments)")
+				return "", ErrTooFewArgs
 			}
 
 			newArgs := []string{}
@@ -74,7 +76,7 @@ func (c *TemplateCommand) executeTemplate(name string, content string) (string, 
 				str, ok := arg.(string)
 
 				if !ok {
-					return "", fmt.Errorf("(get error: cannot cast %v to string)", arg)
+					return "", fmt.Errorf("%w: %v", ErrCannotCast, arg)
 				}
 
 				newArgs = append(newArgs, str)
@@ -82,55 +84,52 @@ func (c *TemplateCommand) executeTemplate(name string, content string) (string, 
 
 			credential := newArgs[0]
 			context, err := gcredstash.ParseContext(newArgs[1:])
-
 			if err != nil {
-				return "", fmt.Errorf("(get error: %s)", err.Error())
+				return "", fmt.Errorf("could not parse context: %w", err)
 			}
 
 			value, err := c.getCredential(credential, context)
-
 			if err != nil {
-				return "", fmt.Errorf("(get error: %s)", err.Error())
+				return "", fmt.Errorf("could not fetch credentials: %w", err)
 			}
 
 			return value, nil
 		},
 		"env": func(args ...interface{}) (string, error) {
 			if len(args) < 1 {
-				return "", fmt.Errorf("(env error: too few arguments)")
+				return "", ErrTooFewArgs
 			}
 
 			if len(args) > 1 {
-				return "", fmt.Errorf("(env error: too many arguments)")
+				return "", ErrTooManyArgs
 			}
 
 			key, ok := args[0].(string)
 
 			if !ok {
-				return "", fmt.Errorf("(env error: cannot cast %v to string)", args[0])
+				return "", fmt.Errorf("%w: %v", ErrCannotCast, args[0])
 			}
 
 			return os.Getenv(key), nil
 		},
 		"sh": func(args ...interface{}) (string, error) {
 			if len(args) < 1 {
-				return "", fmt.Errorf("(sh error: too few arguments)")
+				return "", ErrTooFewArgs
 			}
 
 			if len(args) > 1 {
-				return "", fmt.Errorf("(sh error: too many arguments)")
+				return "", ErrTooManyArgs
 			}
 
 			line, ok := args[0].(string)
 
 			if !ok {
-				return "", fmt.Errorf("(sh error: cannot cast %v to string)", args[0])
+				return "", fmt.Errorf("%w: %v", ErrCannotCast, args[0])
 			}
 
 			cmd, err := shellwords.Parse(line)
-
 			if err != nil {
-				return "", fmt.Errorf("(sh error: %s)", err.Error())
+				return "", fmt.Errorf("could not parse command: %w", err)
 			}
 
 			var out []byte
@@ -145,7 +144,7 @@ func (c *TemplateCommand) executeTemplate(name string, content string) (string, 
 			}
 
 			if err != nil {
-				return "", fmt.Errorf("(sh error: %s)", err.Error())
+				return "", fmt.Errorf("could not run command: %w", err)
 			}
 
 			str := string(out)
@@ -155,7 +154,6 @@ func (c *TemplateCommand) executeTemplate(name string, content string) (string, 
 	})
 
 	tmpl, err := tmpl.Parse(content)
-
 	if err != nil {
 		return "", err
 	}
@@ -168,25 +166,22 @@ func (c *TemplateCommand) executeTemplate(name string, content string) (string, 
 
 func (c *TemplateCommand) RunImpl(args []string) (string, error) {
 	tmplFile, inPlace, err := c.parseArgs(args)
-
 	if err != nil {
 		return "", err
 	}
 
 	tmplContent, err := c.readTemplate(tmplFile)
-
 	if err != nil {
 		return "", err
 	}
 
 	out, err := c.executeTemplate(tmplFile, tmplContent)
-
 	if err != nil {
 		return "", err
 	}
 
 	if inPlace {
-		err = ioutil.WriteFile(tmplFile, []byte(out), 0644)
+		err = os.WriteFile(tmplFile, []byte(out), 0o644)
 		out = ""
 	}
 
@@ -195,7 +190,6 @@ func (c *TemplateCommand) RunImpl(args []string) (string, error) {
 
 func (c *TemplateCommand) Run(args []string) int {
 	out, err := c.RunImpl(args)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 		return 1

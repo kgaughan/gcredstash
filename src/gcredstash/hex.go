@@ -6,7 +6,6 @@ import (
 
 func HexDecode(encoded string) []byte {
 	decoded, err := hex.DecodeString(encoded)
-
 	if err != nil {
 		panic(err)
 	}

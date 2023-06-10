@@ -2,10 +2,11 @@ package command
 
 import (
 	"fmt"
-	"github.com/ryanuber/go-glob"
-	"github.com/kgaughan/gcredstash/src/gcredstash"
 	"os"
 	"strings"
+
+	"github.com/kgaughan/gcredstash/src/gcredstash"
+	"github.com/ryanuber/go-glob"
 )
 
 type GetCommand struct {
@@ -35,13 +36,12 @@ func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string
 	}
 
 	newArgs, version, err := gcredstash.ParseVersion(argsWithoutNSE)
-
 	if err != nil {
 		return "", "", nil, false, false, "", err
 	}
 
 	if len(newArgs) < 1 {
-		return "", "", nil, false, false, "", fmt.Errorf("too few arguments")
+		return "", "", nil, false, false, "", ErrTooFewArgs
 	}
 
 	credential := newArgs[0]
@@ -50,9 +50,8 @@ func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string
 	return credential, version, context, noNL, noErr, errOut, err
 }
 
-func (c *GetCommand) getCredential(credential string, version string, context map[string]string) (string, error) {
+func (c *GetCommand) getCredential(credential, version string, context map[string]string) (string, error) {
 	value, err := c.Driver.GetSecret(credential, version, c.Table, context)
-
 	if err != nil {
 		return "", err
 	}
@@ -60,27 +59,25 @@ func (c *GetCommand) getCredential(credential string, version string, context ma
 	return value, nil
 }
 
-func (c *GetCommand) getCredentials(credential string, version string, context map[string]string) (string, error) {
+func (c *GetCommand) getCredentials(credential, version string, context map[string]string) (string, error) {
 	names := map[string]bool{}
 	items, err := c.Driver.ListSecrets(c.Table)
-
 	if err != nil {
 		return "", err
 	}
 
-	for name, _ := range items {
+	for name := range items {
 		names[*name] = true
 	}
 
 	creds := map[string]string{}
 
-	for name, _ := range names {
+	for name := range names {
 		if !glob.Glob(credential, name) {
 			continue
 		}
 
 		value, err := c.Driver.GetSecret(name, version, c.Table, context)
-
 		if err != nil {
 			continue
 		}
@@ -88,28 +85,27 @@ func (c *GetCommand) getCredentials(credential string, version string, context m
 		creds[name] = value
 	}
 
-	return gcredstash.MapToJson(creds) + "\n", nil
+	return gcredstash.MapToJSON(creds) + "\n", nil
 }
 
-func (c *GetCommand) write(filename string, message string) {
+func (c *GetCommand) write(filename, message string) {
 	if filename == "" || message == "" {
 		return
 	}
 
 	fp, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, os.ModePerm)
-
 	if err != nil {
 		return
 	}
 
 	defer fp.Close()
 
+	//nolint:errcheck
 	fp.WriteString(message)
 }
 
 func (c *GetCommand) RunImpl(args []string) (string, error) {
 	credential, version, context, noNL, noErr, errOut, err := c.parseArgs(args)
-
 	if err != nil {
 		return "", err
 	}
@@ -122,32 +118,30 @@ func (c *GetCommand) RunImpl(args []string) (string, error) {
 		}
 
 		return value, err
-	} else {
-		value, err := c.getCredential(credential, version, context)
-
-		if err != nil {
-			if errOut != "" {
-				c.write(errOut, fmt.Sprintf("error: gcredstash get %v: %s\n", args, err.Error()))
-			}
-
-			if noErr {
-				return "", nil
-			} else {
-				return "", err
-			}
-		}
-
-		if noNL {
-			return value, nil
-		} else {
-			return value + "\n", nil
-		}
 	}
+
+	value, err := c.getCredential(credential, version, context)
+	if err != nil {
+		if errOut != "" {
+			c.write(errOut, fmt.Sprintf("error: gcredstash get %v: %s\n", args, err.Error()))
+		}
+
+		if noErr {
+			return "", nil
+		}
+
+		return "", err
+	}
+
+	if noNL {
+		return value, nil
+	}
+
+	return value + "\n", nil
 }
 
 func (c *GetCommand) Run(args []string) int {
 	out, err := c.RunImpl(args)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 		return 1

@@ -2,10 +2,11 @@ package command
 
 import (
 	"fmt"
-	"github.com/kgaughan/gcredstash/src/gcredstash"
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/kgaughan/gcredstash/src/gcredstash"
 )
 
 type ListCommand struct {
@@ -26,11 +27,10 @@ func (c *ListCommand) getLines(items map[*string]*string) []string {
 
 func (c *ListCommand) RunImpl(args []string) (string, error) {
 	if len(args) > 0 {
-		return "", fmt.Errorf("too many arguments")
+		return "", ErrTooManyArgs
 	}
 
 	items, err := c.Driver.ListSecrets(c.Table)
-
 	if err != nil {
 		return "", err
 	}
@@ -43,7 +43,6 @@ func (c *ListCommand) RunImpl(args []string) (string, error) {
 
 func (c *ListCommand) Run(args []string) int {
 	out, err := c.RunImpl(args)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 		return 1

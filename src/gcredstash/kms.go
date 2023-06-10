@@ -22,7 +22,6 @@ func KmsDecrypt(svc kmsiface.KMSAPI, blob []byte, context map[string]string) ([]
 	}
 
 	resp, err := svc.Decrypt(params)
-
 	if err != nil {
 		return nil, nil, err
 	}
@@ -33,9 +32,9 @@ func KmsDecrypt(svc kmsiface.KMSAPI, blob []byte, context map[string]string) ([]
 	return dataKey, hmacKey, nil
 }
 
-func KmsGenerateDataKey(svc kmsiface.KMSAPI, keyId string, context map[string]string) ([]byte, []byte, []byte, error) {
+func KmsGenerateDataKey(svc kmsiface.KMSAPI, keyID string, context map[string]string) ([]byte, []byte, []byte, error) {
 	params := &kms.GenerateDataKeyInput{
-		KeyId:         aws.String(keyId),
+		KeyId:         aws.String(keyID),
 		NumberOfBytes: aws.Int64(64),
 	}
 
@@ -50,7 +49,6 @@ func KmsGenerateDataKey(svc kmsiface.KMSAPI, keyId string, context map[string]st
 	}
 
 	resp, err := svc.GenerateDataKey(params)
-
 	if err != nil {
 		return nil, nil, nil, err
 	}

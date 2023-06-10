@@ -1,8 +1,9 @@
-package gcredstash
+package gcredstash_test
 
 import (
-	. "github.com/kgaughan/gcredstash/src/gcredstash"
 	"testing"
+
+	. "github.com/kgaughan/gcredstash/src/gcredstash"
 )
 
 func TestB64DecodeStr(t *testing.T) {

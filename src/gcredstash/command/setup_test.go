@@ -1,13 +1,14 @@
-package command
+package command_test
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/golang/mock/gomock"
 	"github.com/kgaughan/gcredstash/src/gcredstash"
 	. "github.com/kgaughan/gcredstash/src/gcredstash/command"
 	"github.com/kgaughan/gcredstash/src/mockaws"
-	"testing"
 )
 
 func TestSetupCommand(t *testing.T) {
@@ -69,7 +70,6 @@ func TestSetupCommand(t *testing.T) {
 
 	args := []string{}
 	err := cmd.RunImpl(args)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}

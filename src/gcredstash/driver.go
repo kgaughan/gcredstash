@@ -1,12 +1,22 @@
 package gcredstash
 
 import (
+	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 	"github.com/aws/aws-sdk-go/service/kms/kmsiface"
-	"strings"
+)
+
+var (
+	ErrItemNotFound   = errors.New("item couldn't be found")
+	ErrNeedContext    = errors.New("could not decrypt HMAC key with KMS: the credential may require that an encryption context be provided to decrypt it")
+	ErrCredNotMatched = errors.New("could not decrypt HMAC key with KMS: the encryption context provided may not match the one used when the credential was stored")
+	ErrBadHMAC        = errors.New("computed HMAC does not match stored HMAC")
+	ErrVersionExists  = errors.New("version already in the credential store - use the -v flag to specify a new version")
 )
 
 type Driver struct {
@@ -14,7 +24,7 @@ type Driver struct {
 	Kms kmsiface.KMSAPI
 }
 
-func (driver *Driver) GetMaterialWithoutVersion(name string, table string) (map[string]*dynamodb.AttributeValue, error) {
+func (driver *Driver) GetMaterialWithoutVersion(name, table string) (map[string]*dynamodb.AttributeValue, error) {
 	params := &dynamodb.QueryInput{
 		TableName:                aws.String(table),
 		Limit:                    aws.Int64(1),
@@ -28,19 +38,18 @@ func (driver *Driver) GetMaterialWithoutVersion(name string, table string) (map[
 	}
 
 	resp, err := driver.Ddb.Query(params)
-
 	if err != nil {
 		return nil, err
 	}
 
 	if *resp.Count == 0 {
-		return nil, fmt.Errorf("Item {'name': '%s'} couldn't be found.", name)
+		return nil, fmt.Errorf(`%w: {"name": %q}`, ErrItemNotFound, name)
 	}
 
 	return resp.Items[0], nil
 }
 
-func (driver *Driver) GetMaterialWithVersion(name string, version string, table string) (map[string]*dynamodb.AttributeValue, error) {
+func (driver *Driver) GetMaterialWithVersion(name, version, table string) (map[string]*dynamodb.AttributeValue, error) {
 	params := &dynamodb.GetItemInput{
 		TableName: aws.String(table),
 		Key: map[string]*dynamodb.AttributeValue{
@@ -50,13 +59,12 @@ func (driver *Driver) GetMaterialWithVersion(name string, version string, table 
 	}
 
 	resp, err := driver.Ddb.GetItem(params)
-
 	if err != nil {
 		return nil, err
 	}
 
 	if resp.Item == nil {
-		return nil, fmt.Errorf("Item {'name': '%s'} couldn't be found.", name)
+		return nil, fmt.Errorf(`%w: {"name": %q}`, ErrItemNotFound, name)
 	}
 
 	return resp.Item, nil
@@ -65,24 +73,21 @@ func (driver *Driver) GetMaterialWithVersion(name string, version string, table 
 func (driver *Driver) DecryptMaterial(name string, material map[string]*dynamodb.AttributeValue, context map[string]string) (string, error) {
 	data := B64Decode(*material["key"].S)
 	dataKey, hmacKey, err := KmsDecrypt(driver.Kms, data, context)
-
 	if err != nil {
 		if strings.Contains(err.Error(), "InvalidCiphertextException") {
 			if len(context) < 1 {
-				return "", fmt.Errorf("%s: Could not decrypt hmac key with KMS. The credential may require that an encryption context be provided to decrypt it.", name)
-			} else {
-				return "", fmt.Errorf("%s: Could not decrypt hmac key with KMS. The encryption context provided may not match the one used when the credential was stored.", name)
+				return "", fmt.Errorf("%s: %w", name, ErrNeedContext)
 			}
-		} else {
-			return "", err
+			return "", fmt.Errorf("%s: %w", name, ErrCredNotMatched)
 		}
+		return "", err
 	}
 
 	contents := B64Decode(*material["contents"].S)
 	hmac := HexDecode(*material["hmac"].S)
 
 	if !ValidateHMAC(contents, hmac, hmacKey) {
-		return "", fmt.Errorf("Computed HMAC on %s does not match stored HMAC", name)
+		return "", fmt.Errorf("%s: %w", name, ErrBadHMAC)
 	}
 
 	decrypted := Crypt(contents, dataKey)
@@ -90,7 +95,7 @@ func (driver *Driver) DecryptMaterial(name string, material map[string]*dynamodb
 	return string(decrypted), nil
 }
 
-func (driver *Driver) GetHighestVersion(name string, table string) (int, error) {
+func (driver *Driver) GetHighestVersion(name, table string) (int, error) {
 	params := &dynamodb.QueryInput{
 		TableName:                aws.String(table),
 		Limit:                    aws.Int64(1),
@@ -105,7 +110,6 @@ func (driver *Driver) GetHighestVersion(name string, table string) (int, error) 
 	}
 
 	resp, err := driver.Ddb.Query(params)
-
 	if err != nil {
 		return -1, err
 	}
@@ -120,7 +124,7 @@ func (driver *Driver) GetHighestVersion(name string, table string) (int, error) 
 	return versionNum, nil
 }
 
-func (driver *Driver) PutItem(name string, version string, key []byte, contents []byte, hmac []byte, table string) error {
+func (driver *Driver) PutItem(name, version string, key, contents, hmac []byte, table string) error {
 	b64key := B64Encode(key)
 	b64contents := B64Encode(contents)
 	hexHmac := HexEncode(hmac)
@@ -139,7 +143,6 @@ func (driver *Driver) PutItem(name string, version string, key []byte, contents 
 	}
 
 	_, err := driver.Ddb.PutItem(params)
-
 	if err != nil {
 		return err
 	}
@@ -147,7 +150,7 @@ func (driver *Driver) PutItem(name string, version string, key []byte, contents 
 	return nil
 }
 
-func (driver *Driver) GetDeleteTargetWithoutVersion(name string, table string) (map[*string]*string, error) {
+func (driver *Driver) GetDeleteTargetWithoutVersion(name, table string) (map[*string]*string, error) {
 	items := map[*string]*string{}
 
 	params := &dynamodb.QueryInput{
@@ -161,13 +164,12 @@ func (driver *Driver) GetDeleteTargetWithoutVersion(name string, table string) (
 	}
 
 	resp, err := driver.Ddb.Query(params)
-
 	if err != nil {
 		return nil, err
 	}
 
 	if *resp.Count == 0 {
-		return nil, fmt.Errorf("Item {'name': '%s'} couldn't be found.", name)
+		return nil, fmt.Errorf(`%w: {"name": %q}`, ErrItemNotFound, name)
 	}
 
 	for _, i := range resp.Items {
@@ -177,7 +179,7 @@ func (driver *Driver) GetDeleteTargetWithoutVersion(name string, table string) (
 	return items, nil
 }
 
-func (driver *Driver) GetDeleteTargetWithVersion(name string, version string, table string) (map[*string]*string, error) {
+func (driver *Driver) GetDeleteTargetWithVersion(name, version, table string) (map[*string]*string, error) {
 	params := &dynamodb.GetItemInput{
 		TableName: aws.String(table),
 		Key: map[string]*dynamodb.AttributeValue{
@@ -187,14 +189,13 @@ func (driver *Driver) GetDeleteTargetWithVersion(name string, version string, ta
 	}
 
 	resp, err := driver.Ddb.GetItem(params)
-
 	if err != nil {
 		return nil, err
 	}
 
 	if resp.Item == nil {
 		versionNum := Atoi(version)
-		return nil, fmt.Errorf("Item {'name': '%s', 'version': %d} couldn't be found.", name, versionNum)
+		return nil, fmt.Errorf(`%w: {"name": %q, "version": %d}`, ErrItemNotFound, name, versionNum)
 	}
 
 	items := map[*string]*string{}
@@ -203,7 +204,7 @@ func (driver *Driver) GetDeleteTargetWithVersion(name string, version string, ta
 	return items, nil
 }
 
-func (driver *Driver) DeleteItem(name string, version string, table string) error {
+func (driver *Driver) DeleteItem(name, version, table string) error {
 	svc := driver.Ddb
 
 	params := &dynamodb.DeleteItemInput{
@@ -215,7 +216,6 @@ func (driver *Driver) DeleteItem(name string, version string, table string) erro
 	}
 
 	_, err := svc.DeleteItem(params)
-
 	if err != nil {
 		return err
 	}
@@ -223,7 +223,7 @@ func (driver *Driver) DeleteItem(name string, version string, table string) erro
 	return nil
 }
 
-func (driver *Driver) DeleteSecrets(name string, version string, table string) error {
+func (driver *Driver) DeleteSecrets(name, version, table string) error {
 	var items map[*string]*string
 	var err error
 
@@ -239,7 +239,6 @@ func (driver *Driver) DeleteSecrets(name string, version string, table string) e
 
 	for name, version := range items {
 		err := driver.DeleteItem(*name, *version, table)
-
 		if err != nil {
 			return err
 		}
@@ -251,11 +250,10 @@ func (driver *Driver) DeleteSecrets(name string, version string, table string) e
 	return nil
 }
 
-func (driver *Driver) PutSecret(name string, secret string, version string, kmsKey string, table string, context map[string]string) error {
+func (driver *Driver) PutSecret(name, secret, version, kmsKey, table string, context map[string]string) error {
 	dataKey, hmacKey, wrappedKey, err := KmsGenerateDataKey(driver.Kms, kmsKey, context)
-
 	if err != nil {
-		return fmt.Errorf("Could not generate key using KMS key(%s): %s", kmsKey, err.Error())
+		return fmt.Errorf("could not generate key using KMS key(%s): %w", kmsKey, err)
 	}
 
 	cipherText := Crypt([]byte(secret), dataKey)
@@ -266,24 +264,19 @@ func (driver *Driver) PutSecret(name string, secret string, version string, kmsK
 	if err != nil {
 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
 			latestVersion, err := driver.GetHighestVersion(name, table)
-
 			if err != nil {
 				return err
 			}
 
-			return fmt.Errorf(
-				"%s version %d is already in the credential store. Use the -v flag to specify a new version",
-				name,
-				latestVersion)
-		} else {
-			return err
+			return fmt.Errorf("%w (name: %q, version: %d)", ErrVersionExists, name, latestVersion)
 		}
+		return err
 	}
 
 	return nil
 }
 
-func (driver *Driver) GetSecret(name string, version string, table string, context map[string]string) (string, error) {
+func (driver *Driver) GetSecret(name, version, table string, context map[string]string) (string, error) {
 	var material map[string]*dynamodb.AttributeValue
 	var err error
 
@@ -298,7 +291,6 @@ func (driver *Driver) GetSecret(name string, version string, table string, conte
 	}
 
 	value, err := driver.DecryptMaterial(name, material, context)
-
 	if err != nil {
 		return "", err
 	}
@@ -316,7 +308,6 @@ func (driver *Driver) ListSecrets(table string) (map[*string]*string, error) {
 	}
 
 	resp, err := svc.Scan(params)
-
 	if err != nil {
 		return nil, err
 	}

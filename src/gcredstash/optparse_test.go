@@ -1,9 +1,10 @@
-package gcredstash
+package gcredstash_test
 
 import (
-	. "github.com/kgaughan/gcredstash/src/gcredstash"
 	"reflect"
 	"testing"
+
+	. "github.com/kgaughan/gcredstash/src/gcredstash"
 )
 
 func TestParseOptionWithValue1(t *testing.T) {

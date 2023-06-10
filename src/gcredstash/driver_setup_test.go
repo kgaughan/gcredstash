@@ -1,12 +1,13 @@
-package gcredstash
+package gcredstash_test
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/golang/mock/gomock"
 	. "github.com/kgaughan/gcredstash/src/gcredstash"
 	"github.com/kgaughan/gcredstash/src/mockaws"
-	"testing"
 )
 
 func TestCreateTable(t *testing.T) {
@@ -51,7 +52,6 @@ func TestCreateTable(t *testing.T) {
 	}
 
 	err := driver.CreateTable(table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -79,7 +79,6 @@ func TestWaitUntilTableExists(t *testing.T) {
 	}
 
 	err := driver.WaitUntilTableExists(table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -169,7 +168,6 @@ func TestCreateDdbTable(t *testing.T) {
 	}
 
 	err := driver.CreateDdbTable(table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}

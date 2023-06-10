@@ -1,6 +1,9 @@
-package gcredstash
+package gcredstash_test
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
@@ -8,8 +11,6 @@ import (
 	. "github.com/kgaughan/gcredstash/src/gcredstash"
 	"github.com/kgaughan/gcredstash/src/gcredstash/testutils"
 	"github.com/kgaughan/gcredstash/src/mockaws"
-	"reflect"
-	"testing"
 )
 
 func TestGetMaterialWithoutVersion(t *testing.T) {
@@ -125,7 +126,7 @@ func TestDecryptMaterial(t *testing.T) {
 	}
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: []byte(B64Decode(item["key"])),
+		CiphertextBlob: B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -182,7 +183,7 @@ func TestGetSecret(t *testing.T) {
 	}, nil)
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: []byte(B64Decode(item["key"])),
+		CiphertextBlob: B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -237,12 +238,11 @@ func TestListSecrets(t *testing.T) {
 	}
 
 	items, err := driver.ListSecrets(table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 
-	if 1 != len(items) {
+	if len(items) != 1 {
 		t.Errorf("\nexpected: %v\ngot: %v\n", 1, len(items))
 	}
 
@@ -295,7 +295,6 @@ func TestPutItem(t *testing.T) {
 		B64Decode(item["contents"]),
 		HexDecode(item["hmac"]),
 		table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -344,7 +343,6 @@ func TestPutSecret(t *testing.T) {
 	}
 
 	err := driver.PutSecret(name, secret, version, kmsKey, table, context)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -389,12 +387,11 @@ func TestGetHighestVersion(t *testing.T) {
 	}
 
 	versionNum, err := driver.GetHighestVersion(name, table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 
-	if 2 != versionNum {
+	if versionNum != 2 {
 		t.Errorf("\nexpected: %v\ngot: %v\n", 2, versionNum)
 	}
 }
@@ -436,7 +433,6 @@ func TestGetDeleteTargetWithoutVersion(t *testing.T) {
 	}
 
 	items, err := driver.GetDeleteTargetWithoutVersion(name, table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -486,7 +482,6 @@ func TestGetDeleteTargetWithVersion(t *testing.T) {
 	}
 
 	items, err := driver.GetDeleteTargetWithVersion(name, version, table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -526,7 +521,6 @@ func TestDeleteItem(t *testing.T) {
 	}
 
 	err := driver.DeleteItem(name, version, table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -577,7 +571,6 @@ func TestDeleteSecrets(t *testing.T) {
 	}
 
 	err := driver.DeleteSecrets(name, "", table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
