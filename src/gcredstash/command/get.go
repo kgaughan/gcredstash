@@ -100,6 +100,7 @@ func (c *GetCommand) write(filename, message string) {
 
 	defer fp.Close()
 
+	//nolint:errcheck
 	fp.WriteString(message)
 }
 

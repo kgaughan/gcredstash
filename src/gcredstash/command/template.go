@@ -13,9 +13,7 @@ import (
 	"github.com/mattn/go-shellwords"
 )
 
-var (
-	ErrCannotCast = errors.New("cannot cast to string")
-)
+var ErrCannotCast = errors.New("cannot cast to string")
 
 type TemplateCommand struct {
 	Meta

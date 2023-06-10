@@ -360,6 +360,7 @@ func TestGetCommandWithS(t *testing.T) {
 	}
 }
 
+//nolint:errcheck
 func TestGetCommandWithE(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -416,6 +417,7 @@ func TestGetCommandWithE(t *testing.T) {
 	}
 }
 
+//nolint:errcheck
 func TestGetCommandWithErrOutEnv(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
