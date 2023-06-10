@@ -1,6 +1,9 @@
 package gcredstash
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
@@ -8,8 +11,6 @@ import (
 	. "github.com/kgaughan/gcredstash/src/gcredstash"
 	"github.com/kgaughan/gcredstash/src/gcredstash/testutils"
 	"github.com/kgaughan/gcredstash/src/mockaws"
-	"reflect"
-	"testing"
 )
 
 func TestGetMaterialWithoutVersion(t *testing.T) {
@@ -237,7 +238,6 @@ func TestListSecrets(t *testing.T) {
 	}
 
 	items, err := driver.ListSecrets(table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -295,7 +295,6 @@ func TestPutItem(t *testing.T) {
 		B64Decode(item["contents"]),
 		HexDecode(item["hmac"]),
 		table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -344,7 +343,6 @@ func TestPutSecret(t *testing.T) {
 	}
 
 	err := driver.PutSecret(name, secret, version, kmsKey, table, context)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -389,7 +387,6 @@ func TestGetHighestVersion(t *testing.T) {
 	}
 
 	versionNum, err := driver.GetHighestVersion(name, table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -436,7 +433,6 @@ func TestGetDeleteTargetWithoutVersion(t *testing.T) {
 	}
 
 	items, err := driver.GetDeleteTargetWithoutVersion(name, table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -486,7 +482,6 @@ func TestGetDeleteTargetWithVersion(t *testing.T) {
 	}
 
 	items, err := driver.GetDeleteTargetWithVersion(name, version, table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -526,7 +521,6 @@ func TestDeleteItem(t *testing.T) {
 	}
 
 	err := driver.DeleteItem(name, version, table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -577,7 +571,6 @@ func TestDeleteSecrets(t *testing.T) {
 	}
 
 	err := driver.DeleteSecrets(name, "", table)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}

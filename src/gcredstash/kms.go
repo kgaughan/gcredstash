@@ -22,7 +22,6 @@ func KmsDecrypt(svc kmsiface.KMSAPI, blob []byte, context map[string]string) ([]
 	}
 
 	resp, err := svc.Decrypt(params)
-
 	if err != nil {
 		return nil, nil, err
 	}
@@ -50,7 +49,6 @@ func KmsGenerateDataKey(svc kmsiface.KMSAPI, keyId string, context map[string]st
 	}
 
 	resp, err := svc.GenerateDataKey(params)
-
 	if err != nil {
 		return nil, nil, nil, err
 	}

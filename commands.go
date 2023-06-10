@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/mitchellh/cli"
 	"github.com/kgaughan/gcredstash/src/gcredstash/command"
+	"github.com/mitchellh/cli"
 )
 
 func Commands(meta *command.Meta) map[string]cli.CommandFactory {

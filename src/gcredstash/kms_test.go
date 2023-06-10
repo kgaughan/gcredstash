@@ -2,12 +2,13 @@ package gcredstash
 
 import (
 	"bytes"
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/golang/mock/gomock"
 	. "github.com/kgaughan/gcredstash/src/gcredstash"
 	"github.com/kgaughan/gcredstash/src/mockaws"
-	"testing"
 )
 
 func TestKmsDecrypt(t *testing.T) {
@@ -29,7 +30,6 @@ func TestKmsDecrypt(t *testing.T) {
 	}, nil)
 
 	dataKey, hmacKey, err := KmsDecrypt(mkms, blob, context)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -66,7 +66,6 @@ func TestKmsGenerateDataKey(t *testing.T) {
 	}, nil)
 
 	dataKey, hmacKey, wrappedKey, err := KmsGenerateDataKey(mkms, keyId, context)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}

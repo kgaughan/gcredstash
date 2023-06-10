@@ -2,9 +2,10 @@ package gcredstash
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"time"
 )
 
 func (driver *Driver) IsTableExists(table string) (bool, error) {
@@ -21,7 +22,6 @@ func (driver *Driver) IsTableExists(table string) (bool, error) {
 
 		return true
 	})
-
 	if err != nil {
 		return false, err
 	}
@@ -74,7 +74,6 @@ func (driver *Driver) WaitUntilTableExists(table string) error {
 
 	for i := 0; i < 25; i++ {
 		resp, err := driver.Ddb.DescribeTable(params)
-
 		if err != nil {
 			return err
 		}
@@ -96,7 +95,6 @@ func (driver *Driver) WaitUntilTableExists(table string) error {
 
 func (driver *Driver) CreateDdbTable(table string) error {
 	tableIsExist, err := driver.IsTableExists(table)
-
 	if err != nil {
 		return err
 	}

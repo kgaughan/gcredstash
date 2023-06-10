@@ -1,6 +1,8 @@
 package command
 
 import (
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/golang/mock/gomock"
@@ -8,7 +10,6 @@ import (
 	. "github.com/kgaughan/gcredstash/src/gcredstash/command"
 	"github.com/kgaughan/gcredstash/src/gcredstash/testutils"
 	"github.com/kgaughan/gcredstash/src/mockaws"
-	"testing"
 )
 
 func TestDeleteCommand(t *testing.T) {
@@ -60,7 +61,6 @@ func TestDeleteCommand(t *testing.T) {
 
 	args := []string{name}
 	err := cmd.RunImpl(args)
-
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}

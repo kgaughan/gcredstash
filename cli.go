@@ -7,16 +7,18 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
-	"github.com/mitchellh/cli"
 	"github.com/kgaughan/gcredstash/src/gcredstash"
 	"github.com/kgaughan/gcredstash/src/gcredstash/command"
+	"github.com/mitchellh/cli"
 )
 
 func Run(args []string) int {
 	// Meta-option for executables.
 	// It defines output color and its stdout/stderr stream.
-
-	awsSession := session.New()
+	awsSession, err := session.NewSession()
+	if err != nil {
+		panic(err)
+	}
 
 	meta := &command.Meta{
 		Ui: &cli.ColoredUi{
@@ -34,6 +36,7 @@ func Run(args []string) int {
 			Ddb: dynamodb.New(awsSession),
 			Kms: kms.New(awsSession),
 		},
+		Version: Version,
 	}
 
 	if meta.Table == "" {

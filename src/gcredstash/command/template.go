@@ -3,13 +3,14 @@ package command
 import (
 	"bytes"
 	"fmt"
-	"github.com/mattn/go-shellwords"
-	"github.com/kgaughan/gcredstash/src/gcredstash"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 	"text/template"
+
+	"github.com/kgaughan/gcredstash/src/gcredstash"
+	"github.com/mattn/go-shellwords"
 )
 
 type TemplateCommand struct {
@@ -51,7 +52,6 @@ func (c *TemplateCommand) readTemplate(filename string) (string, error) {
 
 func (c *TemplateCommand) getCredential(credential string, context map[string]string) (string, error) {
 	value, err := c.Driver.GetSecret(credential, "", c.Table, context)
-
 	if err != nil {
 		return "", err
 	}
@@ -59,7 +59,7 @@ func (c *TemplateCommand) getCredential(credential string, context map[string]st
 	return value, nil
 }
 
-func (c *TemplateCommand) executeTemplate(name string, content string) (string, error) {
+func (c *TemplateCommand) executeTemplate(name, content string) (string, error) {
 	tmpl := template.New(name)
 
 	tmpl = tmpl.Funcs(template.FuncMap{
@@ -82,13 +82,11 @@ func (c *TemplateCommand) executeTemplate(name string, content string) (string, 
 
 			credential := newArgs[0]
 			context, err := gcredstash.ParseContext(newArgs[1:])
-
 			if err != nil {
 				return "", fmt.Errorf("(get error: %s)", err.Error())
 			}
 
 			value, err := c.getCredential(credential, context)
-
 			if err != nil {
 				return "", fmt.Errorf("(get error: %s)", err.Error())
 			}
@@ -128,7 +126,6 @@ func (c *TemplateCommand) executeTemplate(name string, content string) (string, 
 			}
 
 			cmd, err := shellwords.Parse(line)
-
 			if err != nil {
 				return "", fmt.Errorf("(sh error: %s)", err.Error())
 			}
@@ -155,7 +152,6 @@ func (c *TemplateCommand) executeTemplate(name string, content string) (string, 
 	})
 
 	tmpl, err := tmpl.Parse(content)
-
 	if err != nil {
 		return "", err
 	}
@@ -168,25 +164,22 @@ func (c *TemplateCommand) executeTemplate(name string, content string) (string, 
 
 func (c *TemplateCommand) RunImpl(args []string) (string, error) {
 	tmplFile, inPlace, err := c.parseArgs(args)
-
 	if err != nil {
 		return "", err
 	}
 
 	tmplContent, err := c.readTemplate(tmplFile)
-
 	if err != nil {
 		return "", err
 	}
 
 	out, err := c.executeTemplate(tmplFile, tmplContent)
-
 	if err != nil {
 		return "", err
 	}
 
 	if inPlace {
-		err = ioutil.WriteFile(tmplFile, []byte(out), 0644)
+		err = ioutil.WriteFile(tmplFile, []byte(out), 0o644)
 		out = ""
 	}
 
@@ -195,7 +188,6 @@ func (c *TemplateCommand) RunImpl(args []string) (string, error) {
 
 func (c *TemplateCommand) Run(args []string) int {
 	out, err := c.RunImpl(args)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 		return 1

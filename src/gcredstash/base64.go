@@ -6,7 +6,6 @@ import (
 
 func B64Decode(encoded string) []byte {
 	decoded, err := base64.StdEncoding.DecodeString(encoded)
-
 	if err != nil {
 		panic(err)
 	}

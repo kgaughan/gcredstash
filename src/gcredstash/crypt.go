@@ -7,20 +7,19 @@ import (
 	"crypto/sha256"
 )
 
-func Digest(message []byte, key []byte) []byte {
+func Digest(message, key []byte) []byte {
 	mac := hmac.New(sha256.New, key)
 	mac.Write(message)
 	return mac.Sum(nil)
 }
 
-func ValidateHMAC(message []byte, digest []byte, key []byte) bool {
+func ValidateHMAC(message, digest, key []byte) bool {
 	expected := Digest(message, key)
 	return hmac.Equal(digest, expected)
 }
 
-func Crypt(contents []byte, key []byte) []byte {
+func Crypt(contents, key []byte) []byte {
 	block, err := aes.NewCipher(key)
-
 	if err != nil {
 		panic(err)
 	}

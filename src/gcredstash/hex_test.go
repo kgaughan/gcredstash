@@ -1,8 +1,9 @@
 package gcredstash
 
 import (
-	. "github.com/kgaughan/gcredstash/src/gcredstash"
 	"testing"
+
+	. "github.com/kgaughan/gcredstash/src/gcredstash"
 )
 
 func TestHexDecodeStr(t *testing.T) {

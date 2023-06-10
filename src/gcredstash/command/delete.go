@@ -2,9 +2,10 @@ package command
 
 import (
 	"fmt"
-	"github.com/kgaughan/gcredstash/src/gcredstash"
 	"os"
 	"strings"
+
+	"github.com/kgaughan/gcredstash/src/gcredstash"
 )
 
 type DeleteCommand struct {
@@ -13,7 +14,6 @@ type DeleteCommand struct {
 
 func (c *DeleteCommand) parseArgs(args []string) (string, string, error) {
 	newArgs, version, err := gcredstash.ParseVersion(args)
-
 	if err != nil {
 		return "", "", err
 	}
@@ -33,7 +33,6 @@ func (c *DeleteCommand) parseArgs(args []string) (string, string, error) {
 
 func (c *DeleteCommand) RunImpl(args []string) error {
 	credential, version, err := c.parseArgs(args)
-
 	if err != nil {
 		return err
 	}
@@ -49,7 +48,6 @@ func (c *DeleteCommand) RunImpl(args []string) error {
 
 func (c *DeleteCommand) Run(args []string) int {
 	err := c.RunImpl(args)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 		return 1

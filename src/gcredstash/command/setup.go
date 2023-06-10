@@ -16,7 +16,6 @@ func (c *SetupCommand) RunImpl(args []string) error {
 	}
 
 	err := c.Driver.CreateDdbTable(c.Meta.Table)
-
 	if err != nil {
 		return err
 	}
@@ -26,7 +25,6 @@ func (c *SetupCommand) RunImpl(args []string) error {
 
 func (c *SetupCommand) Run(args []string) int {
 	err := c.RunImpl(args)
-
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 		return 1

@@ -17,7 +17,6 @@ const (
 
 func Atoi(str string) int {
 	num, err := strconv.Atoi(str)
-
 	if err != nil {
 		panic(err)
 	}
@@ -32,7 +31,6 @@ func VersionNumToStr(version int) string {
 func ReadStdin() string {
 	reader := bufio.NewReader(os.Stdin)
 	input, err := ioutil.ReadAll(reader)
-
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +40,6 @@ func ReadStdin() string {
 
 func ReadFile(filename string) (string, error) {
 	content, err := ioutil.ReadFile(filename)
-
 	if err != nil {
 		return "", err
 	}
@@ -52,7 +49,6 @@ func ReadFile(filename string) (string, error) {
 
 func MapToJson(m map[string]string) string {
 	jsonString, err := json.MarshalIndent(m, "", "  ")
-
 	if err != nil {
 		panic(err)
 	}
@@ -67,7 +63,7 @@ func MapToJson(m map[string]string) string {
 func MaxKeyLen(items map[*string]*string) int {
 	max := 0
 
-	for key, _ := range items {
+	for key := range items {
 		keyLen := len(*key)
 
 		if keyLen > max {
