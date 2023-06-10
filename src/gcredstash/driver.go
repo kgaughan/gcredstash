@@ -83,9 +83,14 @@ func (driver *Driver) DecryptMaterial(name string, material map[string]*dynamodb
 		return "", err
 	}
 
-	contents := B64Decode(*material["contents"].S)
-	hmac := HexDecode(*material["hmac"].S)
+	var hmac []byte
+	if len(material["hmac"].B) == 0 {
+		hmac = HexDecode(*material["hmac"].S)
+	} else {
+		hmac = HexDecode(string(material["hmac"].B))
+	}
 
+	contents := B64Decode(*material["contents"].S)
 	if !ValidateHMAC(contents, hmac, hmacKey) {
 		return "", fmt.Errorf("%s: %w", name, ErrBadHMAC)
 	}
