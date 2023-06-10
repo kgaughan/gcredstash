@@ -24,7 +24,7 @@ func TestVersionNumToStr(t *testing.T) {
 	}
 }
 
-func TestMapToJson(t *testing.T) {
+func TestMapToJSON(t *testing.T) {
 	m := map[string]string{"foo": "bar", "bar": "zoo"}
 
 	expected := `{
@@ -32,14 +32,14 @@ func TestMapToJson(t *testing.T) {
   "foo": "bar"
 }`
 
-	actual := MapToJson(m)
+	actual := MapToJSON(m)
 
 	if expected != actual {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expected, actual)
 	}
 }
 
-func TestMapToJsonWithoutEscape(t *testing.T) {
+func TestMapToJSONWithoutEscape(t *testing.T) {
 	m := map[string]string{"<foo>": "&bar", "&bar": "<zoo>"}
 
 	expected := `{
@@ -47,7 +47,7 @@ func TestMapToJsonWithoutEscape(t *testing.T) {
   "<foo>": "&bar"
 }`
 
-	actual := MapToJson(m)
+	actual := MapToJSON(m)
 
 	if expected != actual {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expected, actual)

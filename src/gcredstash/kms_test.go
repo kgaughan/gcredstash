@@ -47,7 +47,7 @@ func TestKmsGenerateDataKey(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	keyId := "alias/credstash"
+	keyID := "alias/credstash"
 	context := map[string]string{"foo": "bar"}
 
 	expectedDataKey := []byte("12345678901234567890123456789012")
@@ -57,7 +57,7 @@ func TestKmsGenerateDataKey(t *testing.T) {
 	mkms := mockaws.NewMockKMSAPI(ctrl)
 
 	mkms.EXPECT().GenerateDataKey(&kms.GenerateDataKeyInput{
-		KeyId:             aws.String(keyId),
+		KeyId:             aws.String(keyID),
 		NumberOfBytes:     aws.Int64(64),
 		EncryptionContext: map[string]*string{"foo": aws.String("bar")},
 	}).Return(&kms.GenerateDataKeyOutput{
@@ -65,7 +65,7 @@ func TestKmsGenerateDataKey(t *testing.T) {
 		CiphertextBlob: expectedWrappedKey,
 	}, nil)
 
-	dataKey, hmacKey, wrappedKey, err := KmsGenerateDataKey(mkms, keyId, context)
+	dataKey, hmacKey, wrappedKey, err := KmsGenerateDataKey(mkms, keyID, context)
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}

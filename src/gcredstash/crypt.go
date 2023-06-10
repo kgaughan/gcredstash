@@ -10,12 +10,12 @@ import (
 func Digest(message, key []byte) []byte {
 	mac := hmac.New(sha256.New, key)
 	mac.Write(message)
+
 	return mac.Sum(nil)
 }
 
 func ValidateHMAC(message, digest, key []byte) bool {
-	expected := Digest(message, key)
-	return hmac.Equal(digest, expected)
+	return hmac.Equal(digest, Digest(message, key))
 }
 
 func Crypt(contents, key []byte) []byte {

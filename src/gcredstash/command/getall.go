@@ -60,7 +60,7 @@ func (c *GetallCommand) RunImpl(args []string) (string, error) {
 
 	creds := c.getCredentials(names, context)
 
-	return gcredstash.MapToJson(creds) + "\n", nil
+	return gcredstash.MapToJSON(creds) + "\n", nil
 }
 
 func (c *GetallCommand) Run(args []string) int {

@@ -5,14 +5,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"strconv"
 	"strings"
 )
 
 const (
-	VERSION_FORMAT = "%019d"
+	VersionFormat = "%019d"
 )
 
 func Atoi(str string) int {
@@ -25,12 +25,12 @@ func Atoi(str string) int {
 }
 
 func VersionNumToStr(version int) string {
-	return fmt.Sprintf(VERSION_FORMAT, version)
+	return fmt.Sprintf(VersionFormat, version)
 }
 
 func ReadStdin() string {
 	reader := bufio.NewReader(os.Stdin)
-	input, err := ioutil.ReadAll(reader)
+	input, err := io.ReadAll(reader)
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +39,7 @@ func ReadStdin() string {
 }
 
 func ReadFile(filename string) (string, error) {
-	content, err := ioutil.ReadFile(filename)
+	content, err := os.ReadFile(filename)
 	if err != nil {
 		return "", err
 	}
@@ -47,15 +47,15 @@ func ReadFile(filename string) (string, error) {
 	return string(content), nil
 }
 
-func MapToJson(m map[string]string) string {
+func MapToJSON(m map[string]string) string {
 	jsonString, err := json.MarshalIndent(m, "", "  ")
 	if err != nil {
 		panic(err)
 	}
 
-	jsonString = bytes.Replace(jsonString, []byte("\\u003c"), []byte("<"), -1)
-	jsonString = bytes.Replace(jsonString, []byte("\\u003e"), []byte(">"), -1)
-	jsonString = bytes.Replace(jsonString, []byte("\\u0026"), []byte("&"), -1)
+	jsonString = bytes.ReplaceAll(jsonString, []byte("\\u003c"), []byte("<"))
+	jsonString = bytes.ReplaceAll(jsonString, []byte("\\u003e"), []byte(">"))
+	jsonString = bytes.ReplaceAll(jsonString, []byte("\\u0026"), []byte("&"))
 
 	return string(jsonString)
 }

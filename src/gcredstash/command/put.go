@@ -20,7 +20,7 @@ func (c *PutCommand) parseArgs(args []string) (string, string, string, map[strin
 	}
 
 	if len(newArgs) < 2 {
-		return "", "", "", nil, false, fmt.Errorf("too few arguments")
+		return "", "", "", nil, false, ErrTooFewArgs
 	}
 
 	credential := newArgs[0]
@@ -46,7 +46,7 @@ func (c *PutCommand) RunImpl(args []string) error {
 			return err
 		}
 
-		latestVersion += 1
+		latestVersion++
 		version = gcredstash.VersionNumToStr(latestVersion)
 	} else if version == "" {
 		version = gcredstash.VersionNumToStr(1)

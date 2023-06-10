@@ -41,7 +41,7 @@ func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string
 	}
 
 	if len(newArgs) < 1 {
-		return "", "", nil, false, false, "", fmt.Errorf("too few arguments")
+		return "", "", nil, false, false, "", ErrTooFewArgs
 	}
 
 	credential := newArgs[0]
@@ -85,7 +85,7 @@ func (c *GetCommand) getCredentials(credential, version string, context map[stri
 		creds[name] = value
 	}
 
-	return gcredstash.MapToJson(creds) + "\n", nil
+	return gcredstash.MapToJSON(creds) + "\n", nil
 }
 
 func (c *GetCommand) write(filename, message string) {
@@ -117,26 +117,26 @@ func (c *GetCommand) RunImpl(args []string) (string, error) {
 		}
 
 		return value, err
-	} else {
-		value, err := c.getCredential(credential, version, context)
-		if err != nil {
-			if errOut != "" {
-				c.write(errOut, fmt.Sprintf("error: gcredstash get %v: %s\n", args, err.Error()))
-			}
-
-			if noErr {
-				return "", nil
-			} else {
-				return "", err
-			}
-		}
-
-		if noNL {
-			return value, nil
-		} else {
-			return value + "\n", nil
-		}
 	}
+
+	value, err := c.getCredential(credential, version, context)
+	if err != nil {
+		if errOut != "" {
+			c.write(errOut, fmt.Sprintf("error: gcredstash get %v: %s\n", args, err.Error()))
+		}
+
+		if noErr {
+			return "", nil
+		}
+
+		return "", err
+	}
+
+	if noNL {
+		return value, nil
+	}
+
+	return value + "\n", nil
 }
 
 func (c *GetCommand) Run(args []string) int {

@@ -12,7 +12,7 @@ type SetupCommand struct {
 
 func (c *SetupCommand) RunImpl(args []string) error {
 	if len(args) > 0 {
-		return fmt.Errorf("too many arguments")
+		return ErrTooManyArgs
 	}
 
 	err := c.Driver.CreateDdbTable(c.Meta.Table)

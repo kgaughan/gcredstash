@@ -27,7 +27,7 @@ func (c *ListCommand) getLines(items map[*string]*string) []string {
 
 func (c *ListCommand) RunImpl(args []string) (string, error) {
 	if len(args) > 0 {
-		return "", fmt.Errorf("too many arguments")
+		return "", ErrTooManyArgs
 	}
 
 	items, err := c.Driver.ListSecrets(c.Table)

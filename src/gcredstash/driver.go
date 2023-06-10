@@ -1,6 +1,7 @@
 package gcredstash
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -8,6 +9,14 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 	"github.com/aws/aws-sdk-go/service/kms/kmsiface"
+)
+
+var (
+	ErrItemNotFound   = errors.New("item couldn't be found")
+	ErrNeedContext    = errors.New("could not decrypt HMAC key with KMS: the credential may require that an encryption context be provided to decrypt it")
+	ErrCredNotMatched = errors.New("could not decrypt HMAC key with KMS: the encryption context provided may not match the one used when the credential was stored")
+	ErrBadHMAC        = errors.New("computed HMAC does not match stored HMAC")
+	ErrVersionExists  = errors.New("version already in the credential store - use the -v flag to specify a new version")
 )
 
 type Driver struct {
@@ -34,7 +43,7 @@ func (driver *Driver) GetMaterialWithoutVersion(name, table string) (map[string]
 	}
 
 	if *resp.Count == 0 {
-		return nil, fmt.Errorf("Item {'name': '%s'} couldn't be found.", name)
+		return nil, fmt.Errorf(`%w: {"name": %q}`, ErrItemNotFound, name)
 	}
 
 	return resp.Items[0], nil
@@ -55,7 +64,7 @@ func (driver *Driver) GetMaterialWithVersion(name, version, table string) (map[s
 	}
 
 	if resp.Item == nil {
-		return nil, fmt.Errorf("Item {'name': '%s'} couldn't be found.", name)
+		return nil, fmt.Errorf(`%w: {"name": %q}`, ErrItemNotFound, name)
 	}
 
 	return resp.Item, nil
@@ -67,20 +76,18 @@ func (driver *Driver) DecryptMaterial(name string, material map[string]*dynamodb
 	if err != nil {
 		if strings.Contains(err.Error(), "InvalidCiphertextException") {
 			if len(context) < 1 {
-				return "", fmt.Errorf("%s: Could not decrypt hmac key with KMS. The credential may require that an encryption context be provided to decrypt it.", name)
-			} else {
-				return "", fmt.Errorf("%s: Could not decrypt hmac key with KMS. The encryption context provided may not match the one used when the credential was stored.", name)
+				return "", fmt.Errorf("%s: %w", name, ErrNeedContext)
 			}
-		} else {
-			return "", err
+			return "", fmt.Errorf("%s: %w", name, ErrCredNotMatched)
 		}
+		return "", err
 	}
 
 	contents := B64Decode(*material["contents"].S)
 	hmac := HexDecode(*material["hmac"].S)
 
 	if !ValidateHMAC(contents, hmac, hmacKey) {
-		return "", fmt.Errorf("Computed HMAC on %s does not match stored HMAC", name)
+		return "", fmt.Errorf("%s: %w", name, ErrBadHMAC)
 	}
 
 	decrypted := Crypt(contents, dataKey)
@@ -162,7 +169,7 @@ func (driver *Driver) GetDeleteTargetWithoutVersion(name, table string) (map[*st
 	}
 
 	if *resp.Count == 0 {
-		return nil, fmt.Errorf("Item {'name': '%s'} couldn't be found.", name)
+		return nil, fmt.Errorf(`%w: {"name": %q}`, ErrItemNotFound, name)
 	}
 
 	for _, i := range resp.Items {
@@ -188,7 +195,7 @@ func (driver *Driver) GetDeleteTargetWithVersion(name, version, table string) (m
 
 	if resp.Item == nil {
 		versionNum := Atoi(version)
-		return nil, fmt.Errorf("Item {'name': '%s', 'version': %d} couldn't be found.", name, versionNum)
+		return nil, fmt.Errorf(`%w: {"name": %q, "version": %d}`, ErrItemNotFound, name, versionNum)
 	}
 
 	items := map[*string]*string{}
@@ -246,7 +253,7 @@ func (driver *Driver) DeleteSecrets(name, version, table string) error {
 func (driver *Driver) PutSecret(name, secret, version, kmsKey, table string, context map[string]string) error {
 	dataKey, hmacKey, wrappedKey, err := KmsGenerateDataKey(driver.Kms, kmsKey, context)
 	if err != nil {
-		return fmt.Errorf("Could not generate key using KMS key(%s): %s", kmsKey, err.Error())
+		return fmt.Errorf("could not generate key using KMS key(%s): %w", kmsKey, err)
 	}
 
 	cipherText := Crypt([]byte(secret), dataKey)
@@ -261,13 +268,9 @@ func (driver *Driver) PutSecret(name, secret, version, kmsKey, table string, con
 				return err
 			}
 
-			return fmt.Errorf(
-				"%s version %d is already in the credential store. Use the -v flag to specify a new version",
-				name,
-				latestVersion)
-		} else {
-			return err
+			return fmt.Errorf("%w (name: %q, version: %d)", ErrVersionExists, name, latestVersion)
 		}
+		return err
 	}
 
 	return nil

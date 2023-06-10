@@ -1,11 +1,17 @@
 package gcredstash
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+)
+
+var (
+	ErrAttemptsExceeded = errors.New("timeout while creating table")
+	ErrTableExists      = errors.New("credential store table already exists")
 )
 
 func (driver *Driver) IsTableExists(table string) (bool, error) {
@@ -72,7 +78,7 @@ func (driver *Driver) WaitUntilTableExists(table string) error {
 		TableName: aws.String(table),
 	}
 
-	for i := 0; i < 25; i++ {
+	for i := 0; i < maxAttempts; i++ {
 		resp, err := driver.Ddb.DescribeTable(params)
 		if err != nil {
 			return err
@@ -87,7 +93,7 @@ func (driver *Driver) WaitUntilTableExists(table string) error {
 	}
 
 	if !isCreated {
-		return fmt.Errorf("exceeded %d wait attempts", maxAttempts)
+		return ErrAttemptsExceeded
 	}
 
 	return nil
@@ -100,7 +106,7 @@ func (driver *Driver) CreateDdbTable(table string) error {
 	}
 
 	if tableIsExist {
-		return fmt.Errorf("Credential Store table already exists: %s", table)
+		return fmt.Errorf("%w: %s", ErrTableExists, table)
 	}
 
 	err = driver.CreateTable(table)

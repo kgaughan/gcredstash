@@ -1,7 +1,7 @@
 package command_test
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"regexp"
 	"testing"
@@ -50,7 +50,7 @@ func TestGetCommand(t *testing.T) {
 	}, nil)
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: []byte(gcredstash.B64Decode(item["key"])),
+		CiphertextBlob: gcredstash.B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -118,7 +118,7 @@ func TestGetCommandWithWildcard(t *testing.T) {
 	}, nil)
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: []byte(gcredstash.B64Decode(item["key"])),
+		CiphertextBlob: gcredstash.B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -181,7 +181,7 @@ func TestGetCommandWithTrailingNewline(t *testing.T) {
 	}, nil)
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: []byte(gcredstash.B64Decode(item["key"])),
+		CiphertextBlob: gcredstash.B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -195,7 +195,7 @@ func TestGetCommandWithTrailingNewline(t *testing.T) {
 	}
 
 	args := []string{name}
-	os.Setenv("GCREDSTASH_GET_TRAILING_NEWLINE", "1")
+	t.Setenv("GCREDSTASH_GET_TRAILING_NEWLINE", "1")
 	out, err := cmd.RunImpl(args)
 	expected := "test.value"
 
@@ -242,7 +242,7 @@ func TestGetCommandWithN(t *testing.T) {
 	}, nil)
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: []byte(gcredstash.B64Decode(item["key"])),
+		CiphertextBlob: gcredstash.B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -303,7 +303,7 @@ func TestGetCommandWithoutItem(t *testing.T) {
 
 	args := []string{name}
 	_, err := cmd.RunImpl(args)
-	expected := "Item {'name': 'test.key'} couldn't be found."
+	expected := `item couldn't be found: {"name": "test.key"}`
 
 	if err == nil {
 		t.Errorf("expected error does not happen")
@@ -393,13 +393,13 @@ func TestGetCommandWithE(t *testing.T) {
 		},
 	}
 
-	tmpfile, _ := ioutil.TempFile("", "gcredstash")
+	tmpfile, _ := os.CreateTemp("", "gcredstash")
 	defer os.Remove(tmpfile.Name())
 
 	args := []string{"-e", tmpfile.Name(), name}
 	_, err := cmd.RunImpl(args)
-	expectedError := "Item {'name': 'test.key'} couldn't be found."
-	expectedErrOut := regexp.MustCompile(`^error: gcredstash get \[-e \S+ test\.key\]: Item {'name': 'test\.key'} couldn't be found\.\n$`)
+	expectedError := `item couldn't be found: {"name": "test.key"}`
+	expectedErrOut := regexp.MustCompile(`^error: gcredstash get \[-e \S+ test\.key\]: item couldn't be found: {"name": "test\.key"}\n$`)
 	tmpfile.Sync()
 	tmpfile.Seek(0, 0)
 
@@ -411,7 +411,7 @@ func TestGetCommandWithE(t *testing.T) {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expectedError, err)
 	}
 
-	if errOut, _ := ioutil.ReadAll(tmpfile); !expectedErrOut.Match(errOut) {
+	if errOut, _ := io.ReadAll(tmpfile); !expectedErrOut.Match(errOut) {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expectedErrOut, string(errOut))
 	}
 }
@@ -449,14 +449,14 @@ func TestGetCommandWithErrOutEnv(t *testing.T) {
 		},
 	}
 
-	tmpfile, _ := ioutil.TempFile("", "gcredstash")
+	tmpfile, _ := os.CreateTemp("", "gcredstash")
 	defer os.Remove(tmpfile.Name())
 
 	args := []string{name}
-	os.Setenv("GCREDSTASH_GET_ERROUT", tmpfile.Name())
+	t.Setenv("GCREDSTASH_GET_ERROUT", tmpfile.Name())
 	_, err := cmd.RunImpl(args)
-	expectedError := "Item {'name': 'test.key'} couldn't be found."
-	expectedErrOut := regexp.MustCompile(`^error: gcredstash get \[test\.key\]: Item {'name': 'test\.key'} couldn't be found\.\n$`)
+	expectedError := `item couldn't be found: {"name": "test.key"}`
+	expectedErrOut := regexp.MustCompile(`^error: gcredstash get \[test\.key\]: item couldn't be found: {"name": "test\.key"}\n$`)
 	tmpfile.Sync()
 	tmpfile.Seek(0, 0)
 
@@ -468,7 +468,7 @@ func TestGetCommandWithErrOutEnv(t *testing.T) {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expectedError, err)
 	}
 
-	if errOut, _ := ioutil.ReadAll(tmpfile); !expectedErrOut.Match(errOut) {
+	if errOut, _ := io.ReadAll(tmpfile); !expectedErrOut.Match(errOut) {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expectedErrOut, string(errOut))
 	}
 }

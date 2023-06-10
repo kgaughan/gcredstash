@@ -19,11 +19,11 @@ func (c *DeleteCommand) parseArgs(args []string) (string, string, error) {
 	}
 
 	if len(newArgs) < 1 {
-		return "", "", fmt.Errorf("too few arguments")
+		return "", "", ErrTooFewArgs
 	}
 
 	if len(newArgs) > 1 {
-		return "", "", fmt.Errorf("too many arguments")
+		return "", "", ErrTooManyArgs
 	}
 
 	credential := args[0]

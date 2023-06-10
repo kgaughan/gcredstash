@@ -1,7 +1,6 @@
 package testutils
 
 import (
-	"io/ioutil"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -29,7 +28,7 @@ func ItemToMap(item map[string]*dynamodb.AttributeValue) map[string]string {
 }
 
 func TempFile(content string, f func(*os.File)) {
-	tmpfile, err := ioutil.TempFile("", "gcredstash")
+	tmpfile, err := os.CreateTemp("", "gcredstash")
 	if err != nil {
 		panic(err)
 	}
