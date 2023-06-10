@@ -18,13 +18,13 @@ gcredstash manages credentials using AWS Key Management Service (KMS) and Dynamo
 %setup -q -n src
 
 %build
-make
+make VERSION=%{version}
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/usr/sbin
-install -m 700 gcredstash %{buildroot}/usr/sbin/
+mkdir -p %{buildroot}%{_sbindir}
+install -m 700 gcredstash %{buildroot}%{_sbindir}
 
 %files
 %defattr(700,root,root,-)
-/usr/sbin/gcredstash
+%{_sbindir}/gcredstash
