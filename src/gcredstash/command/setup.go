@@ -17,6 +17,7 @@ func (c *SetupCommand) RunImpl(args []string) error {
 
 	err := c.Driver.CreateDdbTable(c.Meta.Table)
 	if err != nil {
+		//nolint:wrapcheck
 		return err
 	}
 

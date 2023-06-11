@@ -15,6 +15,7 @@ type DeleteCommand struct {
 func (c *DeleteCommand) parseArgs(args []string) (string, string, error) {
 	newArgs, version, err := gcredstash.ParseVersion(args)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", "", err
 	}
 
@@ -37,13 +38,8 @@ func (c *DeleteCommand) RunImpl(args []string) error {
 		return err
 	}
 
-	err = c.Driver.DeleteSecrets(credential, version, c.Meta.Table)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	//nolint:wrapcheck
+	return c.Driver.DeleteSecrets(credential, version, c.Meta.Table)
 }
 
 func (c *DeleteCommand) Run(args []string) int {

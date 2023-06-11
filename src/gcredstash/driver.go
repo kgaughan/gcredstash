@@ -39,6 +39,7 @@ func (driver *Driver) GetMaterialWithoutVersion(name, table string) (map[string]
 
 	resp, err := driver.Ddb.Query(params)
 	if err != nil {
+		//nolint:wrapcheck
 		return nil, err
 	}
 
@@ -60,6 +61,7 @@ func (driver *Driver) GetMaterialWithVersion(name, version, table string) (map[s
 
 	resp, err := driver.Ddb.GetItem(params)
 	if err != nil {
+		//nolint:wrapcheck
 		return nil, err
 	}
 
@@ -116,7 +118,7 @@ func (driver *Driver) GetHighestVersion(name, table string) (int, error) {
 
 	resp, err := driver.Ddb.Query(params)
 	if err != nil {
-		return -1, err
+		return -1, fmt.Errorf("can't query version: %w", err)
 	}
 
 	if *resp.Count == 0 {
@@ -149,7 +151,7 @@ func (driver *Driver) PutItem(name, version string, key, contents, hmac []byte, 
 
 	_, err := driver.Ddb.PutItem(params)
 	if err != nil {
-		return err
+		return fmt.Errorf("can't store secret: %w", err)
 	}
 
 	return nil
@@ -170,7 +172,7 @@ func (driver *Driver) GetDeleteTargetWithoutVersion(name, table string) (map[*st
 
 	resp, err := driver.Ddb.Query(params)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("can't find deletion target: %w", err)
 	}
 
 	if *resp.Count == 0 {
@@ -195,7 +197,7 @@ func (driver *Driver) GetDeleteTargetWithVersion(name, version, table string) (m
 
 	resp, err := driver.Ddb.GetItem(params)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("can't find deletion target: %w", err)
 	}
 
 	if resp.Item == nil {
@@ -222,7 +224,7 @@ func (driver *Driver) DeleteItem(name, version, table string) error {
 
 	_, err := svc.DeleteItem(params)
 	if err != nil {
-		return err
+		return fmt.Errorf("can't delete secret %q (%v): %w", name, version, err)
 	}
 
 	return nil
@@ -270,6 +272,7 @@ func (driver *Driver) PutSecret(name, secret, version, kmsKey, table string, con
 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
 			latestVersion, err := driver.GetHighestVersion(name, table)
 			if err != nil {
+				//nolint:wrapcheck
 				return err
 			}
 
@@ -292,12 +295,12 @@ func (driver *Driver) GetSecret(name, version, table string, context map[string]
 	}
 
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("can't fetch secret: %w", err)
 	}
 
 	value, err := driver.DecryptMaterial(name, material, context)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("can't decrypt secret: %w", err)
 	}
 
 	return value, nil
@@ -314,7 +317,7 @@ func (driver *Driver) ListSecrets(table string) (map[*string]*string, error) {
 
 	resp, err := svc.Scan(params)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("can't list secrets: %w", err)
 	}
 
 	items := map[*string]*string{}

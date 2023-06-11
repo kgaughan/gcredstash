@@ -1,6 +1,7 @@
 package command_test
 
 import (
+	"errors"
 	"io"
 	"os"
 	"regexp"
@@ -303,14 +304,11 @@ func TestGetCommandWithoutItem(t *testing.T) {
 
 	args := []string{name}
 	_, err := cmd.RunImpl(args)
-	expected := `item couldn't be found: {"name": "test.key"}`
-
 	if err == nil {
 		t.Errorf("expected error does not happen")
 	}
-
-	if expected != err.Error() {
-		t.Errorf("\nexpected: %v\ngot: %v\n", expected, err)
+	if !errors.Is(err, gcredstash.ErrItemNotFound) {
+		t.Errorf("Unexpected error: %v", err)
 	}
 }
 
@@ -360,7 +358,6 @@ func TestGetCommandWithS(t *testing.T) {
 	}
 }
 
-//nolint:errcheck
 func TestGetCommandWithE(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -399,25 +396,26 @@ func TestGetCommandWithE(t *testing.T) {
 
 	args := []string{"-e", tmpfile.Name(), name}
 	_, err := cmd.RunImpl(args)
-	expectedError := `item couldn't be found: {"name": "test.key"}`
-	expectedErrOut := regexp.MustCompile(`^error: gcredstash get \[-e \S+ test\.key\]: item couldn't be found: {"name": "test\.key"}\n$`)
-	tmpfile.Sync()
-	tmpfile.Seek(0, 0)
-
 	if err == nil {
 		t.Errorf("expected error does not happen")
 	}
-
-	if expectedError != err.Error() {
-		t.Errorf("\nexpected: %v\ngot: %v\n", expectedError, err)
+	if !errors.Is(err, gcredstash.ErrItemNotFound) {
+		t.Errorf("Unexpected error: %v", err)
 	}
 
+	if err := tmpfile.Sync(); err != nil {
+		t.Error(err)
+	}
+	if _, err := tmpfile.Seek(0, 0); err != nil {
+		t.Error(err)
+	}
+
+	expectedErrOut := regexp.MustCompile(`^error: gcredstash get \[-e \S+ test\.key\]: can't fetch secret: item couldn't be found: {"name": "test\.key"}\n$`)
 	if errOut, _ := io.ReadAll(tmpfile); !expectedErrOut.Match(errOut) {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expectedErrOut, string(errOut))
 	}
 }
 
-//nolint:errcheck
 func TestGetCommandWithErrOutEnv(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -457,19 +455,21 @@ func TestGetCommandWithErrOutEnv(t *testing.T) {
 	args := []string{name}
 	t.Setenv("GCREDSTASH_GET_ERROUT", tmpfile.Name())
 	_, err := cmd.RunImpl(args)
-	expectedError := `item couldn't be found: {"name": "test.key"}`
-	expectedErrOut := regexp.MustCompile(`^error: gcredstash get \[test\.key\]: item couldn't be found: {"name": "test\.key"}\n$`)
-	tmpfile.Sync()
-	tmpfile.Seek(0, 0)
-
 	if err == nil {
 		t.Errorf("expected error does not happen")
 	}
-
-	if expectedError != err.Error() {
-		t.Errorf("\nexpected: %v\ngot: %v\n", expectedError, err)
+	if !errors.Is(err, gcredstash.ErrItemNotFound) {
+		t.Errorf("Unexpected error: %v", err)
 	}
 
+	if err := tmpfile.Sync(); err != nil {
+		t.Error(err)
+	}
+	if _, err := tmpfile.Seek(0, 0); err != nil {
+		t.Error(err)
+	}
+
+	expectedErrOut := regexp.MustCompile(`^error: gcredstash get \[test\.key\]: can't fetch secret: item couldn't be found: {"name": "test\.key"}\n$`)
 	if errOut, _ := io.ReadAll(tmpfile); !expectedErrOut.Match(errOut) {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expectedErrOut, string(errOut))
 	}

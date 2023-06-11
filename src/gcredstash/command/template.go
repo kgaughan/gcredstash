@@ -45,7 +45,7 @@ func (c *TemplateCommand) readTemplate(filename string) (string, error) {
 		content, err = gcredstash.ReadFile(filename)
 
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("can't read template: %w", err)
 		}
 	}
 
@@ -55,6 +55,7 @@ func (c *TemplateCommand) readTemplate(filename string) (string, error) {
 func (c *TemplateCommand) getCredential(credential string, context map[string]string) (string, error) {
 	value, err := c.Driver.GetSecret(credential, "", c.Table, context)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", err
 	}
 
@@ -155,7 +156,7 @@ func (c *TemplateCommand) executeTemplate(name, content string) (string, error) 
 
 	tmpl, err := tmpl.Parse(content)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("can't parse %q template: %w", name, err)
 	}
 
 	buf := &bytes.Buffer{}
@@ -167,25 +168,27 @@ func (c *TemplateCommand) executeTemplate(name, content string) (string, error) 
 func (c *TemplateCommand) RunImpl(args []string) (string, error) {
 	tmplFile, inPlace, err := c.parseArgs(args)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("can't parse arguments: %w", err)
 	}
 
 	tmplContent, err := c.readTemplate(tmplFile)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", err
 	}
 
 	out, err := c.executeTemplate(tmplFile, tmplContent)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("can't execute template: %w", err)
 	}
 
 	if inPlace {
-		err = os.WriteFile(tmplFile, []byte(out), 0o644)
-		out = ""
+		if err := os.WriteFile(tmplFile, []byte(out), 0o644); err != nil {
+			return "", fmt.Errorf("could not write output: %w", err)
+		}
 	}
 
-	return out, err
+	return out, nil
 }
 
 func (c *TemplateCommand) Run(args []string) int {

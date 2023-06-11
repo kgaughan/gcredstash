@@ -16,6 +16,7 @@ func (c *PutCommand) parseArgs(args []string) (string, string, string, map[strin
 	argsWithoutA, autoVersion := gcredstash.HasOption(args, "-a")
 	newArgs, version, err := gcredstash.ParseVersion(argsWithoutA)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", "", "", nil, false, err
 	}
 
@@ -27,13 +28,14 @@ func (c *PutCommand) parseArgs(args []string) (string, string, string, map[strin
 	value := newArgs[1]
 	context, err := gcredstash.ParseContext(newArgs[2:])
 
+	//nolint:wrapcheck
 	return credential, value, version, context, autoVersion, err
 }
 
 func (c *PutCommand) RunImpl(args []string) error {
 	credential, value, version, context, autoVersion, err := c.parseArgs(args)
 	if err != nil {
-		return err
+		return fmt.Errorf("can't parse arguments: %w", err)
 	}
 
 	if value == "-" {
@@ -43,7 +45,7 @@ func (c *PutCommand) RunImpl(args []string) error {
 	if autoVersion {
 		latestVersion, err := c.Driver.GetHighestVersion(credential, c.Table)
 		if err != nil {
-			return err
+			return fmt.Errorf("can't fetch highest version: %w", err)
 		}
 
 		latestVersion++
@@ -52,10 +54,8 @@ func (c *PutCommand) RunImpl(args []string) error {
 		version = gcredstash.VersionNumToStr(1)
 	}
 
-	err = c.Driver.PutSecret(credential, value, version, c.KmsKey, c.Table, context)
-
-	if err != nil {
-		return err
+	if err := c.Driver.PutSecret(credential, value, version, c.KmsKey, c.Table, context); err != nil {
+		return fmt.Errorf("can't store secret: %w", err)
 	}
 
 	fmt.Printf("%s has been stored\n", credential)

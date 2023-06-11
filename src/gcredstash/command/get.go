@@ -32,11 +32,13 @@ func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string
 	}
 
 	if err != nil {
+		//nolint:wrapcheck
 		return "", "", nil, false, false, "", err
 	}
 
 	newArgs, version, err := gcredstash.ParseVersion(argsWithoutNSE)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", "", nil, false, false, "", err
 	}
 
@@ -47,12 +49,14 @@ func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string
 	credential := newArgs[0]
 	context, err := gcredstash.ParseContext(newArgs[1:])
 
+	//nolint:wrapcheck
 	return credential, version, context, noNL, noErr, errOut, err
 }
 
 func (c *GetCommand) getCredential(credential, version string, context map[string]string) (string, error) {
 	value, err := c.Driver.GetSecret(credential, version, c.Table, context)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", err
 	}
 
@@ -63,6 +67,7 @@ func (c *GetCommand) getCredentials(credential, version string, context map[stri
 	names := map[string]bool{}
 	items, err := c.Driver.ListSecrets(c.Table)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", err
 	}
 

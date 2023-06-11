@@ -1,6 +1,7 @@
 package gcredstash_test
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -111,23 +112,17 @@ func TestParseVersion2(t *testing.T) {
 
 func TestErrParseVersion1(t *testing.T) {
 	args := []string{"-a", "-v", "-c", "CCC"}
-	expected := "option requires an argument: -v"
-
 	_, _, err := ParseVersion(args)
-
-	if err == nil || err.Error() != expected {
-		t.Errorf("\nexpected: %v\ngot: %v\n", expected, err)
+	if !errors.Is(err, ErrArgumentRequired) {
+		t.Errorf("Unexpected error: %#v", err)
 	}
 }
 
 func TestErrParseVersion2(t *testing.T) {
 	args := []string{"-a", "-v", "X", "-c", "CCC"}
-	expected := `strconv.Atoi: parsing "X": invalid syntax`
-
 	_, _, err := ParseVersion(args)
-
-	if err == nil || err.Error() != expected {
-		t.Errorf("\nexpected: %v\ngot: %v\n", expected, err)
+	if !errors.Is(err, ErrBadVersion) {
+		t.Errorf("Unexpected error: %#v", err)
 	}
 }
 

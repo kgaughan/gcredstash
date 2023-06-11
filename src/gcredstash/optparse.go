@@ -10,6 +10,7 @@ import (
 var (
 	ErrArgumentRequired = errors.New("option requires an argument")
 	ErrInvalidContext   = errors.New("invalid context")
+	ErrBadVersion       = errors.New("malformed version")
 )
 
 func ParseOptionWithValue(args []string, key string) ([]string, string, error) {
@@ -44,13 +45,14 @@ func ParseOptionWithValue(args []string, key string) ([]string, string, error) {
 func ParseVersion(args []string) ([]string, string, error) {
 	newArgs, version, err := ParseOptionWithValue(args, "-v")
 	if err != nil {
+		//nolint:wrapcheck
 		return nil, "", err
 	}
 
 	if version != "" {
 		ver, err := strconv.Atoi(version)
 		if err != nil {
-			return nil, "", err
+			return nil, "", fmt.Errorf("%w: %q", ErrBadVersion, version)
 		}
 
 		version = fmt.Sprintf("%019d", ver)
