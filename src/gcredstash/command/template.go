@@ -139,8 +139,10 @@ func (c *TemplateCommand) executeTemplate(name, content string) (string, error) 
 			case 0:
 				out = []byte{}
 			case 1:
+				//nolint:gosec
 				out, err = exec.Command(cmd[0]).Output()
 			default:
+				//nolint:gosec
 				out, err = exec.Command(cmd[0], cmd[1:]...).Output()
 			}
 
@@ -183,6 +185,7 @@ func (c *TemplateCommand) RunImpl(args []string) (string, error) {
 	}
 
 	if inPlace {
+		//nolint:gosec
 		if err := os.WriteFile(tmplFile, []byte(out), 0o644); err != nil {
 			return "", fmt.Errorf("could not write output: %w", err)
 		}

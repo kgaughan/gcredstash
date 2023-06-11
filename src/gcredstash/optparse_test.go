@@ -112,16 +112,14 @@ func TestParseVersion2(t *testing.T) {
 
 func TestErrParseVersion1(t *testing.T) {
 	args := []string{"-a", "-v", "-c", "CCC"}
-	_, _, err := ParseVersion(args)
-	if !errors.Is(err, ErrArgumentRequired) {
+	if _, _, err := ParseVersion(args); !errors.Is(err, ErrArgumentRequired) {
 		t.Errorf("Unexpected error: %#v", err)
 	}
 }
 
 func TestErrParseVersion2(t *testing.T) {
 	args := []string{"-a", "-v", "X", "-c", "CCC"}
-	_, _, err := ParseVersion(args)
-	if !errors.Is(err, ErrBadVersion) {
+	if _, _, err := ParseVersion(args); !errors.Is(err, ErrBadVersion) {
 		t.Errorf("Unexpected error: %#v", err)
 	}
 }
@@ -143,9 +141,7 @@ func TestParseContext(t *testing.T) {
 func TestErrParseContext1(t *testing.T) {
 	args := []string{"foo=100", "bar"}
 	expected := "invalid context: bar"
-	_, err := ParseContext(args)
-
-	if err == nil || err.Error() != expected {
+	if _, err := ParseContext(args); err == nil || err.Error() != expected {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expected, err)
 	}
 }
@@ -153,9 +149,7 @@ func TestErrParseContext1(t *testing.T) {
 func TestErrParseContext2(t *testing.T) {
 	args := []string{"foo=100", "bar="}
 	expected := "invalid context: bar="
-	_, err := ParseContext(args)
-
-	if err == nil || err.Error() != expected {
+	if _, err := ParseContext(args); err == nil || err.Error() != expected {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expected, err)
 	}
 }

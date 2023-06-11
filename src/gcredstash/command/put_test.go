@@ -77,8 +77,7 @@ func TestPutCommand(t *testing.T) {
 	}
 
 	args := []string{name, secret, "-a"}
-	err := cmd.RunImpl(args)
-	if err != nil {
+	if err := cmd.RunImpl(args); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 }
