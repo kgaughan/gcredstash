@@ -41,6 +41,7 @@ func ReadStdin() string {
 func ReadFile(filename string) (string, error) {
 	content, err := os.ReadFile(filename)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", err
 	}
 

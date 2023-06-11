@@ -16,6 +16,7 @@ func (c *PutCommand) parseArgs(args []string) (string, string, string, map[strin
 	argsWithoutA, autoVersion := gcredstash.HasOption(args, "-a")
 	newArgs, version, err := gcredstash.ParseVersion(argsWithoutA)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", "", "", nil, false, err
 	}
 
@@ -27,6 +28,7 @@ func (c *PutCommand) parseArgs(args []string) (string, string, string, map[strin
 	value := newArgs[1]
 	context, err := gcredstash.ParseContext(newArgs[2:])
 
+	//nolint:wrapcheck
 	return credential, value, version, context, autoVersion, err
 }
 

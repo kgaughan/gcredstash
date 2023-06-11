@@ -39,6 +39,7 @@ func (driver *Driver) GetMaterialWithoutVersion(name, table string) (map[string]
 
 	resp, err := driver.Ddb.Query(params)
 	if err != nil {
+		//nolint:wrapcheck
 		return nil, err
 	}
 
@@ -60,6 +61,7 @@ func (driver *Driver) GetMaterialWithVersion(name, version, table string) (map[s
 
 	resp, err := driver.Ddb.GetItem(params)
 	if err != nil {
+		//nolint:wrapcheck
 		return nil, err
 	}
 
@@ -270,6 +272,7 @@ func (driver *Driver) PutSecret(name, secret, version, kmsKey, table string, con
 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
 			latestVersion, err := driver.GetHighestVersion(name, table)
 			if err != nil {
+				//nolint:wrapcheck
 				return err
 			}
 

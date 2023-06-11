@@ -55,6 +55,7 @@ func (c *TemplateCommand) readTemplate(filename string) (string, error) {
 func (c *TemplateCommand) getCredential(credential string, context map[string]string) (string, error) {
 	value, err := c.Driver.GetSecret(credential, "", c.Table, context)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", err
 	}
 
@@ -172,6 +173,7 @@ func (c *TemplateCommand) RunImpl(args []string) (string, error) {
 
 	tmplContent, err := c.readTemplate(tmplFile)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", err
 	}
 

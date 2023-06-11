@@ -32,6 +32,7 @@ func (c *ListCommand) RunImpl(args []string) (string, error) {
 
 	items, err := c.Driver.ListSecrets(c.Table)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", err
 	}
 

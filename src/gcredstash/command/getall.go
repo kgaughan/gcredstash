@@ -18,6 +18,7 @@ func (c *GetallCommand) getNames() ([]string, error) {
 
 	items, err := c.Driver.ListSecrets(c.Table)
 	if err != nil {
+		//nolint:wrapcheck
 		return nil, err
 	}
 
@@ -50,6 +51,7 @@ func (c *GetallCommand) getCredentials(names []string, context map[string]string
 func (c *GetallCommand) RunImpl(args []string) (string, error) {
 	context, err := gcredstash.ParseContext(args)
 	if err != nil {
+		//nolint:wrapcheck
 		return "", err
 	}
 
