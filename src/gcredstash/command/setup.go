@@ -25,8 +25,7 @@ func (c *SetupCommand) RunImpl(args []string) error {
 }
 
 func (c *SetupCommand) Run(args []string) int {
-	err := c.RunImpl(args)
-	if err != nil {
+	if err := c.RunImpl(args); err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
 		return 1
 	}

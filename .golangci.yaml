@@ -32,6 +32,7 @@ linters:
 
     # Undecided
     - tparallel
+    - gosec
 
 run:
   skip-dirs:

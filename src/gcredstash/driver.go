@@ -222,8 +222,7 @@ func (driver *Driver) DeleteItem(name, version, table string) error {
 		},
 	}
 
-	_, err := svc.DeleteItem(params)
-	if err != nil {
+	if _, err := svc.DeleteItem(params); err != nil {
 		return fmt.Errorf("can't delete secret %q (%v): %w", name, version, err)
 	}
 
