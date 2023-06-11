@@ -7,7 +7,6 @@ linters:
     - godot
     - gofumpt
     - goimports
-    - tagalign
     - whitespace
 
     # fast, nofix
