@@ -1,6 +1,8 @@
 package gcredstash
 
 import (
+	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/aws/aws-sdk-go/service/kms/kmsiface"
@@ -23,7 +25,7 @@ func KmsDecrypt(svc kmsiface.KMSAPI, blob []byte, context map[string]string) ([]
 
 	resp, err := svc.Decrypt(params)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("can't decrypt values with KMS: %w", err)
 	}
 
 	dataKey := resp.Plaintext[:32]
@@ -50,7 +52,7 @@ func KmsGenerateDataKey(svc kmsiface.KMSAPI, keyID string, context map[string]st
 
 	resp, err := svc.GenerateDataKey(params)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, fmt.Errorf("can't generate data key: %w", err)
 	}
 
 	dataKey := resp.Plaintext[:32]

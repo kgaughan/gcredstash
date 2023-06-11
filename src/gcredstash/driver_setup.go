@@ -29,7 +29,7 @@ func (driver *Driver) IsTableExists(table string) (bool, error) {
 		return true
 	})
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("can't check if %q exists: %w", table, err)
 	}
 
 	return isExist, nil
@@ -64,9 +64,10 @@ func (driver *Driver) CreateTable(table string) error {
 		},
 	}
 
-	_, err := driver.Ddb.CreateTable(params)
-
-	return err
+	if _, err := driver.Ddb.CreateTable(params); err != nil {
+		return fmt.Errorf("can't create %q: %w", table, err)
+	}
+	return nil
 }
 
 func (driver *Driver) WaitUntilTableExists(table string) error {
@@ -81,7 +82,7 @@ func (driver *Driver) WaitUntilTableExists(table string) error {
 	for i := 0; i < maxAttempts; i++ {
 		resp, err := driver.Ddb.DescribeTable(params)
 		if err != nil {
-			return err
+			return fmt.Errorf("can't describe %q: %w", table, err)
 		}
 
 		if *resp.Table.TableStatus == "ACTIVE" {
@@ -100,27 +101,20 @@ func (driver *Driver) WaitUntilTableExists(table string) error {
 }
 
 func (driver *Driver) CreateDdbTable(table string) error {
-	tableIsExist, err := driver.IsTableExists(table)
-	if err != nil {
+	if tableIsExist, err := driver.IsTableExists(table); err != nil {
 		return err
-	}
-
-	if tableIsExist {
+	} else if tableIsExist {
 		return fmt.Errorf("%w: %s", ErrTableExists, table)
 	}
 
-	err = driver.CreateTable(table)
-
-	if err != nil {
+	if err := driver.CreateTable(table); err != nil {
 		return err
 	}
 
 	fmt.Println("Creating table...")
 	fmt.Println("Waiting for table to be created...")
 
-	err = driver.WaitUntilTableExists(table)
-
-	if err != nil {
+	if err := driver.WaitUntilTableExists(table); err != nil {
 		return err
 	}
 
