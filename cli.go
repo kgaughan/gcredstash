@@ -21,7 +21,7 @@ func Run(args []string) int {
 	}
 
 	meta := &command.Meta{
-		Ui: &cli.ColoredUi{
+		UI: &cli.ColoredUi{
 			InfoColor:  cli.UiColorBlue,
 			ErrorColor: cli.UiColorRed,
 			Ui: &cli.BasicUi{
