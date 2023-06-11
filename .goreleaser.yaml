@@ -25,11 +25,11 @@ brews:
   - name: gcredstash
     ids:
       - archives
-    token: "{{ .Env.TAP_GITHUB_TOKEN }}"
     homepage: "https://github.com/kgaughan/gcredstash"
     tap:
       owner: kgaughan
       name: homebrew-tap
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
     commit_author:
       name: Keith Gaughan
       email: k@stereochro.me
