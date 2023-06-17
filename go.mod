@@ -3,7 +3,7 @@ module github.com/kgaughan/gcredstash
 go 1.18
 
 require (
-	github.com/aws/aws-sdk-go v1.44.280
+	github.com/aws/aws-sdk-go v1.44.284
 	github.com/golang/mock v1.6.0
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/mitchellh/cli v1.1.5
@@ -30,6 +30,6 @@ require (
 	github.com/posener/complete v1.2.3 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/crypto v0.10.0 // indirect
+	golang.org/x/sys v0.9.0 // indirect
 )
