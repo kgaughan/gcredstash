@@ -7,7 +7,7 @@ gcredstash: $(SRC)
 	CGO_ENABLED=0 go build -v -trimpath -ldflags "-s -w -X main.Version=$(VERSION)" -tags netgo -o gcredstash
 
 test:
-	go test -v ./...
+	go test -cover -v ./...
 
 clean:
 	rm -f gcredstash{,.exe} *.gz *.zip dist/
