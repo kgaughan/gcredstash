@@ -9,7 +9,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/kgaughan/gcredstash/src/gcredstash"
+	gcredstash "github.com/kgaughan/gcredstash/internal"
 	"github.com/mattn/go-shellwords"
 )
 

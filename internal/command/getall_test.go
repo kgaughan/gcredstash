@@ -1,20 +1,19 @@
 package command_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/golang/mock/gomock"
-	"github.com/kgaughan/gcredstash/src/gcredstash"
-	. "github.com/kgaughan/gcredstash/src/gcredstash/command"
-	"github.com/kgaughan/gcredstash/src/gcredstash/testutils"
-	"github.com/kgaughan/gcredstash/src/mockaws"
+	gcredstash "github.com/kgaughan/gcredstash/internal"
+	. "github.com/kgaughan/gcredstash/internal/command"
+	"github.com/kgaughan/gcredstash/internal/mockaws"
+	"github.com/kgaughan/gcredstash/internal/testutils"
 )
 
-func TestTemplateCommand(t *testing.T) {
+func TestGetallCommand(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -31,6 +30,14 @@ func TestTemplateCommand(t *testing.T) {
 		"name":     "test.key",
 		"version":  "0000000000000000002",
 	}
+
+	mddb.EXPECT().Scan(&dynamodb.ScanInput{
+		TableName:                aws.String(table),
+		ProjectionExpression:     aws.String("#name,version"),
+		ExpressionAttributeNames: map[string]*string{"#name": aws.String("name")},
+	}).Return(&dynamodb.ScanOutput{
+		Items: []map[string]*dynamodb.AttributeValue{testutils.MapToItem(item)},
+	}, nil)
 
 	mddb.EXPECT().Query(&dynamodb.QueryInput{
 		TableName:                aws.String(table),
@@ -53,7 +60,7 @@ func TestTemplateCommand(t *testing.T) {
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
 
-	cmd := &TemplateCommand{
+	cmd := &GetallCommand{
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
@@ -61,26 +68,18 @@ func TestTemplateCommand(t *testing.T) {
 		},
 	}
 
-	tmplContent := `test.key={{get "test.key"}}
-GCREDSTASH_TEST_ENV_KEY={{env "GCREDSTASH_TEST_ENV_KEY"}}
-CMD_OUT={{sh "echo 100"}}`
+	args := []string{}
+	out, err := cmd.RunImpl(args)
+	expected := `{
+  "test.key": "test.value"
+}
+`
 
-	testutils.TempFile(tmplContent, func(tmpfile *os.File) {
-		testutils.Setenv("GCREDSTASH_TEST_ENV_KEY", "env.value")
+	if err != nil {
+		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
+	}
 
-		args := []string{tmpfile.Name()}
-		out, err := cmd.RunImpl(args)
-
-		expected := `test.key=test.value
-GCREDSTASH_TEST_ENV_KEY=env.value
-CMD_OUT=100`
-
-		if err != nil {
-			t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
-		}
-
-		if expected != out {
-			t.Errorf("\nexpected: %v\ngot: %v\n", expected, out)
-		}
-	})
+	if expected != out {
+		t.Errorf("\nexpected: %v\ngot: %v\n", expected, out)
+	}
 }

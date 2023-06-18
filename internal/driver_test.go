@@ -8,9 +8,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/golang/mock/gomock"
-	. "github.com/kgaughan/gcredstash/src/gcredstash"
-	"github.com/kgaughan/gcredstash/src/gcredstash/testutils"
-	"github.com/kgaughan/gcredstash/src/mockaws"
+	. "github.com/kgaughan/gcredstash/internal"
+	"github.com/kgaughan/gcredstash/internal/mockaws"
+	"github.com/kgaughan/gcredstash/internal/testutils"
 )
 
 func TestGetMaterialWithoutVersion(t *testing.T) {

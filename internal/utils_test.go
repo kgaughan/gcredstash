@@ -3,7 +3,7 @@ package gcredstash_test
 import (
 	"testing"
 
-	. "github.com/kgaughan/gcredstash/src/gcredstash"
+	. "github.com/kgaughan/gcredstash/internal"
 )
 
 func TestAtoi(t *testing.T) {
