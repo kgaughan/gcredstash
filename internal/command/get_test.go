@@ -11,10 +11,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/golang/mock/gomock"
-	"github.com/kgaughan/gcredstash/src/gcredstash"
-	. "github.com/kgaughan/gcredstash/src/gcredstash/command"
-	"github.com/kgaughan/gcredstash/src/gcredstash/testutils"
-	"github.com/kgaughan/gcredstash/src/mockaws"
+	gcredstash "github.com/kgaughan/gcredstash/internal"
+	. "github.com/kgaughan/gcredstash/internal/command"
+	"github.com/kgaughan/gcredstash/internal/mockaws"
+	"github.com/kgaughan/gcredstash/internal/testutils"
 )
 
 func TestGetCommand(t *testing.T) {

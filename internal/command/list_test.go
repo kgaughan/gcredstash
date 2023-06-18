@@ -1,23 +1,25 @@
 package command_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/golang/mock/gomock"
-	"github.com/kgaughan/gcredstash/src/gcredstash"
-	. "github.com/kgaughan/gcredstash/src/gcredstash/command"
-	"github.com/kgaughan/gcredstash/src/gcredstash/testutils"
-	"github.com/kgaughan/gcredstash/src/mockaws"
+	gcredstash "github.com/kgaughan/gcredstash/internal"
+	. "github.com/kgaughan/gcredstash/internal/command"
+	"github.com/kgaughan/gcredstash/internal/mockaws"
+	"github.com/kgaughan/gcredstash/internal/testutils"
 )
 
-func TestDeleteCommand(t *testing.T) {
+func TestListCommand(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mddb := mockaws.NewMockDynamoDBAPI(ctrl)
 	mkms := mockaws.NewMockKMSAPI(ctrl)
+
 	table := "credential-store"
 	name := "test.key"
 	version := "0000000000000000002"
@@ -30,28 +32,15 @@ func TestDeleteCommand(t *testing.T) {
 		"version":  version,
 	}
 
-	mddb.EXPECT().Query(&dynamodb.QueryInput{
+	mddb.EXPECT().Scan(&dynamodb.ScanInput{
 		TableName:                aws.String(table),
-		ConsistentRead:           aws.Bool(true),
-		KeyConditionExpression:   aws.String("#name = :name"),
+		ProjectionExpression:     aws.String("#name,version"),
 		ExpressionAttributeNames: map[string]*string{"#name": aws.String("name")},
-		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":name": {S: aws.String(name)},
-		},
-	}).Return(&dynamodb.QueryOutput{
-		Count: aws.Int64(1),
+	}).Return(&dynamodb.ScanOutput{
 		Items: []map[string]*dynamodb.AttributeValue{testutils.MapToItem(item)},
 	}, nil)
 
-	mddb.EXPECT().DeleteItem(&dynamodb.DeleteItemInput{
-		TableName: aws.String(table),
-		Key: map[string]*dynamodb.AttributeValue{
-			"name":    {S: aws.String(name)},
-			"version": {S: aws.String(version)},
-		},
-	}).Return(nil, nil)
-
-	cmd := &DeleteCommand{
+	cmd := &ListCommand{
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
@@ -59,8 +48,15 @@ func TestDeleteCommand(t *testing.T) {
 		},
 	}
 
-	args := []string{name}
-	if err := cmd.RunImpl(args); err != nil {
+	args := []string{}
+	out, err := cmd.RunImpl(args)
+	expected := fmt.Sprintf("%s -- version: %d", name, gcredstash.Atoi(version))
+
+	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
+	}
+
+	if expected != out {
+		t.Errorf("\nexpected: %v\ngot: %v\n", expected, out)
 	}
 }

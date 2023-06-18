@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	. "github.com/kgaughan/gcredstash/src/gcredstash"
+	. "github.com/kgaughan/gcredstash/internal"
 )
 
 func TestParseOptionWithValue1(t *testing.T) {

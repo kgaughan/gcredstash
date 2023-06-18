@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/kgaughan/gcredstash/src/gcredstash"
+	gcredstash "github.com/kgaughan/gcredstash/internal"
 )
 
 type PutCommand struct {
