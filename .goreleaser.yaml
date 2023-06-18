@@ -37,6 +37,8 @@ brews:
     description: "Manages credentials using AWS Key Management Service (KMS) and DynamoDB"
     license: "ASL 2.0"
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+    install: |
+      bin.install "gcredstash"
 
 archives:
   - format: tar.gz
@@ -61,8 +63,8 @@ nfpms:
   - id: packages
     file_name_template: >-
       {{ .PackageName }}-{{ .Version }}.
-      {{- if .Amd64 }}x86_64
-      {{- else if .Arm }}aarch64
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "arm64" }}aarch64
       {{- else }}{{ .Arch }}{{ end }}
     description: |-
       Manages credentials using AWS Key Management Service (KMS) and DynamoDB.
