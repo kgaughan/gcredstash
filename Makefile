@@ -9,7 +9,7 @@ test:
 	go test -cover -v ./...
 
 clean:
-	rm -rf gcredstash{,.exe} *.gz *.zip dist/
+	rm -rf gcredstash *.gz *.zip dist/
 
 mock:
 	go install github.com/golang/mock/mockgen@v1.6.0
