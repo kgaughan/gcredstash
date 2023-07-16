@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.298
 	github.com/golang/mock v1.6.0
 	github.com/mattn/go-shellwords v1.0.12
+	github.com/ryanuber/go-glob v1.0.0
 	github.com/spf13/cobra v1.7.0
 )
 

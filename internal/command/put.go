@@ -7,8 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var key string
-var autoVersion bool
+var (
+	key         string
+	autoVersion bool
+)
 
 var putCmd = &cobra.Command{
 	Use:   "put credential value [context ...]",

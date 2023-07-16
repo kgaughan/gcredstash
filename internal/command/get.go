@@ -1,12 +1,18 @@
 package command
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/kgaughan/gcredstash/internal"
+	"github.com/ryanuber/go-glob"
 	"github.com/spf13/cobra"
 )
 
-var noNL bool
-var noErr bool
+var (
+	noNL  bool
+	noErr bool
+)
 
 var getCmd = &cobra.Command{
 	Use:   "get credential [context ...]",
@@ -28,18 +34,42 @@ var getCmd = &cobra.Command{
 			return err //nolint:wrapcheck
 		}
 
-		// TOOD: wildcard support
-		value, err := driver.GetSecret(args[0], version, table, context)
-		if err != nil {
-			if noErr {
-				return nil
+		credential := args[0]
+		if strings.Contains(credential, "*") {
+			items, err := driver.ListSecrets(table)
+			if err != nil {
+				return err //nolint:wrapcheck
 			}
-			return err //nolint:wrapcheck
-		}
-		if noNL {
-			cmd.Print(value)
+			creds := map[string]string{}
+			for name := range items {
+				if !glob.Glob(credential, *name) {
+					continue
+				}
+				value, err := driver.GetSecret(*name, version, table, context)
+				if err != nil {
+					continue
+				}
+				creds[*name] = value
+			}
+			result, err := internal.JSONMarshal(creds)
+			if err != nil {
+				return fmt.Errorf("cannot marshal credential: %w", err)
+			}
+			cmd.Println(string(result))
 		} else {
-			cmd.Println(value)
+			// TOOD: wildcard support
+			value, err := driver.GetSecret(credential, version, table, context)
+			if err != nil {
+				if noErr {
+					return nil
+				}
+				return err //nolint:wrapcheck
+			}
+			if noNL {
+				cmd.Print(value)
+			} else {
+				cmd.Println(value)
+			}
 		}
 		return nil
 	},
