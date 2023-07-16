@@ -7,8 +7,10 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/aws/aws-sdk-go/service/kms/kmsiface"
 )
 
@@ -23,6 +25,18 @@ var (
 type Driver struct {
 	Ddb dynamodbiface.DynamoDBAPI
 	Kms kmsiface.KMSAPI
+}
+
+func NewDriver() (*Driver, error) {
+	awsSession, err := session.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	driver := &Driver{
+		Ddb: dynamodb.New(awsSession),
+		Kms: kms.New(awsSession),
+	}
+	return driver, nil
 }
 
 func (driver *Driver) GetMaterialWithoutVersion(name, table string) (map[string]*dynamodb.AttributeValue, error) {
