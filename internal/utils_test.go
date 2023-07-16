@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -28,27 +29,16 @@ func TestMapToJSON(t *testing.T) {
 	expected := `{
   "bar": "zoo",
   "foo": "bar"
-}`
-
-	actual := MapToJSON(m)
-
-	if expected != actual {
-		t.Errorf("\nexpected: %v\ngot: %v\n", expected, actual)
-	}
 }
+`
 
-func TestMapToJSONWithoutEscape(t *testing.T) {
-	m := map[string]string{"<foo>": "&bar", "&bar": "<zoo>"}
+	actual, err := JSONMarshal(m)
+	if err != nil {
+		t.Error(err)
+	}
 
-	expected := `{
-  "&bar": "<zoo>",
-  "<foo>": "&bar"
-}`
-
-	actual := MapToJSON(m)
-
-	if expected != actual {
-		t.Errorf("\nexpected: %v\ngot: %v\n", expected, actual)
+	if expected != string(actual) {
+		t.Errorf("\nexpected: %q\ngot: %q\n", expected, string(actual))
 	}
 }
 
@@ -64,5 +54,35 @@ func TestMaxKeyLen(t *testing.T) {
 
 	if expected != actual {
 		t.Errorf("\nexpected: %v\ngot: %v\n", expected, actual)
+	}
+}
+
+func TestParseContext(t *testing.T) {
+	args := []string{"foo=100", "bar=ZOO"}
+	expected := map[string]string{"foo": "100", "bar": "ZOO"}
+	actual, err := ParseContext(args)
+
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("\nexpected: %v\ngot: %v\n", expected, actual)
+	}
+
+	if err != nil {
+		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
+	}
+}
+
+func TestErrParseContext1(t *testing.T) {
+	args := []string{"foo=100", "bar"}
+	expected := `invalid context: "bar"`
+	if _, err := ParseContext(args); err == nil || err.Error() != expected {
+		t.Errorf("\nexpected: %v\ngot: %v\n", expected, err)
+	}
+}
+
+func TestErrParseContext2(t *testing.T) {
+	args := []string{"foo=100", "bar="}
+	expected := `invalid context: "bar="`
+	if _, err := ParseContext(args); err == nil || err.Error() != expected {
+		t.Errorf("\nexpected: %v\ngot: %v\n", expected, err)
 	}
 }

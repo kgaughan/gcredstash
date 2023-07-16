@@ -4,64 +4,38 @@ import (
 	"fmt"
 	"os"
 	"sort"
-	"strings"
+	"strconv"
 
 	"github.com/kgaughan/gcredstash/internal"
+	"github.com/spf13/cobra"
 )
 
-type ListCommand struct {
-	Meta
-}
+func MakeListCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command {
+	return &cobra.Command{
+		Use:   "list",
+		Short: "List credentials and their version",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			items, err := driver.ListSecrets(common.Table)
+			if err != nil {
+				return err
+			}
 
-func (c *ListCommand) getLines(items map[*string]*string) []string {
-	maxNameLen := internal.MaxKeyLen(items)
-	lines := []string{}
-
-	for name, version := range items {
-		versionNum := internal.Atoi(*version)
-		lines = append(lines, fmt.Sprintf("%-*s -- version: %d", maxNameLen, *name, versionNum))
+			maxKeyLen := internal.MaxKeyLen(items)
+			lines := make([]string, 0, len(items))
+			for name, version := range items {
+				versionNum, err := strconv.Atoi(*version)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "bad version for %q: %q\n", *name, *version)
+				} else {
+					lines = append(lines, fmt.Sprintf("%-*s -- version: %d\n", maxKeyLen, *name, versionNum))
+				}
+			}
+			sort.Strings(lines)
+			for line := range lines {
+				fmt.Println(line)
+			}
+			return nil
+		},
 	}
-
-	return lines
-}
-
-func (c *ListCommand) RunImpl(args []string) (string, error) {
-	if len(args) > 0 {
-		return "", ErrTooManyArgs
-	}
-
-	items, err := c.Driver.ListSecrets(c.Table)
-	if err != nil {
-		//nolint:wrapcheck
-		return "", err
-	}
-
-	lines := c.getLines(items)
-	sort.Strings(lines)
-
-	return strings.Join(lines, "\n"), nil
-}
-
-func (c *ListCommand) Run(args []string) int {
-	out, err := c.RunImpl(args)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
-		return 1
-	}
-
-	fmt.Println(out)
-
-	return 0
-}
-
-func (c *ListCommand) Synopsis() string {
-	return "list credentials and their version"
-}
-
-func (c *ListCommand) Help() string {
-	helpText := `
-usage: gcredstash list
-`
-
-	return strings.TrimSpace(helpText)
 }

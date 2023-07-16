@@ -4,11 +4,17 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"strconv"
 	"strings"
+)
+
+var (
+	ErrInvalidContext = errors.New("invalid context")
+	ErrBadVersion     = errors.New("malformed version")
 )
 
 const (
@@ -48,17 +54,13 @@ func ReadFile(filename string) (string, error) {
 	return string(content), nil
 }
 
-func MapToJSON(m map[string]string) string {
-	jsonString, err := json.MarshalIndent(m, "", "  ")
-	if err != nil {
-		panic(err)
-	}
-
-	jsonString = bytes.ReplaceAll(jsonString, []byte("\\u003c"), []byte("<"))
-	jsonString = bytes.ReplaceAll(jsonString, []byte("\\u003e"), []byte(">"))
-	jsonString = bytes.ReplaceAll(jsonString, []byte("\\u0026"), []byte("&"))
-
-	return string(jsonString)
+func JSONMarshal(t interface{}) ([]byte, error) {
+	buffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(buffer)
+	encoder.SetEscapeHTML(false)
+	encoder.SetIndent("", "  ")
+	err := encoder.Encode(t)
+	return buffer.Bytes(), err
 }
 
 func MaxKeyLen(items map[*string]*string) int {
@@ -73,4 +75,40 @@ func MaxKeyLen(items map[*string]*string) int {
 	}
 
 	return max
+}
+
+func LookupEnvDefault(defaultVal string, envVars ...string) string {
+	for _, envVar := range envVars {
+		if val, ok := os.LookupEnv(envVar); ok {
+			return val
+		}
+	}
+	return defaultVal
+}
+
+func CheckVersion(version *string) error {
+	if *version != "" {
+		parsed, err := strconv.Atoi(*version)
+		if err != nil {
+			return fmt.Errorf("%w: %q", ErrBadVersion, *version)
+		}
+		*version = fmt.Sprintf("%019d", parsed)
+	}
+	return nil
+}
+
+func ParseContext(strs []string) (map[string]string, error) {
+	context := map[string]string{}
+
+	for _, ctx := range strs {
+		kv := strings.SplitN(ctx, "=", 2)
+
+		if len(kv) < 2 || kv[0] == "" || kv[1] == "" {
+			return nil, fmt.Errorf("%w: %q", ErrInvalidContext, ctx)
+		}
+
+		context[kv[0]] = kv[1]
+	}
+
+	return context, nil
 }
