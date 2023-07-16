@@ -57,7 +57,6 @@ var getCmd = &cobra.Command{
 			}
 			cmd.Println(string(result))
 		} else {
-			// TOOD: wildcard support
 			value, err := driver.GetSecret(credential, version, table, context)
 			if err != nil {
 				if noErr {
