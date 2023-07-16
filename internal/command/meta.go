@@ -1,7 +1,7 @@
 package command
 
 import (
-	gcredstash "github.com/kgaughan/gcredstash/internal"
+	"github.com/kgaughan/gcredstash/internal"
 	"github.com/mitchellh/cli"
 )
 
@@ -11,5 +11,5 @@ type Meta struct {
 	Table   string
 	KmsKey  string
 	Version string
-	Driver  *gcredstash.Driver
+	Driver  *internal.Driver
 }

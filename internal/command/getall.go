@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	gcredstash "github.com/kgaughan/gcredstash/internal"
+	"github.com/kgaughan/gcredstash/internal"
 )
 
 type GetallCommand struct {
@@ -49,7 +49,7 @@ func (c *GetallCommand) getCredentials(names []string, context map[string]string
 }
 
 func (c *GetallCommand) RunImpl(args []string) (string, error) {
-	context, err := gcredstash.ParseContext(args)
+	context, err := internal.ParseContext(args)
 	if err != nil {
 		//nolint:wrapcheck
 		return "", err
@@ -62,7 +62,7 @@ func (c *GetallCommand) RunImpl(args []string) (string, error) {
 
 	creds := c.getCredentials(names, context)
 
-	return gcredstash.MapToJSON(creds) + "\n", nil
+	return internal.MapToJSON(creds) + "\n", nil
 }
 
 func (c *GetallCommand) Run(args []string) int {

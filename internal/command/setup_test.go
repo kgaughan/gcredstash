@@ -1,4 +1,4 @@
-package command_test
+package command
 
 import (
 	"testing"
@@ -6,8 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/golang/mock/gomock"
-	gcredstash "github.com/kgaughan/gcredstash/internal"
-	. "github.com/kgaughan/gcredstash/internal/command"
+	"github.com/kgaughan/gcredstash/internal"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 )
 
@@ -64,7 +63,7 @@ func TestSetupCommand(t *testing.T) {
 		Meta: Meta{
 			Table:  "credential-store",
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 

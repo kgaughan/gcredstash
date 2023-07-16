@@ -1,4 +1,4 @@
-package gcredstash
+package internal
 
 import (
 	"encoding/base64"

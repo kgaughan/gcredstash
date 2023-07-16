@@ -1,10 +1,8 @@
-package gcredstash_test
+package internal
 
 import (
 	"bytes"
 	"testing"
-
-	. "github.com/kgaughan/gcredstash/internal"
 )
 
 func TestDigest(t *testing.T) {

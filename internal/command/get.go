@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	gcredstash "github.com/kgaughan/gcredstash/internal"
+	"github.com/kgaughan/gcredstash/internal"
 	"github.com/ryanuber/go-glob"
 )
 
@@ -14,7 +14,7 @@ type GetCommand struct {
 }
 
 func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string, bool, bool, string, error) {
-	argsWithoutN, noNL := gcredstash.HasOption(args, "-n")
+	argsWithoutN, noNL := internal.HasOption(args, "-n")
 
 	if !noNL {
 		trailingNewline := os.Getenv("GCREDSTASH_GET_TRAILING_NEWLINE")
@@ -24,8 +24,8 @@ func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string
 		}
 	}
 
-	argsWithoutNS, noErr := gcredstash.HasOption(argsWithoutN, "-s")
-	argsWithoutNSE, errOut, err := gcredstash.ParseOptionWithValue(argsWithoutNS, "-e")
+	argsWithoutNS, noErr := internal.HasOption(argsWithoutN, "-s")
+	argsWithoutNSE, errOut, err := internal.ParseOptionWithValue(argsWithoutNS, "-e")
 
 	if errOut == "" {
 		errOut = os.Getenv("GCREDSTASH_GET_ERROUT")
@@ -36,7 +36,7 @@ func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string
 		return "", "", nil, false, false, "", err
 	}
 
-	newArgs, version, err := gcredstash.ParseVersion(argsWithoutNSE)
+	newArgs, version, err := internal.ParseVersion(argsWithoutNSE)
 	if err != nil {
 		//nolint:wrapcheck
 		return "", "", nil, false, false, "", err
@@ -47,7 +47,7 @@ func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string
 	}
 
 	credential := newArgs[0]
-	context, err := gcredstash.ParseContext(newArgs[1:])
+	context, err := internal.ParseContext(newArgs[1:])
 
 	//nolint:wrapcheck
 	return credential, version, context, noNL, noErr, errOut, err
@@ -90,7 +90,7 @@ func (c *GetCommand) getCredentials(credential, version string, context map[stri
 		creds[name] = value
 	}
 
-	return gcredstash.MapToJSON(creds) + "\n", nil
+	return internal.MapToJSON(creds) + "\n", nil
 }
 
 func (c *GetCommand) write(filename, message string) {

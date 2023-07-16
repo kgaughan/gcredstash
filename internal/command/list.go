@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	gcredstash "github.com/kgaughan/gcredstash/internal"
+	"github.com/kgaughan/gcredstash/internal"
 )
 
 type ListCommand struct {
@@ -14,11 +14,11 @@ type ListCommand struct {
 }
 
 func (c *ListCommand) getLines(items map[*string]*string) []string {
-	maxNameLen := gcredstash.MaxKeyLen(items)
+	maxNameLen := internal.MaxKeyLen(items)
 	lines := []string{}
 
 	for name, version := range items {
-		versionNum := gcredstash.Atoi(*version)
+		versionNum := internal.Atoi(*version)
 		lines = append(lines, fmt.Sprintf("%-*s -- version: %d", maxNameLen, *name, versionNum))
 	}
 

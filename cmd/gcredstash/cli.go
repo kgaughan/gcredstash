@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
-	gcredstash "github.com/kgaughan/gcredstash/internal"
+	"github.com/kgaughan/gcredstash/internal"
 	"github.com/kgaughan/gcredstash/internal/command"
 	"github.com/mitchellh/cli"
 )
@@ -32,7 +32,7 @@ func Run(args []string) int {
 		},
 		Table:  os.Getenv("GCREDSTASH_TABLE"),
 		KmsKey: os.Getenv("GCREDSTASH_KMS_KEY"),
-		Driver: &gcredstash.Driver{
+		Driver: &internal.Driver{
 			Ddb: dynamodb.New(awsSession),
 			Kms: kms.New(awsSession),
 		},

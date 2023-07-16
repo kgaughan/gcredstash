@@ -1,4 +1,4 @@
-package command_test
+package command
 
 import (
 	"fmt"
@@ -7,8 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/golang/mock/gomock"
-	gcredstash "github.com/kgaughan/gcredstash/internal"
-	. "github.com/kgaughan/gcredstash/internal/command"
+	"github.com/kgaughan/gcredstash/internal"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 	"github.com/kgaughan/gcredstash/internal/testutils"
 )
@@ -44,13 +43,13 @@ func TestListCommand(t *testing.T) {
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 
 	args := []string{}
 	out, err := cmd.RunImpl(args)
-	expected := fmt.Sprintf("%s -- version: %d", name, gcredstash.Atoi(version))
+	expected := fmt.Sprintf("%s -- version: %d", name, internal.Atoi(version))
 
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
