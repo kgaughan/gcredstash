@@ -3,6 +3,7 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -250,7 +251,7 @@ func (driver *Driver) DeleteSecrets(name, version, table string) error {
 		}
 
 		versionNum := Atoi(*version)
-		fmt.Printf("Deleting %s -- version %d\n", *name, versionNum)
+		fmt.Fprintf(os.Stderr, "Deleting %s -- version %d\n", *name, versionNum)
 	}
 
 	return nil

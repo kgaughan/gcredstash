@@ -36,7 +36,7 @@ func MakeGetAllCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command 
 				return fmt.Errorf("cannot marshal credentials: %w", err)
 			}
 
-			fmt.Println(string(jsonString))
+			cmd.Println(string(jsonString))
 			return nil
 		},
 	}

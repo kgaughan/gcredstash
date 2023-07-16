@@ -1,8 +1,6 @@
 package command
 
 import (
-	"fmt"
-
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/spf13/cobra"
 )
@@ -35,9 +33,9 @@ func MakeGetCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command {
 				return err //nolint:wrapcheck
 			}
 			if noNL {
-				fmt.Print(value)
+				cmd.Print(value)
 			} else {
-				fmt.Println(value)
+				cmd.Println(value)
 			}
 			return nil
 		},

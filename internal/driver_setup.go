@@ -3,6 +3,7 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -111,14 +112,14 @@ func (driver *Driver) CreateDdbTable(table string) error {
 		return err
 	}
 
-	fmt.Println("Creating table...")
-	fmt.Println("Waiting for table to be created...")
+	fmt.Fprintln(os.Stderr, "Creating table...")
+	fmt.Fprintln(os.Stderr, "Waiting for table to be created...")
 
 	if err := driver.WaitUntilTableExists(table); err != nil {
 		return err
 	}
 
-	fmt.Println("Table has been created. Go read the README about how to create your KMS key")
+	fmt.Fprintln(os.Stderr, "Table has been created. Go read the README about how to create your KMS key")
 
 	return nil
 }

@@ -46,7 +46,7 @@ func MakeTemplateCmd(driver *gcredstash.Driver, common *CommonFlags) *cobra.Comm
 				}
 			}
 
-			fmt.Print(buf.String())
+			cmd.Print(buf.String())
 			return nil
 		},
 	}

@@ -49,7 +49,7 @@ func MakePutCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command {
 				return fmt.Errorf("cannot store secret: %w", err)
 			}
 
-			fmt.Printf("%v has been stored\n", credential)
+			cmd.Printf("%v has been stored\n", credential)
 			return nil
 		},
 	}

@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"os"
 	"sort"
 	"strconv"
 
@@ -26,14 +25,14 @@ func MakeListCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command {
 			for name, version := range items {
 				versionNum, err := strconv.Atoi(*version)
 				if err != nil {
-					fmt.Fprintf(os.Stderr, "bad version for %q: %q\n", *name, *version)
+					cmd.PrintErrf("bad version for %q: %q\n", *name, *version)
 				} else {
 					lines = append(lines, fmt.Sprintf("%-*s -- version: %d\n", maxKeyLen, *name, versionNum))
 				}
 			}
 			sort.Strings(lines)
 			for line := range lines {
-				fmt.Println(line)
+				cmd.Println(line)
 			}
 			return nil
 		},
