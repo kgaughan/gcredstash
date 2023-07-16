@@ -1,4 +1,4 @@
-package gcredstash_test
+package internal
 
 import (
 	"bytes"
@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/golang/mock/gomock"
-	. "github.com/kgaughan/gcredstash/internal"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 )
 

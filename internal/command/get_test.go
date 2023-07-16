@@ -1,4 +1,4 @@
-package command_test
+package command
 
 import (
 	"errors"
@@ -11,8 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/golang/mock/gomock"
-	gcredstash "github.com/kgaughan/gcredstash/internal"
-	. "github.com/kgaughan/gcredstash/internal/command"
+	"github.com/kgaughan/gcredstash/internal"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 	"github.com/kgaughan/gcredstash/internal/testutils"
 )
@@ -51,7 +50,7 @@ func TestGetCommand(t *testing.T) {
 	}, nil)
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: gcredstash.B64Decode(item["key"]),
+		CiphertextBlob: internal.B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -60,7 +59,7 @@ func TestGetCommand(t *testing.T) {
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 
@@ -119,7 +118,7 @@ func TestGetCommandWithWildcard(t *testing.T) {
 	}, nil)
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: gcredstash.B64Decode(item["key"]),
+		CiphertextBlob: internal.B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -128,7 +127,7 @@ func TestGetCommandWithWildcard(t *testing.T) {
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 
@@ -182,7 +181,7 @@ func TestGetCommandWithTrailingNewline(t *testing.T) {
 	}, nil)
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: gcredstash.B64Decode(item["key"]),
+		CiphertextBlob: internal.B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -191,7 +190,7 @@ func TestGetCommandWithTrailingNewline(t *testing.T) {
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 
@@ -243,7 +242,7 @@ func TestGetCommandWithN(t *testing.T) {
 	}, nil)
 
 	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob: gcredstash.B64Decode(item["key"]),
+		CiphertextBlob: internal.B64Decode(item["key"]),
 	}).Return(&kms.DecryptOutput{
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
@@ -252,7 +251,7 @@ func TestGetCommandWithN(t *testing.T) {
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 
@@ -298,7 +297,7 @@ func TestGetCommandWithoutItem(t *testing.T) {
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 
@@ -307,7 +306,7 @@ func TestGetCommandWithoutItem(t *testing.T) {
 	if err == nil {
 		t.Errorf("expected error does not happen")
 	}
-	if !errors.Is(err, gcredstash.ErrItemNotFound) {
+	if !errors.Is(err, internal.ErrItemNotFound) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 }
@@ -341,7 +340,7 @@ func TestGetCommandWithS(t *testing.T) {
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 
@@ -387,7 +386,7 @@ func TestGetCommandWithE(t *testing.T) {
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 
@@ -399,7 +398,7 @@ func TestGetCommandWithE(t *testing.T) {
 	if err == nil {
 		t.Errorf("expected error does not happen")
 	}
-	if !errors.Is(err, gcredstash.ErrItemNotFound) {
+	if !errors.Is(err, internal.ErrItemNotFound) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
@@ -445,7 +444,7 @@ func TestGetCommandWithErrOutEnv(t *testing.T) {
 		Meta: Meta{
 			Table:  table,
 			KmsKey: "alias/credstash",
-			Driver: &gcredstash.Driver{Ddb: mddb, Kms: mkms},
+			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
 		},
 	}
 
@@ -458,7 +457,7 @@ func TestGetCommandWithErrOutEnv(t *testing.T) {
 	if err == nil {
 		t.Errorf("expected error does not happen")
 	}
-	if !errors.Is(err, gcredstash.ErrItemNotFound) {
+	if !errors.Is(err, internal.ErrItemNotFound) {
 		t.Errorf("Unexpected error: %v", err)
 	}
 

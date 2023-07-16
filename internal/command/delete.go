@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	gcredstash "github.com/kgaughan/gcredstash/internal"
+	"github.com/kgaughan/gcredstash/internal"
 )
 
 type DeleteCommand struct {
@@ -13,7 +13,7 @@ type DeleteCommand struct {
 }
 
 func (c *DeleteCommand) parseArgs(args []string) (string, string, error) {
-	newArgs, version, err := gcredstash.ParseVersion(args)
+	newArgs, version, err := internal.ParseVersion(args)
 	if err != nil {
 		//nolint:wrapcheck
 		return "", "", err

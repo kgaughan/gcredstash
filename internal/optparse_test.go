@@ -1,11 +1,9 @@
-package gcredstash_test
+package internal
 
 import (
 	"errors"
 	"reflect"
 	"testing"
-
-	. "github.com/kgaughan/gcredstash/internal"
 )
 
 func TestParseOptionWithValue1(t *testing.T) {

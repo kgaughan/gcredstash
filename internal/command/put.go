@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	gcredstash "github.com/kgaughan/gcredstash/internal"
+	"github.com/kgaughan/gcredstash/internal"
 )
 
 type PutCommand struct {
@@ -13,8 +13,8 @@ type PutCommand struct {
 }
 
 func (c *PutCommand) parseArgs(args []string) (string, string, string, map[string]string, bool, error) {
-	argsWithoutA, autoVersion := gcredstash.HasOption(args, "-a")
-	newArgs, version, err := gcredstash.ParseVersion(argsWithoutA)
+	argsWithoutA, autoVersion := internal.HasOption(args, "-a")
+	newArgs, version, err := internal.ParseVersion(argsWithoutA)
 	if err != nil {
 		//nolint:wrapcheck
 		return "", "", "", nil, false, err
@@ -26,7 +26,7 @@ func (c *PutCommand) parseArgs(args []string) (string, string, string, map[strin
 
 	credential := newArgs[0]
 	value := newArgs[1]
-	context, err := gcredstash.ParseContext(newArgs[2:])
+	context, err := internal.ParseContext(newArgs[2:])
 
 	//nolint:wrapcheck
 	return credential, value, version, context, autoVersion, err
@@ -39,7 +39,7 @@ func (c *PutCommand) RunImpl(args []string) error {
 	}
 
 	if value == "-" {
-		value = gcredstash.ReadStdin()
+		value = internal.ReadStdin()
 	}
 
 	if autoVersion {
@@ -49,9 +49,9 @@ func (c *PutCommand) RunImpl(args []string) error {
 		}
 
 		latestVersion++
-		version = gcredstash.VersionNumToStr(latestVersion)
+		version = internal.VersionNumToStr(latestVersion)
 	} else if version == "" {
-		version = gcredstash.VersionNumToStr(1)
+		version = internal.VersionNumToStr(1)
 	}
 
 	if err := c.Driver.PutSecret(credential, value, version, c.KmsKey, c.Table, context); err != nil {

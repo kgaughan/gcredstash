@@ -9,7 +9,7 @@ import (
 	"strings"
 	"text/template"
 
-	gcredstash "github.com/kgaughan/gcredstash/internal"
+	"github.com/kgaughan/gcredstash/internal"
 	"github.com/mattn/go-shellwords"
 )
 
@@ -20,7 +20,7 @@ type TemplateCommand struct {
 }
 
 func (c *TemplateCommand) parseArgs(args []string) (string, bool, error) {
-	newArgs, inPlace := gcredstash.HasOption(args, "-i")
+	newArgs, inPlace := internal.HasOption(args, "-i")
 
 	if len(newArgs) < 1 {
 		return "", false, ErrTooFewArgs
@@ -39,10 +39,10 @@ func (c *TemplateCommand) readTemplate(filename string) (string, error) {
 	var content string
 
 	if filename == "-" {
-		content = gcredstash.ReadStdin()
+		content = internal.ReadStdin()
 	} else {
 		var err error
-		content, err = gcredstash.ReadFile(filename)
+		content, err = internal.ReadFile(filename)
 
 		if err != nil {
 			return "", fmt.Errorf("can't read template: %w", err)
@@ -84,7 +84,7 @@ func (c *TemplateCommand) executeTemplate(name, content string) (string, error) 
 			}
 
 			credential := newArgs[0]
-			context, err := gcredstash.ParseContext(newArgs[1:])
+			context, err := internal.ParseContext(newArgs[1:])
 			if err != nil {
 				return "", fmt.Errorf("could not parse context: %w", err)
 			}
