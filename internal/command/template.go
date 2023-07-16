@@ -41,7 +41,7 @@ func MakeTemplateCmd(driver *gcredstash.Driver, common *CommonFlags) *cobra.Comm
 			}
 
 			if inplace {
-				if err := os.WriteFile(tmplFile, buf.Bytes(), 0o644); err != nil {
+				if err := os.WriteFile(tmplFile, buf.Bytes(), 0o644); err != nil { //nolint:gosec
 					return fmt.Errorf("cannot write to %q: %w", tmplFile, err)
 				}
 			}

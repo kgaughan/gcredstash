@@ -17,17 +17,14 @@ func MakeGetCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command {
 		Short: "Get a credential from the store",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if err := cobra.MinimumNArgs(1)(cmd, args); err != nil {
-				return err
+				return err //nolint:wrapcheck
 			}
-			if err := internal.CheckVersion(&version); err != nil {
-				return err
-			}
-			return nil
+			return internal.CheckVersion(&version) //nolint:wrapcheck
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			context, err := internal.ParseContext(args[1:])
 			if err != nil {
-				return err
+				return err //nolint:wrapcheck
 			}
 			// TOOD: wildcard support
 			value, err := driver.GetSecret(args[0], version, common.Table, context)
@@ -35,7 +32,7 @@ func MakeGetCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command {
 				if noErr {
 					return nil
 				}
-				return err
+				return err //nolint:wrapcheck
 			}
 			if noNL {
 				fmt.Print(value)

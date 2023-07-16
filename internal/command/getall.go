@@ -15,25 +15,25 @@ func MakeGetAllCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			context, err := internal.ParseContext(args[0:])
 			if err != nil {
-				return err
+				return err //nolint:wrapcheck
 			}
 
 			creds := map[string]string{}
-			if items, err := driver.ListSecrets(common.Table); err != nil {
-				return err
-			} else {
-				for name := range items {
-					value, err := driver.GetSecret(*name, "", common.Table, context)
-					if err != nil {
-						continue
-					}
-					creds[*name] = value
+			items, err := driver.ListSecrets(common.Table)
+			if err != nil {
+				return err //nolint:wrapcheck
+			}
+			for name := range items {
+				value, err := driver.GetSecret(*name, "", common.Table, context)
+				if err != nil {
+					continue
 				}
+				creds[*name] = value
 			}
 
 			jsonString, err := internal.JSONMarshal(creds)
 			if err != nil {
-				return err
+				return fmt.Errorf("cannot marshal credentials: %w", err)
 			}
 
 			fmt.Println(string(jsonString))

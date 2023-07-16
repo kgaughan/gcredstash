@@ -92,7 +92,7 @@ func CheckVersion(version *string) error {
 		if err != nil {
 			return fmt.Errorf("%w: %q", ErrBadVersion, *version)
 		}
-		*version = fmt.Sprintf("%019d", parsed)
+		*version = fmt.Sprintf(VersionFormat, parsed)
 	}
 	return nil
 }

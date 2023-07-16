@@ -18,7 +18,7 @@ func MakeListCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			items, err := driver.ListSecrets(common.Table)
 			if err != nil {
-				return err
+				return err //nolint:wrapcheck
 			}
 
 			maxKeyLen := internal.MaxKeyLen(items)

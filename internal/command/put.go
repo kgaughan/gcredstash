@@ -21,10 +21,7 @@ func MakePutCmd(driver *internal.Driver, common *CommonFlags) *cobra.Command {
 			if err := cobra.MinimumNArgs(2)(cmd, args); err != nil {
 				return err
 			}
-			if err := internal.CheckVersion(&version); err != nil {
-				return err
-			}
-			return nil
+			return internal.CheckVersion(&version) //nolint:wrapcheck
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			context, err := internal.ParseContext(args[2:])

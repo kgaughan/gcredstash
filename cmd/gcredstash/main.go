@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
@@ -20,5 +22,7 @@ func main() {
 		Kms: kms.New(awsSession),
 	}
 
-	command.MakeRootCmd(driver, Version).Execute()
+	if err := command.MakeRootCmd(driver, Version).Execute(); err != nil {
+		log.Fatal(err)
+	}
 }
