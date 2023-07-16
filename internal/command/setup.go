@@ -5,20 +5,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var setupCmd = &cobra.Command{
-	Use:   "setup",
-	Short: "Setup the credential store",
-	Args:  cobra.NoArgs,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		driver, err := internal.NewDriver()
-		if err != nil {
-			return err //nolint:wrapcheck
-		}
+func setupImpl(cmd *cobra.Command, args []string) error {
+	driver, err := internal.NewDriver()
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
-		return driver.CreateDdbTable(table) //nolint:wrapcheck
-	},
+	return driver.CreateDdbTable(table) //nolint:wrapcheck
 }
 
 func init() {
-	Root.AddCommand(setupCmd)
+	cmd := &cobra.Command{
+		Use:   "setup",
+		Short: "Setup the credential store",
+		Args:  cobra.NoArgs,
+		RunE:  setupImpl,
+	}
+
+	Root.AddCommand(cmd)
 }
