@@ -50,16 +50,10 @@ func TestDeleteCommand(t *testing.T) {
 		},
 	}).Return(nil, nil)
 
-	cmd := &DeleteCommand{
-		Meta: Meta{
-			Table:  table,
-			KmsKey: "alias/credstash",
-			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
-		},
-	}
+	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
 
 	args := []string{name}
-	if err := cmd.RunImpl(args); err != nil {
+	if err := deleteImpl(nil, args, driver); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 }

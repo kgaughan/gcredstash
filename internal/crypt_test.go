@@ -27,7 +27,7 @@ func TestValidateHMAC(t *testing.T) {
 	}
 }
 
-func TestCreypt(t *testing.T) {
+func TestCrypt(t *testing.T) {
 	message := []byte("London Bridge is broken down")
 	key := []byte("My fair lady.000")
 	expected := []byte{29, 235, 222, 17, 203, 68, 27, 104, 42, 151, 177, 119, 11, 194, 27, 226, 180, 194, 28, 162, 201, 157, 52, 186, 147, 134, 243, 135}

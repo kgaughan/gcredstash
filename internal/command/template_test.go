@@ -52,13 +52,7 @@ func TestTemplateCommand(t *testing.T) {
 		Plaintext: []byte{188, 163, 172, 238, 203, 68, 210, 84, 58, 152, 145, 235, 42, 23, 204, 164, 62, 139, 115, 220, 63, 85, 98, 228, 48, 229, 82, 62, 72, 86, 255, 162, 53, 75, 177, 91, 204, 232, 206, 127, 200, 23, 43, 148, 246, 221, 240, 247, 94, 72, 147, 211, 60, 139, 50, 150, 18, 100, 28, 24, 240, 2, 199, 121},
 	}, nil)
 
-	cmd := &TemplateCommand{
-		Meta: Meta{
-			Table:  table,
-			KmsKey: "alias/credstash",
-			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
-		},
-	}
+	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
 
 	tmplContent := `test.key={{get "test.key"}}
 GCREDSTASH_TEST_ENV_KEY={{env "GCREDSTASH_TEST_ENV_KEY"}}
@@ -67,19 +61,19 @@ CMD_OUT={{sh "echo 100"}}`
 	testutils.TempFile(tmplContent, func(tmpfile *os.File) {
 		testutils.Setenv("GCREDSTASH_TEST_ENV_KEY", "env.value")
 
+		cmd, out := testutils.NewDummyCommand()
+
 		args := []string{tmpfile.Name()}
-		out, err := cmd.RunImpl(args)
+		if err := templateImpl(cmd, args, driver); err != nil {
+			t.Errorf("\nexpected: %v\ngot: %q\n", nil, err)
+		}
 
 		expected := `test.key=test.value
 GCREDSTASH_TEST_ENV_KEY=env.value
 CMD_OUT=100`
-
-		if err != nil {
-			t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
-		}
-
-		if expected != out {
-			t.Errorf("\nexpected: %v\ngot: %v\n", expected, out)
+		txt := out.String()
+		if expected != txt {
+			t.Errorf("\nexpected: %q\ngot: %q\n", expected, txt)
 		}
 	})
 }

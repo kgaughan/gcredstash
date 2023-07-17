@@ -2,168 +2,80 @@ package command
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/ryanuber/go-glob"
+	"github.com/spf13/cobra"
 )
 
-type GetCommand struct {
-	Meta
-}
+var (
+	noNL  bool
+	noErr bool
+)
 
-func (c *GetCommand) parseArgs(args []string) (string, string, map[string]string, bool, bool, string, error) {
-	argsWithoutN, noNL := internal.HasOption(args, "-n")
-
-	if !noNL {
-		trailingNewline := os.Getenv("GCREDSTASH_GET_TRAILING_NEWLINE")
-
-		if trailingNewline == "1" {
-			noNL = true
-		}
-	}
-
-	argsWithoutNS, noErr := internal.HasOption(argsWithoutN, "-s")
-	argsWithoutNSE, errOut, err := internal.ParseOptionWithValue(argsWithoutNS, "-e")
-
-	if errOut == "" {
-		errOut = os.Getenv("GCREDSTASH_GET_ERROUT")
-	}
-
+func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
+	context, err := internal.ParseContext(args[1:])
 	if err != nil {
-		//nolint:wrapcheck
-		return "", "", nil, false, false, "", err
+		return err //nolint:wrapcheck
 	}
 
-	newArgs, version, err := internal.ParseVersion(argsWithoutNSE)
-	if err != nil {
-		//nolint:wrapcheck
-		return "", "", nil, false, false, "", err
-	}
-
-	if len(newArgs) < 1 {
-		return "", "", nil, false, false, "", ErrTooFewArgs
-	}
-
-	credential := newArgs[0]
-	context, err := internal.ParseContext(newArgs[1:])
-
-	//nolint:wrapcheck
-	return credential, version, context, noNL, noErr, errOut, err
-}
-
-func (c *GetCommand) getCredential(credential, version string, context map[string]string) (string, error) {
-	value, err := c.Driver.GetSecret(credential, version, c.Table, context)
-	if err != nil {
-		//nolint:wrapcheck
-		return "", err
-	}
-
-	return value, nil
-}
-
-func (c *GetCommand) getCredentials(credential, version string, context map[string]string) (string, error) {
-	names := map[string]bool{}
-	items, err := c.Driver.ListSecrets(c.Table)
-	if err != nil {
-		//nolint:wrapcheck
-		return "", err
-	}
-
-	for name := range items {
-		names[*name] = true
-	}
-
-	creds := map[string]string{}
-
-	for name := range names {
-		if !glob.Glob(credential, name) {
-			continue
-		}
-
-		value, err := c.Driver.GetSecret(name, version, c.Table, context)
-		if err != nil {
-			continue
-		}
-
-		creds[name] = value
-	}
-
-	return internal.MapToJSON(creds) + "\n", nil
-}
-
-func (c *GetCommand) write(filename, message string) {
-	if filename == "" || message == "" {
-		return
-	}
-
-	fp, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, os.ModePerm)
-	if err != nil {
-		return
-	}
-
-	defer fp.Close()
-
-	//nolint:errcheck
-	fp.WriteString(message)
-}
-
-func (c *GetCommand) RunImpl(args []string) (string, error) {
-	credential, version, context, noNL, noErr, errOut, err := c.parseArgs(args)
-	if err != nil {
-		return "", err
-	}
-
+	credential := args[0]
 	if strings.Contains(credential, "*") {
-		value, err := c.getCredentials(credential, version, context)
-
-		if err != nil && errOut != "" {
-			c.write(errOut, fmt.Sprintf("error: gcredstash get %v: %s\n", args, err.Error()))
+		items, err := driver.ListSecrets(table)
+		if err != nil {
+			return err //nolint:wrapcheck
 		}
-
-		return value, err
-	}
-
-	value, err := c.getCredential(credential, version, context)
-	if err != nil {
-		if errOut != "" {
-			c.write(errOut, fmt.Sprintf("error: gcredstash get %v: %s\n", args, err.Error()))
+		creds := map[string]string{}
+		for name := range items {
+			if !glob.Glob(credential, *name) {
+				continue
+			}
+			value, err := driver.GetSecret(*name, version, table, context)
+			if err != nil {
+				continue
+			}
+			creds[*name] = value
 		}
-
-		if noErr {
-			return "", nil
+		result, err := internal.JSONMarshal(creds)
+		if err != nil {
+			return fmt.Errorf("cannot marshal credential: %w", err)
 		}
-
-		return "", err
+		cmd.Print(string(result))
+	} else {
+		value, err := driver.GetSecret(credential, version, table, context)
+		if err != nil {
+			if noErr {
+				return nil
+			}
+			return err //nolint:wrapcheck
+		}
+		if noNL {
+			cmd.Print(value)
+		} else {
+			cmd.Println(value)
+		}
 	}
-
-	if noNL {
-		return value, nil
-	}
-
-	return value + "\n", nil
+	return nil
 }
 
-func (c *GetCommand) Run(args []string) int {
-	out, err := c.RunImpl(args)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
-		return 1
+func init() {
+	cmd := &cobra.Command{
+		Use:   "get credential [context ...]",
+		Short: "Get a credential from the store",
+		Args: func(cmd *cobra.Command, args []string) error {
+			if err := cobra.MinimumNArgs(1)(cmd, args); err != nil {
+				return err //nolint:wrapcheck
+			}
+			return internal.CheckVersion(&version) //nolint:wrapcheck
+		},
+		RunE: wrapWithDriver(getImpl),
 	}
 
-	fmt.Print(out)
+	flag := cmd.Flags()
+	flag.BoolVarP(&noNL, "noline", "n", false, "don't append newline to returned value")
+	flag.BoolVarP(&noErr, "noerr", "s", false, "don't exit with an error if the secret is not found")
+	flag.StringVarP(&version, "version", "v", "", "get a specific version of the credential")
 
-	return 0
-}
-
-func (c *GetCommand) Synopsis() string {
-	return "Get a credential from the store"
-}
-
-func (c *GetCommand) Help() string {
-	helpText := `
-usage: gcredstash get [-v VERSION] [-n] [-s] [-e ERROUT] credential [context [context ...]]
-`
-	return strings.TrimSpace(helpText)
+	Root.AddCommand(cmd)
 }

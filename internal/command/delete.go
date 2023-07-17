@@ -1,63 +1,29 @@
 package command
 
 import (
-	"fmt"
-	"os"
-	"strings"
-
 	"github.com/kgaughan/gcredstash/internal"
+	"github.com/spf13/cobra"
 )
 
-type DeleteCommand struct {
-	Meta
+func deleteImpl(_ *cobra.Command, args []string, driver *internal.Driver) error {
+	return driver.DeleteSecrets(args[0], version, table) //nolint:wrapcheck
 }
 
-func (c *DeleteCommand) parseArgs(args []string) (string, string, error) {
-	newArgs, version, err := internal.ParseVersion(args)
-	if err != nil {
-		//nolint:wrapcheck
-		return "", "", err
+func init() {
+	cmd := &cobra.Command{
+		Use:   "delete credential",
+		Short: "Delete a credential from the store",
+		Args: func(cmd *cobra.Command, args []string) error {
+			if err := cobra.ExactArgs(1)(cmd, args); err != nil {
+				return err //nolint:wrapcheck
+			}
+			return internal.CheckVersion(&version) //nolint:wrapcheck
+		},
+		RunE: wrapWithDriver(deleteImpl),
 	}
 
-	if len(newArgs) < 1 {
-		return "", "", ErrTooFewArgs
-	}
+	flag := cmd.Flags()
+	flag.StringVarP(&version, "version", "v", "", "delete a specfic version of the credential")
 
-	if len(newArgs) > 1 {
-		return "", "", ErrTooManyArgs
-	}
-
-	credential := args[0]
-
-	return credential, version, nil
-}
-
-func (c *DeleteCommand) RunImpl(args []string) error {
-	credential, version, err := c.parseArgs(args)
-	if err != nil {
-		return err
-	}
-
-	//nolint:wrapcheck
-	return c.Driver.DeleteSecrets(credential, version, c.Meta.Table)
-}
-
-func (c *DeleteCommand) Run(args []string) int {
-	if err := c.RunImpl(args); err != nil {
-		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
-		return 1
-	}
-
-	return 0
-}
-
-func (c *DeleteCommand) Synopsis() string {
-	return "Delete a credential from the store"
-}
-
-func (c *DeleteCommand) Help() string {
-	helpText := `
-usage: gcredstash delete [-v VERSION] credential
-`
-	return strings.TrimSpace(helpText)
+	Root.AddCommand(cmd)
 }

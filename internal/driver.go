@@ -3,11 +3,14 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/aws/aws-sdk-go/service/kms/kmsiface"
 )
 
@@ -22,6 +25,18 @@ var (
 type Driver struct {
 	Ddb dynamodbiface.DynamoDBAPI
 	Kms kmsiface.KMSAPI
+}
+
+func NewDriver() (*Driver, error) {
+	awsSession, err := session.NewSession()
+	if err != nil {
+		return nil, fmt.Errorf("cannot create session: %w", err)
+	}
+	driver := &Driver{
+		Ddb: dynamodb.New(awsSession),
+		Kms: kms.New(awsSession),
+	}
+	return driver, nil
 }
 
 func (driver *Driver) GetMaterialWithoutVersion(name, table string) (map[string]*dynamodb.AttributeValue, error) {
@@ -250,7 +265,7 @@ func (driver *Driver) DeleteSecrets(name, version, table string) error {
 		}
 
 		versionNum := Atoi(*version)
-		fmt.Printf("Deleting %s -- version %d\n", *name, versionNum)
+		fmt.Fprintf(os.Stderr, "Deleting %s -- version %d\n", *name, versionNum)
 	}
 
 	return nil

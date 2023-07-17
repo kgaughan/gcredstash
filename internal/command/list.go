@@ -2,66 +2,43 @@ package command
 
 import (
 	"fmt"
-	"os"
 	"sort"
-	"strings"
+	"strconv"
 
 	"github.com/kgaughan/gcredstash/internal"
+	"github.com/spf13/cobra"
 )
 
-type ListCommand struct {
-	Meta
-}
+func listImpl(cmd *cobra.Command, _ []string, driver *internal.Driver) error {
+	items, err := driver.ListSecrets(table)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
-func (c *ListCommand) getLines(items map[*string]*string) []string {
-	maxNameLen := internal.MaxKeyLen(items)
-	lines := []string{}
-
+	maxKeyLen := internal.MaxKeyLen(items)
+	lines := make([]string, 0, len(items))
 	for name, version := range items {
-		versionNum := internal.Atoi(*version)
-		lines = append(lines, fmt.Sprintf("%-*s -- version: %d", maxNameLen, *name, versionNum))
+		versionNum, err := strconv.Atoi(*version)
+		if err != nil {
+			cmd.PrintErrf("bad version for %q: %q\n", *name, *version)
+		} else {
+			lines = append(lines, fmt.Sprintf("%-*s -- version: %d", maxKeyLen, *name, versionNum))
+		}
 	}
-
-	return lines
-}
-
-func (c *ListCommand) RunImpl(args []string) (string, error) {
-	if len(args) > 0 {
-		return "", ErrTooManyArgs
-	}
-
-	items, err := c.Driver.ListSecrets(c.Table)
-	if err != nil {
-		//nolint:wrapcheck
-		return "", err
-	}
-
-	lines := c.getLines(items)
 	sort.Strings(lines)
-
-	return strings.Join(lines, "\n"), nil
+	for _, line := range lines {
+		cmd.Println(line)
+	}
+	return nil
 }
 
-func (c *ListCommand) Run(args []string) int {
-	out, err := c.RunImpl(args)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
-		return 1
+func init() {
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "List credentials and their version",
+		Args:  cobra.NoArgs,
+		RunE:  wrapWithDriver(listImpl),
 	}
 
-	fmt.Println(out)
-
-	return 0
-}
-
-func (c *ListCommand) Synopsis() string {
-	return "list credentials and their version"
-}
-
-func (c *ListCommand) Help() string {
-	helpText := `
-usage: gcredstash list
-`
-
-	return strings.TrimSpace(helpText)
+	Root.AddCommand(cmd)
 }

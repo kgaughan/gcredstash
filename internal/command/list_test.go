@@ -39,23 +39,17 @@ func TestListCommand(t *testing.T) {
 		Items: []map[string]*dynamodb.AttributeValue{testutils.MapToItem(item)},
 	}, nil)
 
-	cmd := &ListCommand{
-		Meta: Meta{
-			Table:  table,
-			KmsKey: "alias/credstash",
-			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
-		},
-	}
+	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
+	cmd, out := testutils.NewDummyCommand()
 
 	args := []string{}
-	out, err := cmd.RunImpl(args)
-	expected := fmt.Sprintf("%s -- version: %d", name, internal.Atoi(version))
-
-	if err != nil {
+	if err := listImpl(cmd, args, driver); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 
-	if expected != out {
-		t.Errorf("\nexpected: %v\ngot: %v\n", expected, out)
+	expected := fmt.Sprintf("%s -- version: %d\n", name, internal.Atoi(version))
+	txt := out.String()
+	if expected != txt {
+		t.Errorf("\nexpected: %q\ngot: %q\n", expected, txt)
 	}
 }

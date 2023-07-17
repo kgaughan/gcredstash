@@ -1,7 +1,15 @@
 package main
 
-import "os"
+import (
+	"fmt"
+	"os"
+
+	"github.com/kgaughan/gcredstash/internal/command"
+)
 
 func main() {
-	os.Exit(Run(os.Args[1:]))
+	if err := command.Root.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

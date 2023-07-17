@@ -8,6 +8,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
+	"github.com/kgaughan/gcredstash/internal/testutils"
 )
 
 func TestSetupCommand(t *testing.T) {
@@ -59,16 +60,11 @@ func TestSetupCommand(t *testing.T) {
 		},
 	}, nil)
 
-	cmd := &SetupCommand{
-		Meta: Meta{
-			Table:  "credential-store",
-			KmsKey: "alias/credstash",
-			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
-		},
-	}
+	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
+	cmd, _ := testutils.NewDummyCommand()
 
 	args := []string{}
-	if err := cmd.RunImpl(args); err != nil {
-		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
+	if err := setupImpl(cmd, args, driver); err != nil {
+		t.Errorf("\nexpected: %v\ngot: %q\n", nil, err)
 	}
 }

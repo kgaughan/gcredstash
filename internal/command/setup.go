@@ -1,45 +1,21 @@
 package command
 
 import (
-	"fmt"
-	"os"
-	"strings"
+	"github.com/kgaughan/gcredstash/internal"
+	"github.com/spf13/cobra"
 )
 
-type SetupCommand struct {
-	Meta
+func setupImpl(_ *cobra.Command, _ []string, driver *internal.Driver) error {
+	return driver.CreateDdbTable(table) //nolint:wrapcheck
 }
 
-func (c *SetupCommand) RunImpl(args []string) error {
-	if len(args) > 0 {
-		return ErrTooManyArgs
+func init() {
+	cmd := &cobra.Command{
+		Use:   "setup",
+		Short: "Setup the credential store",
+		Args:  cobra.NoArgs,
+		RunE:  wrapWithDriver(setupImpl),
 	}
 
-	err := c.Driver.CreateDdbTable(c.Meta.Table)
-	if err != nil {
-		//nolint:wrapcheck
-		return err
-	}
-
-	return nil
-}
-
-func (c *SetupCommand) Run(args []string) int {
-	if err := c.RunImpl(args); err != nil {
-		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
-		return 1
-	}
-
-	return 0
-}
-
-func (c *SetupCommand) Synopsis() string {
-	return "setup the credential store"
-}
-
-func (c *SetupCommand) Help() string {
-	helpText := `
-usage: gcredstash setup
-`
-	return strings.TrimSpace(helpText)
+	Root.AddCommand(cmd)
 }

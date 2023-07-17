@@ -67,16 +67,13 @@ func TestPutCommand(t *testing.T) {
 		ExpressionAttributeNames: map[string]*string{"#name": aws.String("name")},
 	}).Return(nil, nil)
 
-	cmd := &PutCommand{
-		Meta: Meta{
-			Table:  table,
-			KmsKey: kmsKey,
-			Driver: &internal.Driver{Ddb: mddb, Kms: mkms},
-		},
-	}
+	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
+	cmd, _ := testutils.NewDummyCommand()
 
-	args := []string{name, secret, "-a"}
-	if err := cmd.RunImpl(args); err != nil {
-		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
+	autoVersion = true
+
+	args := []string{name, secret}
+	if err := putImpl(cmd, args, driver); err != nil {
+		t.Errorf("\nexpected: %v\ngot: %q\n", nil, err)
 	}
 }

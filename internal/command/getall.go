@@ -2,88 +2,46 @@ package command
 
 import (
 	"fmt"
-	"os"
-	"strings"
 
 	"github.com/kgaughan/gcredstash/internal"
+	"github.com/spf13/cobra"
 )
 
-type GetallCommand struct {
-	Meta
-}
-
-func (c *GetallCommand) getNames() ([]string, error) {
-	namesMap := map[string]bool{}
-	names := []string{}
-
-	items, err := c.Driver.ListSecrets(c.Table)
+func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
+	context, err := internal.ParseContext(args[0:])
 	if err != nil {
-		//nolint:wrapcheck
-		return nil, err
+		return err //nolint:wrapcheck
 	}
 
-	for name := range items {
-		namesMap[*name] = true
-	}
-
-	for name := range namesMap {
-		names = append(names, name)
-	}
-
-	return names, nil
-}
-
-func (c *GetallCommand) getCredentials(names []string, context map[string]string) map[string]string {
 	creds := map[string]string{}
-
-	for _, name := range names {
-		value, err := c.Driver.GetSecret(name, "", c.Table, context)
+	items, err := driver.ListSecrets(table)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+	for name := range items {
+		value, err := driver.GetSecret(*name, "", table, context)
 		if err != nil {
 			continue
 		}
-
-		creds[name] = value
+		creds[*name] = value
 	}
 
-	return creds
-}
-
-func (c *GetallCommand) RunImpl(args []string) (string, error) {
-	context, err := internal.ParseContext(args)
+	jsonString, err := internal.JSONMarshal(creds)
 	if err != nil {
-		//nolint:wrapcheck
-		return "", err
+		return fmt.Errorf("cannot marshal credentials: %w", err)
 	}
 
-	names, err := c.getNames()
-	if err != nil {
-		return "", err
+	cmd.Print(string(jsonString))
+	return nil
+}
+
+func init() {
+	cmd := &cobra.Command{
+		Use:   "getall [context ...]",
+		Short: "Get all credentials from the store",
+		Args:  cobra.MinimumNArgs(0),
+		RunE:  wrapWithDriver(getAllImpl),
 	}
 
-	creds := c.getCredentials(names, context)
-
-	return internal.MapToJSON(creds) + "\n", nil
-}
-
-func (c *GetallCommand) Run(args []string) int {
-	out, err := c.RunImpl(args)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %s\n", err.Error())
-		return 1
-	}
-
-	fmt.Print(out)
-
-	return 0
-}
-
-func (c *GetallCommand) Synopsis() string {
-	return "Get all credentials from the store"
-}
-
-func (c *GetallCommand) Help() string {
-	helpText := `
-usage: gcredstash getall [context [context ...]]
-`
-	return strings.TrimSpace(helpText)
+	Root.AddCommand(cmd)
 }
