@@ -22,11 +22,11 @@ func listImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error 
 		if err != nil {
 			cmd.PrintErrf("bad version for %q: %q\n", *name, *version)
 		} else {
-			lines = append(lines, fmt.Sprintf("%-*s -- version: %d\n", maxKeyLen, *name, versionNum))
+			lines = append(lines, fmt.Sprintf("%-*s -- version: %d", maxKeyLen, *name, versionNum))
 		}
 	}
 	sort.Strings(lines)
-	for line := range lines {
+	for _, line := range lines {
 		cmd.Println(line)
 	}
 	return nil

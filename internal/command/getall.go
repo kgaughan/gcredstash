@@ -31,7 +31,7 @@ func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver) erro
 		return fmt.Errorf("cannot marshal credentials: %w", err)
 	}
 
-	cmd.Println(string(jsonString))
+	cmd.Print(string(jsonString))
 	return nil
 }
 

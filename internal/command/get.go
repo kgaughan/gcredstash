@@ -41,7 +41,7 @@ func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 		if err != nil {
 			return fmt.Errorf("cannot marshal credential: %w", err)
 		}
-		cmd.Println(string(result))
+		cmd.Print(string(result))
 	} else {
 		value, err := driver.GetSecret(credential, version, table, context)
 		if err != nil {
