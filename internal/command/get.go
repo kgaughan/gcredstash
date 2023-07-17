@@ -14,13 +14,8 @@ var (
 	noErr bool
 )
 
-func getImpl(cmd *cobra.Command, args []string) error {
+func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	context, err := internal.ParseContext(args[1:])
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	driver, err := internal.NewDriver()
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -74,7 +69,7 @@ func init() {
 			}
 			return internal.CheckVersion(&version) //nolint:wrapcheck
 		},
-		RunE: getImpl,
+		RunE: wrapWithDriver(getImpl),
 	}
 
 	flag := cmd.Flags()

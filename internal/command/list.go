@@ -9,12 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func listImpl(cmd *cobra.Command, args []string) error {
-	driver, err := internal.NewDriver()
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
+func listImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	items, err := driver.ListSecrets(table)
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -42,7 +37,7 @@ func init() {
 		Use:   "list",
 		Short: "List credentials and their version",
 		Args:  cobra.NoArgs,
-		RunE:  listImpl,
+		RunE:  wrapWithDriver(listImpl),
 	}
 
 	Root.AddCommand(cmd)

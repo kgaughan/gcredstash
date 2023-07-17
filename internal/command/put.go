@@ -12,7 +12,7 @@ var (
 	autoVersion bool
 )
 
-func putImpl(cmd *cobra.Command, args []string) error {
+func putImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	context, err := internal.ParseContext(args[2:])
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -21,11 +21,6 @@ func putImpl(cmd *cobra.Command, args []string) error {
 	value := args[1]
 	if value == "-" {
 		value = internal.ReadStdin()
-	}
-
-	driver, err := internal.NewDriver()
-	if err != nil {
-		return err //nolint:wrapcheck
 	}
 
 	if autoVersion {
@@ -57,7 +52,7 @@ func init() {
 			}
 			return internal.CheckVersion(&version) //nolint:wrapcheck
 		},
-		RunE: putImpl,
+		RunE: wrapWithDriver(putImpl),
 	}
 
 	defaultKMSKey := internal.LookupEnvDefault("alias/credstash", "GCREDSTASH_KMS_KEY", "CREDSTASH_KMS_KEY")

@@ -15,7 +15,7 @@ import (
 
 var inplace bool
 
-func templateImpl(cmd *cobra.Command, args []string) error {
+func templateImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	tmplFile := args[0]
 
 	var content string
@@ -27,11 +27,6 @@ func templateImpl(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("cannot read %q: %w", tmplFile, err)
 		}
-	}
-
-	driver, err := internal.NewDriver()
-	if err != nil {
-		return err //nolint:wrapcheck
 	}
 
 	tmpl, err := makeTemplate(driver, table).Parse(content)
@@ -107,7 +102,7 @@ func init() {
 		Use:   "template",
 		Short: "Parse a template file with credentials",
 		Args:  cobra.ExactArgs(1),
-		RunE:  templateImpl,
+		RunE:  wrapWithDriver(templateImpl),
 	}
 
 	flag := cmd.Flags()

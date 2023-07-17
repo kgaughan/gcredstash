@@ -5,11 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func deleteImpl(cmd *cobra.Command, args []string) error {
-	driver, err := internal.NewDriver()
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
+func deleteImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	return driver.DeleteSecrets(args[0], version, table) //nolint:wrapcheck
 }
 
@@ -23,7 +19,7 @@ func init() {
 			}
 			return internal.CheckVersion(&version) //nolint:wrapcheck
 		},
-		RunE: deleteImpl,
+		RunE: wrapWithDriver(deleteImpl),
 	}
 
 	flag := cmd.Flags()

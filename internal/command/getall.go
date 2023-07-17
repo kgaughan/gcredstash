@@ -7,13 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getAllImpl(cmd *cobra.Command, args []string) error {
+func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	context, err := internal.ParseContext(args[0:])
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	driver, err := internal.NewDriver()
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -45,7 +40,7 @@ func init() {
 		Use:   "getall [context ...]",
 		Short: "Get all credentials from the store",
 		Args:  cobra.MinimumNArgs(0),
-		RunE:  getAllImpl,
+		RunE:  wrapWithDriver(getAllImpl),
 	}
 
 	Root.AddCommand(cmd)
