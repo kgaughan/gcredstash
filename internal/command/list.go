@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func listImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
+func listImpl(cmd *cobra.Command, _ []string, driver *internal.Driver) error {
 	items, err := driver.ListSecrets(table)
 	if err != nil {
 		return err //nolint:wrapcheck

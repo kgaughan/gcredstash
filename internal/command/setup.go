@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func setupImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
+func setupImpl(_ *cobra.Command, _ []string, driver *internal.Driver) error {
 	return driver.CreateDdbTable(table) //nolint:wrapcheck
 }
 

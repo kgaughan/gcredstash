@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func deleteImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
+func deleteImpl(_ *cobra.Command, args []string, driver *internal.Driver) error {
 	return driver.DeleteSecrets(args[0], version, table) //nolint:wrapcheck
 }
 
