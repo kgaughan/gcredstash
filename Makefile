@@ -3,7 +3,7 @@ VERSION:=unknown
 all: gcredstash
 
 gcredstash:
-	CGO_ENABLED=0 go build -v -trimpath -ldflags "-s -w -X main.Version=$(VERSION)" -tags netgo -o $@ ./cmd/$@
+	CGO_ENABLED=0 go build -v -trimpath -ldflags "-s -w -X github.com/kgaughan/gcredstash/internal.Version=$(VERSION)" -tags netgo -o $@ ./cmd/$@
 
 test:
 	go test -cover -v ./...
