@@ -18,7 +18,7 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      - -s -w -X main.Version={{.Version}}
+      - -s -w -X github.com/kgaughan/gcredstash/internal.Version={{.Version}}
     mod_timestamp: "{{ .CommitTimestamp }}"
     tags:
       - netgo
@@ -28,7 +28,7 @@ brews:
     ids:
       - archives
     homepage: "https://github.com/kgaughan/gcredstash"
-    tap:
+    repository:
       owner: kgaughan
       name: homebrew-tap
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
