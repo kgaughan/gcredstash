@@ -3,7 +3,7 @@ module github.com/kgaughan/gcredstash
 go 1.18
 
 require (
-	github.com/aws/aws-sdk-go v1.45.25
+	github.com/aws/aws-sdk-go v1.51.6
 	github.com/golang/mock v1.6.0
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/ryanuber/go-glob v1.0.0
