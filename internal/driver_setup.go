@@ -19,7 +19,7 @@ func (driver *Driver) IsTableExists(table string) (bool, error) {
 	params := &dynamodb.ListTablesInput{}
 	isExist := false
 
-	err := driver.Ddb.ListTablesPages(params, func(page *dynamodb.ListTablesOutput, lastPage bool) bool {
+	err := driver.Ddb.ListTablesPages(params, func(page *dynamodb.ListTablesOutput, _ bool) bool {
 		for _, tableName := range page.TableNames {
 			if *tableName == table {
 				isExist = true
