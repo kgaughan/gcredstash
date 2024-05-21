@@ -281,7 +281,6 @@ func (driver *Driver) PutSecret(name, secret, version, kmsKey, table string, con
 	hmac := Digest(cipherText, hmacKey)
 
 	err = driver.PutItem(name, version, wrappedKey, cipherText, hmac, table)
-
 	if err != nil {
 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
 			latestVersion, err := driver.GetHighestVersion(name, table)

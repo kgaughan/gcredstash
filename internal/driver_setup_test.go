@@ -5,8 +5,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/golang/mock/gomock"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
+	"go.uber.org/mock/gomock"
 )
 
 func TestCreateTable(t *testing.T) {
