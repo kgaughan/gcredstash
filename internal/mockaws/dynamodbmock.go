@@ -469,6 +469,56 @@ func (mr *MockDynamoDBAPIMockRecorder) DeleteItemWithContext(arg0, arg1 interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteItemWithContext", reflect.TypeOf((*MockDynamoDBAPI)(nil).DeleteItemWithContext), varargs...)
 }
 
+// DeleteResourcePolicy mocks base method.
+func (m *MockDynamoDBAPI) DeleteResourcePolicy(arg0 *dynamodb.DeleteResourcePolicyInput) (*dynamodb.DeleteResourcePolicyOutput, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteResourcePolicy", arg0)
+	ret0, _ := ret[0].(*dynamodb.DeleteResourcePolicyOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteResourcePolicy indicates an expected call of DeleteResourcePolicy.
+func (mr *MockDynamoDBAPIMockRecorder) DeleteResourcePolicy(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResourcePolicy", reflect.TypeOf((*MockDynamoDBAPI)(nil).DeleteResourcePolicy), arg0)
+}
+
+// DeleteResourcePolicyRequest mocks base method.
+func (m *MockDynamoDBAPI) DeleteResourcePolicyRequest(arg0 *dynamodb.DeleteResourcePolicyInput) (*request.Request, *dynamodb.DeleteResourcePolicyOutput) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteResourcePolicyRequest", arg0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*dynamodb.DeleteResourcePolicyOutput)
+	return ret0, ret1
+}
+
+// DeleteResourcePolicyRequest indicates an expected call of DeleteResourcePolicyRequest.
+func (mr *MockDynamoDBAPIMockRecorder) DeleteResourcePolicyRequest(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResourcePolicyRequest", reflect.TypeOf((*MockDynamoDBAPI)(nil).DeleteResourcePolicyRequest), arg0)
+}
+
+// DeleteResourcePolicyWithContext mocks base method.
+func (m *MockDynamoDBAPI) DeleteResourcePolicyWithContext(arg0 context.Context, arg1 *dynamodb.DeleteResourcePolicyInput, arg2 ...request.Option) (*dynamodb.DeleteResourcePolicyOutput, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DeleteResourcePolicyWithContext", varargs...)
+	ret0, _ := ret[0].(*dynamodb.DeleteResourcePolicyOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteResourcePolicyWithContext indicates an expected call of DeleteResourcePolicyWithContext.
+func (mr *MockDynamoDBAPIMockRecorder) DeleteResourcePolicyWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResourcePolicyWithContext", reflect.TypeOf((*MockDynamoDBAPI)(nil).DeleteResourcePolicyWithContext), varargs...)
+}
+
 // DeleteTable mocks base method.
 func (m *MockDynamoDBAPI) DeleteTable(arg0 *dynamodb.DeleteTableInput) (*dynamodb.DeleteTableOutput, error) {
 	m.ctrl.T.Helper()
@@ -1469,6 +1519,56 @@ func (mr *MockDynamoDBAPIMockRecorder) GetItemWithContext(arg0, arg1 interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetItemWithContext", reflect.TypeOf((*MockDynamoDBAPI)(nil).GetItemWithContext), varargs...)
 }
 
+// GetResourcePolicy mocks base method.
+func (m *MockDynamoDBAPI) GetResourcePolicy(arg0 *dynamodb.GetResourcePolicyInput) (*dynamodb.GetResourcePolicyOutput, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetResourcePolicy", arg0)
+	ret0, _ := ret[0].(*dynamodb.GetResourcePolicyOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetResourcePolicy indicates an expected call of GetResourcePolicy.
+func (mr *MockDynamoDBAPIMockRecorder) GetResourcePolicy(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResourcePolicy", reflect.TypeOf((*MockDynamoDBAPI)(nil).GetResourcePolicy), arg0)
+}
+
+// GetResourcePolicyRequest mocks base method.
+func (m *MockDynamoDBAPI) GetResourcePolicyRequest(arg0 *dynamodb.GetResourcePolicyInput) (*request.Request, *dynamodb.GetResourcePolicyOutput) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetResourcePolicyRequest", arg0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*dynamodb.GetResourcePolicyOutput)
+	return ret0, ret1
+}
+
+// GetResourcePolicyRequest indicates an expected call of GetResourcePolicyRequest.
+func (mr *MockDynamoDBAPIMockRecorder) GetResourcePolicyRequest(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResourcePolicyRequest", reflect.TypeOf((*MockDynamoDBAPI)(nil).GetResourcePolicyRequest), arg0)
+}
+
+// GetResourcePolicyWithContext mocks base method.
+func (m *MockDynamoDBAPI) GetResourcePolicyWithContext(arg0 context.Context, arg1 *dynamodb.GetResourcePolicyInput, arg2 ...request.Option) (*dynamodb.GetResourcePolicyOutput, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GetResourcePolicyWithContext", varargs...)
+	ret0, _ := ret[0].(*dynamodb.GetResourcePolicyOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetResourcePolicyWithContext indicates an expected call of GetResourcePolicyWithContext.
+func (mr *MockDynamoDBAPIMockRecorder) GetResourcePolicyWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResourcePolicyWithContext", reflect.TypeOf((*MockDynamoDBAPI)(nil).GetResourcePolicyWithContext), varargs...)
+}
+
 // ImportTable mocks base method.
 func (m *MockDynamoDBAPI) ImportTable(arg0 *dynamodb.ImportTableInput) (*dynamodb.ImportTableOutput, error) {
 	m.ctrl.T.Helper()
@@ -2049,6 +2149,56 @@ func (mr *MockDynamoDBAPIMockRecorder) PutItemWithContext(arg0, arg1 interface{}
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutItemWithContext", reflect.TypeOf((*MockDynamoDBAPI)(nil).PutItemWithContext), varargs...)
+}
+
+// PutResourcePolicy mocks base method.
+func (m *MockDynamoDBAPI) PutResourcePolicy(arg0 *dynamodb.PutResourcePolicyInput) (*dynamodb.PutResourcePolicyOutput, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PutResourcePolicy", arg0)
+	ret0, _ := ret[0].(*dynamodb.PutResourcePolicyOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PutResourcePolicy indicates an expected call of PutResourcePolicy.
+func (mr *MockDynamoDBAPIMockRecorder) PutResourcePolicy(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutResourcePolicy", reflect.TypeOf((*MockDynamoDBAPI)(nil).PutResourcePolicy), arg0)
+}
+
+// PutResourcePolicyRequest mocks base method.
+func (m *MockDynamoDBAPI) PutResourcePolicyRequest(arg0 *dynamodb.PutResourcePolicyInput) (*request.Request, *dynamodb.PutResourcePolicyOutput) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PutResourcePolicyRequest", arg0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*dynamodb.PutResourcePolicyOutput)
+	return ret0, ret1
+}
+
+// PutResourcePolicyRequest indicates an expected call of PutResourcePolicyRequest.
+func (mr *MockDynamoDBAPIMockRecorder) PutResourcePolicyRequest(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutResourcePolicyRequest", reflect.TypeOf((*MockDynamoDBAPI)(nil).PutResourcePolicyRequest), arg0)
+}
+
+// PutResourcePolicyWithContext mocks base method.
+func (m *MockDynamoDBAPI) PutResourcePolicyWithContext(arg0 context.Context, arg1 *dynamodb.PutResourcePolicyInput, arg2 ...request.Option) (*dynamodb.PutResourcePolicyOutput, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "PutResourcePolicyWithContext", varargs...)
+	ret0, _ := ret[0].(*dynamodb.PutResourcePolicyOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PutResourcePolicyWithContext indicates an expected call of PutResourcePolicyWithContext.
+func (mr *MockDynamoDBAPIMockRecorder) PutResourcePolicyWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutResourcePolicyWithContext", reflect.TypeOf((*MockDynamoDBAPI)(nil).PutResourcePolicyWithContext), varargs...)
 }
 
 // Query mocks base method.
@@ -2765,6 +2915,56 @@ func (mr *MockDynamoDBAPIMockRecorder) UpdateItemWithContext(arg0, arg1 interfac
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateItemWithContext", reflect.TypeOf((*MockDynamoDBAPI)(nil).UpdateItemWithContext), varargs...)
+}
+
+// UpdateKinesisStreamingDestination mocks base method.
+func (m *MockDynamoDBAPI) UpdateKinesisStreamingDestination(arg0 *dynamodb.UpdateKinesisStreamingDestinationInput) (*dynamodb.UpdateKinesisStreamingDestinationOutput, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateKinesisStreamingDestination", arg0)
+	ret0, _ := ret[0].(*dynamodb.UpdateKinesisStreamingDestinationOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateKinesisStreamingDestination indicates an expected call of UpdateKinesisStreamingDestination.
+func (mr *MockDynamoDBAPIMockRecorder) UpdateKinesisStreamingDestination(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateKinesisStreamingDestination", reflect.TypeOf((*MockDynamoDBAPI)(nil).UpdateKinesisStreamingDestination), arg0)
+}
+
+// UpdateKinesisStreamingDestinationRequest mocks base method.
+func (m *MockDynamoDBAPI) UpdateKinesisStreamingDestinationRequest(arg0 *dynamodb.UpdateKinesisStreamingDestinationInput) (*request.Request, *dynamodb.UpdateKinesisStreamingDestinationOutput) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateKinesisStreamingDestinationRequest", arg0)
+	ret0, _ := ret[0].(*request.Request)
+	ret1, _ := ret[1].(*dynamodb.UpdateKinesisStreamingDestinationOutput)
+	return ret0, ret1
+}
+
+// UpdateKinesisStreamingDestinationRequest indicates an expected call of UpdateKinesisStreamingDestinationRequest.
+func (mr *MockDynamoDBAPIMockRecorder) UpdateKinesisStreamingDestinationRequest(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateKinesisStreamingDestinationRequest", reflect.TypeOf((*MockDynamoDBAPI)(nil).UpdateKinesisStreamingDestinationRequest), arg0)
+}
+
+// UpdateKinesisStreamingDestinationWithContext mocks base method.
+func (m *MockDynamoDBAPI) UpdateKinesisStreamingDestinationWithContext(arg0 context.Context, arg1 *dynamodb.UpdateKinesisStreamingDestinationInput, arg2 ...request.Option) (*dynamodb.UpdateKinesisStreamingDestinationOutput, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "UpdateKinesisStreamingDestinationWithContext", varargs...)
+	ret0, _ := ret[0].(*dynamodb.UpdateKinesisStreamingDestinationOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateKinesisStreamingDestinationWithContext indicates an expected call of UpdateKinesisStreamingDestinationWithContext.
+func (mr *MockDynamoDBAPIMockRecorder) UpdateKinesisStreamingDestinationWithContext(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateKinesisStreamingDestinationWithContext", reflect.TypeOf((*MockDynamoDBAPI)(nil).UpdateKinesisStreamingDestinationWithContext), varargs...)
 }
 
 // UpdateTable mocks base method.
