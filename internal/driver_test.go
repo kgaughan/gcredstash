@@ -7,9 +7,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kms"
-	"github.com/golang/mock/gomock"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 	"github.com/kgaughan/gcredstash/internal/testutils"
+	"go.uber.org/mock/gomock"
 )
 
 func TestGetMaterialWithoutVersion(t *testing.T) {

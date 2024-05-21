@@ -12,7 +12,7 @@ clean:
 	rm -rf gcredstash *.gz *.zip dist/
 
 mock:
-	go install github.com/golang/mock/mockgen@v1.6.0
+	go install go.uber.org/mock/mockgen@v0.4.0
 	mockgen -package mockaws -destination internal/mockaws/dynamodbmock.go github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface DynamoDBAPI
 	mockgen -package mockaws -destination internal/mockaws/kmsmock.go github.com/aws/aws-sdk-go/service/kms/kmsiface KMSAPI
 

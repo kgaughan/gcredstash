@@ -6,8 +6,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kms"
-	"github.com/golang/mock/gomock"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
+	"go.uber.org/mock/gomock"
 )
 
 func TestKmsDecrypt(t *testing.T) {
