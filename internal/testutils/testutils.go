@@ -1,6 +1,7 @@
 package testutils
 
 import (
+	"log"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -35,20 +36,20 @@ func TempFile(content string, f func(*os.File)) {
 
 	defer os.Remove(tmpfile.Name())
 
-	_, err = tmpfile.WriteString(content)
-	if err != nil {
+	if _, err = tmpfile.WriteString(content); err != nil {
+		log.Printf("Error writing to temporary file: %v", err)
 		panic(err)
 	}
 
-	err = tmpfile.Sync()
-	if err != nil {
+	if err = tmpfile.Sync(); err != nil {
+		log.Printf("Error syncing temporary file: %v", err)
 		panic(err)
 	}
 
 	f(tmpfile)
 
-	err = tmpfile.Close()
-	if err != nil {
+	if err = tmpfile.Close(); err != nil {
+		log.Printf("Error closing temporary file: %v", err)
 		panic(err)
 	}
 }
