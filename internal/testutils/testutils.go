@@ -35,20 +35,17 @@ func TempFile(content string, f func(*os.File)) {
 
 	defer os.Remove(tmpfile.Name())
 
-	_, err = tmpfile.WriteString(content)
-	if err != nil {
+	if _, err = tmpfile.WriteString(content); err != nil {
 		panic(err)
 	}
 
-	err = tmpfile.Sync()
-	if err != nil {
+	if err = tmpfile.Sync(); err != nil {
 		panic(err)
 	}
 
 	f(tmpfile)
 
-	err = tmpfile.Close()
-	if err != nil {
+	if err = tmpfile.Close(); err != nil {
 		panic(err)
 	}
 }
