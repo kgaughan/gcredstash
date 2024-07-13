@@ -1,0 +1,30 @@
+---
+name: Regenerate mocks
+
+on:
+  - pull_request
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: true
+
+      - run: |
+          make mock
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add internal/mockaws
+          git commit -m "Update mocks"
+          git push
