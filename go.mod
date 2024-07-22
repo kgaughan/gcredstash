@@ -3,7 +3,7 @@ module github.com/kgaughan/gcredstash
 go 1.18
 
 require (
-	github.com/aws/aws-sdk-go v1.54.19
+	github.com/aws/aws-sdk-go v1.54.20
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/ryanuber/go-glob v1.0.0
 	github.com/spf13/cobra v1.8.1
