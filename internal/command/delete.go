@@ -23,7 +23,7 @@ func init() {
 	}
 
 	flag := cmd.Flags()
-	flag.StringVarP(&version, "version", "v", "", "delete a specfic version of the credential")
+	flag.StringVarP(&version, "version", "v", "", "delete a specific version of the credential")
 
 	Root.AddCommand(cmd)
 }
