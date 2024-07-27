@@ -11,8 +11,11 @@ jobs:
   build:
     if: github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -23,10 +26,7 @@ jobs:
 
       - run: |
           make mock
-          if test "$(git status --porcelain | wc -l)" -gt 0; then
-              git config user.name github-actions
-              git config user.email github-actions@github.com
-              git add internal/mockaws
-              git commit -m "Update mocks"
-              git push
-          fi
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update mocks"
