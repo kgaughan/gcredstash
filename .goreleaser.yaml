@@ -78,6 +78,13 @@ nfpms:
     formats:
       - rpm
 
+dockers:
+  - image_templates:
+      - "{{ .Env.REGISTRY }}/{{ .Env.IMAGE }}:{{ .Tag }}"
+    skip_push: auto
+    use: buildx
+    dockerfile: Dockerfile
+
 checksum:
   algorithm: sha256
   name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
