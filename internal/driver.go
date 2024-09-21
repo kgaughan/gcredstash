@@ -30,7 +30,7 @@ type Driver struct {
 func NewDriver() (*Driver, error) {
 	awsSession, err := session.NewSession()
 	if err != nil {
-		return nil, fmt.Errorf("cannot create session: %w", err)
+		return nil, fmt.Errorf("can't create session: %w", err)
 	}
 	driver := &Driver{
 		Ddb: dynamodb.New(awsSession),

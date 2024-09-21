@@ -25,23 +25,23 @@ func templateImpl(cmd *cobra.Command, args []string, driver *internal.Driver) er
 		var err error
 		content, err = internal.ReadFile(tmplFile)
 		if err != nil {
-			return fmt.Errorf("cannot read %q: %w", tmplFile, err)
+			return fmt.Errorf("can't read %q: %w", tmplFile, err)
 		}
 	}
 
 	tmpl, err := makeTemplate(driver, table).Parse(content)
 	if err != nil {
-		return fmt.Errorf("cannot parse %q template: %w", tmplFile, err)
+		return fmt.Errorf("can't parse %q template: %w", tmplFile, err)
 	}
 
 	buf := &bytes.Buffer{}
 	if err = tmpl.Execute(buf, nil); err != nil {
-		return fmt.Errorf("cannot execute %q template: %w", tmplFile, err)
+		return fmt.Errorf("can't execute %q template: %w", tmplFile, err)
 	}
 
 	if inplace {
 		if err := os.WriteFile(tmplFile, buf.Bytes(), 0o644); err != nil { //nolint:gosec
-			return fmt.Errorf("cannot write to %q: %w", tmplFile, err)
+			return fmt.Errorf("can't write to %q: %w", tmplFile, err)
 		}
 	}
 
