@@ -39,7 +39,7 @@ func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 		}
 		result, err := internal.JSONMarshal(creds)
 		if err != nil {
-			return fmt.Errorf("cannot marshal credential: %w", err)
+			return fmt.Errorf("can't marshal credential: %w", err)
 		}
 		cmd.Print(string(result))
 	} else {
