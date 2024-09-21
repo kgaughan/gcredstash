@@ -1,0 +1,13 @@
+---
+site_name: gcredstash
+repo_url: https://github.com/kgaughan/gcredstash/
+theme:
+  name: material
+
+markdown_extensions:
+  admonition: {}
+  attr_list: {}
+
+nav:
+  - commands.md
+  - configuration.md
