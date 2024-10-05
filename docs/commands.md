@@ -1,26 +1,33 @@
 # Commands
 
-```
-gcredstash manages credentials using AWS Key Management Service (KMS) and DynamoDB
+## setup
 
-Usage:
-  gcredstash [command]
+Setup the credential store.
 
-Available Commands:
-  completion  Generate the autocompletion script for the specified shell
-  delete      Delete a credential from the store
-  get         Get a credential from the store
-  getall      Get all credentials from the store
-  help        Help about any command
-  list        List credentials and their version
-  put         Put a credential into the store
-  setup       Setup the credential store
-  template    Parse a template file with credentials
+## completion
 
-Flags:
-  -h, --help           help for gcredstash
-  -t, --table string   DynamoDB table to use for credential storage (default "credential-store")
-  -v, --version        version for gcredstash
+Generate the autocompletion script for the specified shell.
 
-Use "gcredstash [command] --help" for more information about a command.
-```
+## list
+
+List credentials and their versions.
+
+## get
+
+Get a credential from the store.
+
+## getall
+
+Get all credentials from the store.
+
+## put
+
+Put a credential into the store.
+
+## template
+
+Generate a file from a template, embedding credentials into it.
+
+## help
+
+Show help about a command.
