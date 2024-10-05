@@ -23,7 +23,7 @@ jobs:
           cache: true
 
       - name: Test
-        run: make test
+        run: make tests
 
       - name: Build
         run: make
