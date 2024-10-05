@@ -1,0 +1,21 @@
+---
+site_name: gcredstash
+repo_url: https://github.com/kgaughan/gcredstash/
+theme:
+  name: material
+
+markdown_extensions:
+  pymdownx.highlight:
+    anchor_linenums: true
+    line_spans: __span
+    pygments_lang_class: true 
+  pymdownx.inlinehilite: {}
+  pymdownx.snippets: {}
+  pymdownx.superfences: {}
+  admonition: {}
+  attr_list: {}
+
+nav:
+  - About: index.md
+  - commands.md
+  - configuration.md
