@@ -2,7 +2,7 @@
 
 **gcredstash** is a reimplementation of [credstash](https://github.com/fugue/credstash) in Go.
 
-Like the original, it allows for the management of versioned secrets using AWS [Key Management Store](https://docs.aws.amazon.com/kms/) (KMS) for encryption/decryption and [DynamoDB](https://docs.aws.amazon.com/dynamodb/) for storage.
+Like the original, it allows for the management of versioned secrets using AWS [Key Management Service](https://docs.aws.amazon.com/kms/) (KMS) for encryption/decryption and [DynamoDB](https://docs.aws.amazon.com/dynamodb/) for storage.
 
 Unlike the original, gcredstash is a standalone binary, making its deployment simpler.
 
