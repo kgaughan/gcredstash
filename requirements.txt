@@ -16,7 +16,12 @@ ghp-import==2.1.0
     # via mkdocs
 idna==3.10
     # via requests
-jinja2==3.1.5
+importlib-metadata==8.6.1
+    # via
+    #   markdown
+    #   mkdocs
+    #   mkdocs-get-deps
+jinja2==3.1.6
     # via
     #   mkdocs
     #   mkdocs-material
@@ -82,3 +87,5 @@ watchdog==5.0.2
     # via mkdocs
 wcmatch==9.0
     # via mkdocs-awesome-pages-plugin
+zipp==3.21.0
+    # via importlib-metadata
