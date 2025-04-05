@@ -9,6 +9,6 @@ import (
 func NewDummyCommand() (*cobra.Command, *strings.Builder) {
 	out := &strings.Builder{}
 	cmd := &cobra.Command{}
-	cmd.SetOutput(out)
+	cmd.SetOut(out)
 	return cmd, out
 }

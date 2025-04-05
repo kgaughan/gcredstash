@@ -64,17 +64,17 @@ func JSONMarshal(t interface{}) ([]byte, error) {
 }
 
 func MaxKeyLen(items map[*string]*string) int {
-	max := 0
+	maxlen := 0
 
 	for key := range items {
 		keyLen := len(*key)
 
-		if keyLen > max {
-			max = keyLen
+		if keyLen > maxlen {
+			maxlen = keyLen
 		}
 	}
 
-	return max
+	return maxlen
 }
 
 func LookupEnvDefault(defaultVal string, envVars ...string) string {
