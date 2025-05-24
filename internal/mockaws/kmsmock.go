@@ -10,9 +10,9 @@
 package mockaws
 
 import (
-	context "context"
 	reflect "reflect"
 
+	aws "github.com/aws/aws-sdk-go/aws"
 	request "github.com/aws/aws-sdk-go/aws/request"
 	kms "github.com/aws/aws-sdk-go/service/kms"
 	gomock "go.uber.org/mock/gomock"
@@ -22,6 +22,7 @@ import (
 type MockKMSAPI struct {
 	ctrl     *gomock.Controller
 	recorder *MockKMSAPIMockRecorder
+	isgomock struct{}
 }
 
 // MockKMSAPIMockRecorder is the mock recorder for MockKMSAPI.
@@ -72,7 +73,7 @@ func (mr *MockKMSAPIMockRecorder) CancelKeyDeletionRequest(arg0 any) *gomock.Cal
 }
 
 // CancelKeyDeletionWithContext mocks base method.
-func (m *MockKMSAPI) CancelKeyDeletionWithContext(arg0 context.Context, arg1 *kms.CancelKeyDeletionInput, arg2 ...request.Option) (*kms.CancelKeyDeletionOutput, error) {
+func (m *MockKMSAPI) CancelKeyDeletionWithContext(arg0 aws.Context, arg1 *kms.CancelKeyDeletionInput, arg2 ...request.Option) (*kms.CancelKeyDeletionOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -122,7 +123,7 @@ func (mr *MockKMSAPIMockRecorder) ConnectCustomKeyStoreRequest(arg0 any) *gomock
 }
 
 // ConnectCustomKeyStoreWithContext mocks base method.
-func (m *MockKMSAPI) ConnectCustomKeyStoreWithContext(arg0 context.Context, arg1 *kms.ConnectCustomKeyStoreInput, arg2 ...request.Option) (*kms.ConnectCustomKeyStoreOutput, error) {
+func (m *MockKMSAPI) ConnectCustomKeyStoreWithContext(arg0 aws.Context, arg1 *kms.ConnectCustomKeyStoreInput, arg2 ...request.Option) (*kms.ConnectCustomKeyStoreOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -172,7 +173,7 @@ func (mr *MockKMSAPIMockRecorder) CreateAliasRequest(arg0 any) *gomock.Call {
 }
 
 // CreateAliasWithContext mocks base method.
-func (m *MockKMSAPI) CreateAliasWithContext(arg0 context.Context, arg1 *kms.CreateAliasInput, arg2 ...request.Option) (*kms.CreateAliasOutput, error) {
+func (m *MockKMSAPI) CreateAliasWithContext(arg0 aws.Context, arg1 *kms.CreateAliasInput, arg2 ...request.Option) (*kms.CreateAliasOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -222,7 +223,7 @@ func (mr *MockKMSAPIMockRecorder) CreateCustomKeyStoreRequest(arg0 any) *gomock.
 }
 
 // CreateCustomKeyStoreWithContext mocks base method.
-func (m *MockKMSAPI) CreateCustomKeyStoreWithContext(arg0 context.Context, arg1 *kms.CreateCustomKeyStoreInput, arg2 ...request.Option) (*kms.CreateCustomKeyStoreOutput, error) {
+func (m *MockKMSAPI) CreateCustomKeyStoreWithContext(arg0 aws.Context, arg1 *kms.CreateCustomKeyStoreInput, arg2 ...request.Option) (*kms.CreateCustomKeyStoreOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -272,7 +273,7 @@ func (mr *MockKMSAPIMockRecorder) CreateGrantRequest(arg0 any) *gomock.Call {
 }
 
 // CreateGrantWithContext mocks base method.
-func (m *MockKMSAPI) CreateGrantWithContext(arg0 context.Context, arg1 *kms.CreateGrantInput, arg2 ...request.Option) (*kms.CreateGrantOutput, error) {
+func (m *MockKMSAPI) CreateGrantWithContext(arg0 aws.Context, arg1 *kms.CreateGrantInput, arg2 ...request.Option) (*kms.CreateGrantOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -322,7 +323,7 @@ func (mr *MockKMSAPIMockRecorder) CreateKeyRequest(arg0 any) *gomock.Call {
 }
 
 // CreateKeyWithContext mocks base method.
-func (m *MockKMSAPI) CreateKeyWithContext(arg0 context.Context, arg1 *kms.CreateKeyInput, arg2 ...request.Option) (*kms.CreateKeyOutput, error) {
+func (m *MockKMSAPI) CreateKeyWithContext(arg0 aws.Context, arg1 *kms.CreateKeyInput, arg2 ...request.Option) (*kms.CreateKeyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -372,7 +373,7 @@ func (mr *MockKMSAPIMockRecorder) DecryptRequest(arg0 any) *gomock.Call {
 }
 
 // DecryptWithContext mocks base method.
-func (m *MockKMSAPI) DecryptWithContext(arg0 context.Context, arg1 *kms.DecryptInput, arg2 ...request.Option) (*kms.DecryptOutput, error) {
+func (m *MockKMSAPI) DecryptWithContext(arg0 aws.Context, arg1 *kms.DecryptInput, arg2 ...request.Option) (*kms.DecryptOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -422,7 +423,7 @@ func (mr *MockKMSAPIMockRecorder) DeleteAliasRequest(arg0 any) *gomock.Call {
 }
 
 // DeleteAliasWithContext mocks base method.
-func (m *MockKMSAPI) DeleteAliasWithContext(arg0 context.Context, arg1 *kms.DeleteAliasInput, arg2 ...request.Option) (*kms.DeleteAliasOutput, error) {
+func (m *MockKMSAPI) DeleteAliasWithContext(arg0 aws.Context, arg1 *kms.DeleteAliasInput, arg2 ...request.Option) (*kms.DeleteAliasOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -472,7 +473,7 @@ func (mr *MockKMSAPIMockRecorder) DeleteCustomKeyStoreRequest(arg0 any) *gomock.
 }
 
 // DeleteCustomKeyStoreWithContext mocks base method.
-func (m *MockKMSAPI) DeleteCustomKeyStoreWithContext(arg0 context.Context, arg1 *kms.DeleteCustomKeyStoreInput, arg2 ...request.Option) (*kms.DeleteCustomKeyStoreOutput, error) {
+func (m *MockKMSAPI) DeleteCustomKeyStoreWithContext(arg0 aws.Context, arg1 *kms.DeleteCustomKeyStoreInput, arg2 ...request.Option) (*kms.DeleteCustomKeyStoreOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -522,7 +523,7 @@ func (mr *MockKMSAPIMockRecorder) DeleteImportedKeyMaterialRequest(arg0 any) *go
 }
 
 // DeleteImportedKeyMaterialWithContext mocks base method.
-func (m *MockKMSAPI) DeleteImportedKeyMaterialWithContext(arg0 context.Context, arg1 *kms.DeleteImportedKeyMaterialInput, arg2 ...request.Option) (*kms.DeleteImportedKeyMaterialOutput, error) {
+func (m *MockKMSAPI) DeleteImportedKeyMaterialWithContext(arg0 aws.Context, arg1 *kms.DeleteImportedKeyMaterialInput, arg2 ...request.Option) (*kms.DeleteImportedKeyMaterialOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -572,7 +573,7 @@ func (mr *MockKMSAPIMockRecorder) DeriveSharedSecretRequest(arg0 any) *gomock.Ca
 }
 
 // DeriveSharedSecretWithContext mocks base method.
-func (m *MockKMSAPI) DeriveSharedSecretWithContext(arg0 context.Context, arg1 *kms.DeriveSharedSecretInput, arg2 ...request.Option) (*kms.DeriveSharedSecretOutput, error) {
+func (m *MockKMSAPI) DeriveSharedSecretWithContext(arg0 aws.Context, arg1 *kms.DeriveSharedSecretInput, arg2 ...request.Option) (*kms.DeriveSharedSecretOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -621,7 +622,7 @@ func (mr *MockKMSAPIMockRecorder) DescribeCustomKeyStoresPages(arg0, arg1 any) *
 }
 
 // DescribeCustomKeyStoresPagesWithContext mocks base method.
-func (m *MockKMSAPI) DescribeCustomKeyStoresPagesWithContext(arg0 context.Context, arg1 *kms.DescribeCustomKeyStoresInput, arg2 func(*kms.DescribeCustomKeyStoresOutput, bool) bool, arg3 ...request.Option) error {
+func (m *MockKMSAPI) DescribeCustomKeyStoresPagesWithContext(arg0 aws.Context, arg1 *kms.DescribeCustomKeyStoresInput, arg2 func(*kms.DescribeCustomKeyStoresOutput, bool) bool, arg3 ...request.Option) error {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1, arg2}
 	for _, a := range arg3 {
@@ -655,7 +656,7 @@ func (mr *MockKMSAPIMockRecorder) DescribeCustomKeyStoresRequest(arg0 any) *gomo
 }
 
 // DescribeCustomKeyStoresWithContext mocks base method.
-func (m *MockKMSAPI) DescribeCustomKeyStoresWithContext(arg0 context.Context, arg1 *kms.DescribeCustomKeyStoresInput, arg2 ...request.Option) (*kms.DescribeCustomKeyStoresOutput, error) {
+func (m *MockKMSAPI) DescribeCustomKeyStoresWithContext(arg0 aws.Context, arg1 *kms.DescribeCustomKeyStoresInput, arg2 ...request.Option) (*kms.DescribeCustomKeyStoresOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -705,7 +706,7 @@ func (mr *MockKMSAPIMockRecorder) DescribeKeyRequest(arg0 any) *gomock.Call {
 }
 
 // DescribeKeyWithContext mocks base method.
-func (m *MockKMSAPI) DescribeKeyWithContext(arg0 context.Context, arg1 *kms.DescribeKeyInput, arg2 ...request.Option) (*kms.DescribeKeyOutput, error) {
+func (m *MockKMSAPI) DescribeKeyWithContext(arg0 aws.Context, arg1 *kms.DescribeKeyInput, arg2 ...request.Option) (*kms.DescribeKeyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -785,7 +786,7 @@ func (mr *MockKMSAPIMockRecorder) DisableKeyRotationRequest(arg0 any) *gomock.Ca
 }
 
 // DisableKeyRotationWithContext mocks base method.
-func (m *MockKMSAPI) DisableKeyRotationWithContext(arg0 context.Context, arg1 *kms.DisableKeyRotationInput, arg2 ...request.Option) (*kms.DisableKeyRotationOutput, error) {
+func (m *MockKMSAPI) DisableKeyRotationWithContext(arg0 aws.Context, arg1 *kms.DisableKeyRotationInput, arg2 ...request.Option) (*kms.DisableKeyRotationOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -805,7 +806,7 @@ func (mr *MockKMSAPIMockRecorder) DisableKeyRotationWithContext(arg0, arg1 any, 
 }
 
 // DisableKeyWithContext mocks base method.
-func (m *MockKMSAPI) DisableKeyWithContext(arg0 context.Context, arg1 *kms.DisableKeyInput, arg2 ...request.Option) (*kms.DisableKeyOutput, error) {
+func (m *MockKMSAPI) DisableKeyWithContext(arg0 aws.Context, arg1 *kms.DisableKeyInput, arg2 ...request.Option) (*kms.DisableKeyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -855,7 +856,7 @@ func (mr *MockKMSAPIMockRecorder) DisconnectCustomKeyStoreRequest(arg0 any) *gom
 }
 
 // DisconnectCustomKeyStoreWithContext mocks base method.
-func (m *MockKMSAPI) DisconnectCustomKeyStoreWithContext(arg0 context.Context, arg1 *kms.DisconnectCustomKeyStoreInput, arg2 ...request.Option) (*kms.DisconnectCustomKeyStoreOutput, error) {
+func (m *MockKMSAPI) DisconnectCustomKeyStoreWithContext(arg0 aws.Context, arg1 *kms.DisconnectCustomKeyStoreInput, arg2 ...request.Option) (*kms.DisconnectCustomKeyStoreOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -935,7 +936,7 @@ func (mr *MockKMSAPIMockRecorder) EnableKeyRotationRequest(arg0 any) *gomock.Cal
 }
 
 // EnableKeyRotationWithContext mocks base method.
-func (m *MockKMSAPI) EnableKeyRotationWithContext(arg0 context.Context, arg1 *kms.EnableKeyRotationInput, arg2 ...request.Option) (*kms.EnableKeyRotationOutput, error) {
+func (m *MockKMSAPI) EnableKeyRotationWithContext(arg0 aws.Context, arg1 *kms.EnableKeyRotationInput, arg2 ...request.Option) (*kms.EnableKeyRotationOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -955,7 +956,7 @@ func (mr *MockKMSAPIMockRecorder) EnableKeyRotationWithContext(arg0, arg1 any, a
 }
 
 // EnableKeyWithContext mocks base method.
-func (m *MockKMSAPI) EnableKeyWithContext(arg0 context.Context, arg1 *kms.EnableKeyInput, arg2 ...request.Option) (*kms.EnableKeyOutput, error) {
+func (m *MockKMSAPI) EnableKeyWithContext(arg0 aws.Context, arg1 *kms.EnableKeyInput, arg2 ...request.Option) (*kms.EnableKeyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1005,7 +1006,7 @@ func (mr *MockKMSAPIMockRecorder) EncryptRequest(arg0 any) *gomock.Call {
 }
 
 // EncryptWithContext mocks base method.
-func (m *MockKMSAPI) EncryptWithContext(arg0 context.Context, arg1 *kms.EncryptInput, arg2 ...request.Option) (*kms.EncryptOutput, error) {
+func (m *MockKMSAPI) EncryptWithContext(arg0 aws.Context, arg1 *kms.EncryptInput, arg2 ...request.Option) (*kms.EncryptOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1070,7 +1071,7 @@ func (mr *MockKMSAPIMockRecorder) GenerateDataKeyPairRequest(arg0 any) *gomock.C
 }
 
 // GenerateDataKeyPairWithContext mocks base method.
-func (m *MockKMSAPI) GenerateDataKeyPairWithContext(arg0 context.Context, arg1 *kms.GenerateDataKeyPairInput, arg2 ...request.Option) (*kms.GenerateDataKeyPairOutput, error) {
+func (m *MockKMSAPI) GenerateDataKeyPairWithContext(arg0 aws.Context, arg1 *kms.GenerateDataKeyPairInput, arg2 ...request.Option) (*kms.GenerateDataKeyPairOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1120,7 +1121,7 @@ func (mr *MockKMSAPIMockRecorder) GenerateDataKeyPairWithoutPlaintextRequest(arg
 }
 
 // GenerateDataKeyPairWithoutPlaintextWithContext mocks base method.
-func (m *MockKMSAPI) GenerateDataKeyPairWithoutPlaintextWithContext(arg0 context.Context, arg1 *kms.GenerateDataKeyPairWithoutPlaintextInput, arg2 ...request.Option) (*kms.GenerateDataKeyPairWithoutPlaintextOutput, error) {
+func (m *MockKMSAPI) GenerateDataKeyPairWithoutPlaintextWithContext(arg0 aws.Context, arg1 *kms.GenerateDataKeyPairWithoutPlaintextInput, arg2 ...request.Option) (*kms.GenerateDataKeyPairWithoutPlaintextOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1155,7 +1156,7 @@ func (mr *MockKMSAPIMockRecorder) GenerateDataKeyRequest(arg0 any) *gomock.Call 
 }
 
 // GenerateDataKeyWithContext mocks base method.
-func (m *MockKMSAPI) GenerateDataKeyWithContext(arg0 context.Context, arg1 *kms.GenerateDataKeyInput, arg2 ...request.Option) (*kms.GenerateDataKeyOutput, error) {
+func (m *MockKMSAPI) GenerateDataKeyWithContext(arg0 aws.Context, arg1 *kms.GenerateDataKeyInput, arg2 ...request.Option) (*kms.GenerateDataKeyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1205,7 +1206,7 @@ func (mr *MockKMSAPIMockRecorder) GenerateDataKeyWithoutPlaintextRequest(arg0 an
 }
 
 // GenerateDataKeyWithoutPlaintextWithContext mocks base method.
-func (m *MockKMSAPI) GenerateDataKeyWithoutPlaintextWithContext(arg0 context.Context, arg1 *kms.GenerateDataKeyWithoutPlaintextInput, arg2 ...request.Option) (*kms.GenerateDataKeyWithoutPlaintextOutput, error) {
+func (m *MockKMSAPI) GenerateDataKeyWithoutPlaintextWithContext(arg0 aws.Context, arg1 *kms.GenerateDataKeyWithoutPlaintextInput, arg2 ...request.Option) (*kms.GenerateDataKeyWithoutPlaintextOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1255,7 +1256,7 @@ func (mr *MockKMSAPIMockRecorder) GenerateMacRequest(arg0 any) *gomock.Call {
 }
 
 // GenerateMacWithContext mocks base method.
-func (m *MockKMSAPI) GenerateMacWithContext(arg0 context.Context, arg1 *kms.GenerateMacInput, arg2 ...request.Option) (*kms.GenerateMacOutput, error) {
+func (m *MockKMSAPI) GenerateMacWithContext(arg0 aws.Context, arg1 *kms.GenerateMacInput, arg2 ...request.Option) (*kms.GenerateMacOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1305,7 +1306,7 @@ func (mr *MockKMSAPIMockRecorder) GenerateRandomRequest(arg0 any) *gomock.Call {
 }
 
 // GenerateRandomWithContext mocks base method.
-func (m *MockKMSAPI) GenerateRandomWithContext(arg0 context.Context, arg1 *kms.GenerateRandomInput, arg2 ...request.Option) (*kms.GenerateRandomOutput, error) {
+func (m *MockKMSAPI) GenerateRandomWithContext(arg0 aws.Context, arg1 *kms.GenerateRandomInput, arg2 ...request.Option) (*kms.GenerateRandomOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1355,7 +1356,7 @@ func (mr *MockKMSAPIMockRecorder) GetKeyPolicyRequest(arg0 any) *gomock.Call {
 }
 
 // GetKeyPolicyWithContext mocks base method.
-func (m *MockKMSAPI) GetKeyPolicyWithContext(arg0 context.Context, arg1 *kms.GetKeyPolicyInput, arg2 ...request.Option) (*kms.GetKeyPolicyOutput, error) {
+func (m *MockKMSAPI) GetKeyPolicyWithContext(arg0 aws.Context, arg1 *kms.GetKeyPolicyInput, arg2 ...request.Option) (*kms.GetKeyPolicyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1405,7 +1406,7 @@ func (mr *MockKMSAPIMockRecorder) GetKeyRotationStatusRequest(arg0 any) *gomock.
 }
 
 // GetKeyRotationStatusWithContext mocks base method.
-func (m *MockKMSAPI) GetKeyRotationStatusWithContext(arg0 context.Context, arg1 *kms.GetKeyRotationStatusInput, arg2 ...request.Option) (*kms.GetKeyRotationStatusOutput, error) {
+func (m *MockKMSAPI) GetKeyRotationStatusWithContext(arg0 aws.Context, arg1 *kms.GetKeyRotationStatusInput, arg2 ...request.Option) (*kms.GetKeyRotationStatusOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1455,7 +1456,7 @@ func (mr *MockKMSAPIMockRecorder) GetParametersForImportRequest(arg0 any) *gomoc
 }
 
 // GetParametersForImportWithContext mocks base method.
-func (m *MockKMSAPI) GetParametersForImportWithContext(arg0 context.Context, arg1 *kms.GetParametersForImportInput, arg2 ...request.Option) (*kms.GetParametersForImportOutput, error) {
+func (m *MockKMSAPI) GetParametersForImportWithContext(arg0 aws.Context, arg1 *kms.GetParametersForImportInput, arg2 ...request.Option) (*kms.GetParametersForImportOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1505,7 +1506,7 @@ func (mr *MockKMSAPIMockRecorder) GetPublicKeyRequest(arg0 any) *gomock.Call {
 }
 
 // GetPublicKeyWithContext mocks base method.
-func (m *MockKMSAPI) GetPublicKeyWithContext(arg0 context.Context, arg1 *kms.GetPublicKeyInput, arg2 ...request.Option) (*kms.GetPublicKeyOutput, error) {
+func (m *MockKMSAPI) GetPublicKeyWithContext(arg0 aws.Context, arg1 *kms.GetPublicKeyInput, arg2 ...request.Option) (*kms.GetPublicKeyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1555,7 +1556,7 @@ func (mr *MockKMSAPIMockRecorder) ImportKeyMaterialRequest(arg0 any) *gomock.Cal
 }
 
 // ImportKeyMaterialWithContext mocks base method.
-func (m *MockKMSAPI) ImportKeyMaterialWithContext(arg0 context.Context, arg1 *kms.ImportKeyMaterialInput, arg2 ...request.Option) (*kms.ImportKeyMaterialOutput, error) {
+func (m *MockKMSAPI) ImportKeyMaterialWithContext(arg0 aws.Context, arg1 *kms.ImportKeyMaterialInput, arg2 ...request.Option) (*kms.ImportKeyMaterialOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1604,7 +1605,7 @@ func (mr *MockKMSAPIMockRecorder) ListAliasesPages(arg0, arg1 any) *gomock.Call 
 }
 
 // ListAliasesPagesWithContext mocks base method.
-func (m *MockKMSAPI) ListAliasesPagesWithContext(arg0 context.Context, arg1 *kms.ListAliasesInput, arg2 func(*kms.ListAliasesOutput, bool) bool, arg3 ...request.Option) error {
+func (m *MockKMSAPI) ListAliasesPagesWithContext(arg0 aws.Context, arg1 *kms.ListAliasesInput, arg2 func(*kms.ListAliasesOutput, bool) bool, arg3 ...request.Option) error {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1, arg2}
 	for _, a := range arg3 {
@@ -1638,7 +1639,7 @@ func (mr *MockKMSAPIMockRecorder) ListAliasesRequest(arg0 any) *gomock.Call {
 }
 
 // ListAliasesWithContext mocks base method.
-func (m *MockKMSAPI) ListAliasesWithContext(arg0 context.Context, arg1 *kms.ListAliasesInput, arg2 ...request.Option) (*kms.ListAliasesOutput, error) {
+func (m *MockKMSAPI) ListAliasesWithContext(arg0 aws.Context, arg1 *kms.ListAliasesInput, arg2 ...request.Option) (*kms.ListAliasesOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1687,7 +1688,7 @@ func (mr *MockKMSAPIMockRecorder) ListGrantsPages(arg0, arg1 any) *gomock.Call {
 }
 
 // ListGrantsPagesWithContext mocks base method.
-func (m *MockKMSAPI) ListGrantsPagesWithContext(arg0 context.Context, arg1 *kms.ListGrantsInput, arg2 func(*kms.ListGrantsResponse, bool) bool, arg3 ...request.Option) error {
+func (m *MockKMSAPI) ListGrantsPagesWithContext(arg0 aws.Context, arg1 *kms.ListGrantsInput, arg2 func(*kms.ListGrantsResponse, bool) bool, arg3 ...request.Option) error {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1, arg2}
 	for _, a := range arg3 {
@@ -1721,7 +1722,7 @@ func (mr *MockKMSAPIMockRecorder) ListGrantsRequest(arg0 any) *gomock.Call {
 }
 
 // ListGrantsWithContext mocks base method.
-func (m *MockKMSAPI) ListGrantsWithContext(arg0 context.Context, arg1 *kms.ListGrantsInput, arg2 ...request.Option) (*kms.ListGrantsResponse, error) {
+func (m *MockKMSAPI) ListGrantsWithContext(arg0 aws.Context, arg1 *kms.ListGrantsInput, arg2 ...request.Option) (*kms.ListGrantsResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1770,7 +1771,7 @@ func (mr *MockKMSAPIMockRecorder) ListKeyPoliciesPages(arg0, arg1 any) *gomock.C
 }
 
 // ListKeyPoliciesPagesWithContext mocks base method.
-func (m *MockKMSAPI) ListKeyPoliciesPagesWithContext(arg0 context.Context, arg1 *kms.ListKeyPoliciesInput, arg2 func(*kms.ListKeyPoliciesOutput, bool) bool, arg3 ...request.Option) error {
+func (m *MockKMSAPI) ListKeyPoliciesPagesWithContext(arg0 aws.Context, arg1 *kms.ListKeyPoliciesInput, arg2 func(*kms.ListKeyPoliciesOutput, bool) bool, arg3 ...request.Option) error {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1, arg2}
 	for _, a := range arg3 {
@@ -1804,7 +1805,7 @@ func (mr *MockKMSAPIMockRecorder) ListKeyPoliciesRequest(arg0 any) *gomock.Call 
 }
 
 // ListKeyPoliciesWithContext mocks base method.
-func (m *MockKMSAPI) ListKeyPoliciesWithContext(arg0 context.Context, arg1 *kms.ListKeyPoliciesInput, arg2 ...request.Option) (*kms.ListKeyPoliciesOutput, error) {
+func (m *MockKMSAPI) ListKeyPoliciesWithContext(arg0 aws.Context, arg1 *kms.ListKeyPoliciesInput, arg2 ...request.Option) (*kms.ListKeyPoliciesOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1853,7 +1854,7 @@ func (mr *MockKMSAPIMockRecorder) ListKeyRotationsPages(arg0, arg1 any) *gomock.
 }
 
 // ListKeyRotationsPagesWithContext mocks base method.
-func (m *MockKMSAPI) ListKeyRotationsPagesWithContext(arg0 context.Context, arg1 *kms.ListKeyRotationsInput, arg2 func(*kms.ListKeyRotationsOutput, bool) bool, arg3 ...request.Option) error {
+func (m *MockKMSAPI) ListKeyRotationsPagesWithContext(arg0 aws.Context, arg1 *kms.ListKeyRotationsInput, arg2 func(*kms.ListKeyRotationsOutput, bool) bool, arg3 ...request.Option) error {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1, arg2}
 	for _, a := range arg3 {
@@ -1887,7 +1888,7 @@ func (mr *MockKMSAPIMockRecorder) ListKeyRotationsRequest(arg0 any) *gomock.Call
 }
 
 // ListKeyRotationsWithContext mocks base method.
-func (m *MockKMSAPI) ListKeyRotationsWithContext(arg0 context.Context, arg1 *kms.ListKeyRotationsInput, arg2 ...request.Option) (*kms.ListKeyRotationsOutput, error) {
+func (m *MockKMSAPI) ListKeyRotationsWithContext(arg0 aws.Context, arg1 *kms.ListKeyRotationsInput, arg2 ...request.Option) (*kms.ListKeyRotationsOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -1936,7 +1937,7 @@ func (mr *MockKMSAPIMockRecorder) ListKeysPages(arg0, arg1 any) *gomock.Call {
 }
 
 // ListKeysPagesWithContext mocks base method.
-func (m *MockKMSAPI) ListKeysPagesWithContext(arg0 context.Context, arg1 *kms.ListKeysInput, arg2 func(*kms.ListKeysOutput, bool) bool, arg3 ...request.Option) error {
+func (m *MockKMSAPI) ListKeysPagesWithContext(arg0 aws.Context, arg1 *kms.ListKeysInput, arg2 func(*kms.ListKeysOutput, bool) bool, arg3 ...request.Option) error {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1, arg2}
 	for _, a := range arg3 {
@@ -1970,7 +1971,7 @@ func (mr *MockKMSAPIMockRecorder) ListKeysRequest(arg0 any) *gomock.Call {
 }
 
 // ListKeysWithContext mocks base method.
-func (m *MockKMSAPI) ListKeysWithContext(arg0 context.Context, arg1 *kms.ListKeysInput, arg2 ...request.Option) (*kms.ListKeysOutput, error) {
+func (m *MockKMSAPI) ListKeysWithContext(arg0 aws.Context, arg1 *kms.ListKeysInput, arg2 ...request.Option) (*kms.ListKeysOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2019,7 +2020,7 @@ func (mr *MockKMSAPIMockRecorder) ListResourceTagsPages(arg0, arg1 any) *gomock.
 }
 
 // ListResourceTagsPagesWithContext mocks base method.
-func (m *MockKMSAPI) ListResourceTagsPagesWithContext(arg0 context.Context, arg1 *kms.ListResourceTagsInput, arg2 func(*kms.ListResourceTagsOutput, bool) bool, arg3 ...request.Option) error {
+func (m *MockKMSAPI) ListResourceTagsPagesWithContext(arg0 aws.Context, arg1 *kms.ListResourceTagsInput, arg2 func(*kms.ListResourceTagsOutput, bool) bool, arg3 ...request.Option) error {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1, arg2}
 	for _, a := range arg3 {
@@ -2053,7 +2054,7 @@ func (mr *MockKMSAPIMockRecorder) ListResourceTagsRequest(arg0 any) *gomock.Call
 }
 
 // ListResourceTagsWithContext mocks base method.
-func (m *MockKMSAPI) ListResourceTagsWithContext(arg0 context.Context, arg1 *kms.ListResourceTagsInput, arg2 ...request.Option) (*kms.ListResourceTagsOutput, error) {
+func (m *MockKMSAPI) ListResourceTagsWithContext(arg0 aws.Context, arg1 *kms.ListResourceTagsInput, arg2 ...request.Option) (*kms.ListResourceTagsOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2102,7 +2103,7 @@ func (mr *MockKMSAPIMockRecorder) ListRetirableGrantsPages(arg0, arg1 any) *gomo
 }
 
 // ListRetirableGrantsPagesWithContext mocks base method.
-func (m *MockKMSAPI) ListRetirableGrantsPagesWithContext(arg0 context.Context, arg1 *kms.ListRetirableGrantsInput, arg2 func(*kms.ListGrantsResponse, bool) bool, arg3 ...request.Option) error {
+func (m *MockKMSAPI) ListRetirableGrantsPagesWithContext(arg0 aws.Context, arg1 *kms.ListRetirableGrantsInput, arg2 func(*kms.ListGrantsResponse, bool) bool, arg3 ...request.Option) error {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1, arg2}
 	for _, a := range arg3 {
@@ -2136,7 +2137,7 @@ func (mr *MockKMSAPIMockRecorder) ListRetirableGrantsRequest(arg0 any) *gomock.C
 }
 
 // ListRetirableGrantsWithContext mocks base method.
-func (m *MockKMSAPI) ListRetirableGrantsWithContext(arg0 context.Context, arg1 *kms.ListRetirableGrantsInput, arg2 ...request.Option) (*kms.ListGrantsResponse, error) {
+func (m *MockKMSAPI) ListRetirableGrantsWithContext(arg0 aws.Context, arg1 *kms.ListRetirableGrantsInput, arg2 ...request.Option) (*kms.ListGrantsResponse, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2186,7 +2187,7 @@ func (mr *MockKMSAPIMockRecorder) PutKeyPolicyRequest(arg0 any) *gomock.Call {
 }
 
 // PutKeyPolicyWithContext mocks base method.
-func (m *MockKMSAPI) PutKeyPolicyWithContext(arg0 context.Context, arg1 *kms.PutKeyPolicyInput, arg2 ...request.Option) (*kms.PutKeyPolicyOutput, error) {
+func (m *MockKMSAPI) PutKeyPolicyWithContext(arg0 aws.Context, arg1 *kms.PutKeyPolicyInput, arg2 ...request.Option) (*kms.PutKeyPolicyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2236,7 +2237,7 @@ func (mr *MockKMSAPIMockRecorder) ReEncryptRequest(arg0 any) *gomock.Call {
 }
 
 // ReEncryptWithContext mocks base method.
-func (m *MockKMSAPI) ReEncryptWithContext(arg0 context.Context, arg1 *kms.ReEncryptInput, arg2 ...request.Option) (*kms.ReEncryptOutput, error) {
+func (m *MockKMSAPI) ReEncryptWithContext(arg0 aws.Context, arg1 *kms.ReEncryptInput, arg2 ...request.Option) (*kms.ReEncryptOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2286,7 +2287,7 @@ func (mr *MockKMSAPIMockRecorder) ReplicateKeyRequest(arg0 any) *gomock.Call {
 }
 
 // ReplicateKeyWithContext mocks base method.
-func (m *MockKMSAPI) ReplicateKeyWithContext(arg0 context.Context, arg1 *kms.ReplicateKeyInput, arg2 ...request.Option) (*kms.ReplicateKeyOutput, error) {
+func (m *MockKMSAPI) ReplicateKeyWithContext(arg0 aws.Context, arg1 *kms.ReplicateKeyInput, arg2 ...request.Option) (*kms.ReplicateKeyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2336,7 +2337,7 @@ func (mr *MockKMSAPIMockRecorder) RetireGrantRequest(arg0 any) *gomock.Call {
 }
 
 // RetireGrantWithContext mocks base method.
-func (m *MockKMSAPI) RetireGrantWithContext(arg0 context.Context, arg1 *kms.RetireGrantInput, arg2 ...request.Option) (*kms.RetireGrantOutput, error) {
+func (m *MockKMSAPI) RetireGrantWithContext(arg0 aws.Context, arg1 *kms.RetireGrantInput, arg2 ...request.Option) (*kms.RetireGrantOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2386,7 +2387,7 @@ func (mr *MockKMSAPIMockRecorder) RevokeGrantRequest(arg0 any) *gomock.Call {
 }
 
 // RevokeGrantWithContext mocks base method.
-func (m *MockKMSAPI) RevokeGrantWithContext(arg0 context.Context, arg1 *kms.RevokeGrantInput, arg2 ...request.Option) (*kms.RevokeGrantOutput, error) {
+func (m *MockKMSAPI) RevokeGrantWithContext(arg0 aws.Context, arg1 *kms.RevokeGrantInput, arg2 ...request.Option) (*kms.RevokeGrantOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2436,7 +2437,7 @@ func (mr *MockKMSAPIMockRecorder) RotateKeyOnDemandRequest(arg0 any) *gomock.Cal
 }
 
 // RotateKeyOnDemandWithContext mocks base method.
-func (m *MockKMSAPI) RotateKeyOnDemandWithContext(arg0 context.Context, arg1 *kms.RotateKeyOnDemandInput, arg2 ...request.Option) (*kms.RotateKeyOnDemandOutput, error) {
+func (m *MockKMSAPI) RotateKeyOnDemandWithContext(arg0 aws.Context, arg1 *kms.RotateKeyOnDemandInput, arg2 ...request.Option) (*kms.RotateKeyOnDemandOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2486,7 +2487,7 @@ func (mr *MockKMSAPIMockRecorder) ScheduleKeyDeletionRequest(arg0 any) *gomock.C
 }
 
 // ScheduleKeyDeletionWithContext mocks base method.
-func (m *MockKMSAPI) ScheduleKeyDeletionWithContext(arg0 context.Context, arg1 *kms.ScheduleKeyDeletionInput, arg2 ...request.Option) (*kms.ScheduleKeyDeletionOutput, error) {
+func (m *MockKMSAPI) ScheduleKeyDeletionWithContext(arg0 aws.Context, arg1 *kms.ScheduleKeyDeletionInput, arg2 ...request.Option) (*kms.ScheduleKeyDeletionOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2536,7 +2537,7 @@ func (mr *MockKMSAPIMockRecorder) SignRequest(arg0 any) *gomock.Call {
 }
 
 // SignWithContext mocks base method.
-func (m *MockKMSAPI) SignWithContext(arg0 context.Context, arg1 *kms.SignInput, arg2 ...request.Option) (*kms.SignOutput, error) {
+func (m *MockKMSAPI) SignWithContext(arg0 aws.Context, arg1 *kms.SignInput, arg2 ...request.Option) (*kms.SignOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2586,7 +2587,7 @@ func (mr *MockKMSAPIMockRecorder) TagResourceRequest(arg0 any) *gomock.Call {
 }
 
 // TagResourceWithContext mocks base method.
-func (m *MockKMSAPI) TagResourceWithContext(arg0 context.Context, arg1 *kms.TagResourceInput, arg2 ...request.Option) (*kms.TagResourceOutput, error) {
+func (m *MockKMSAPI) TagResourceWithContext(arg0 aws.Context, arg1 *kms.TagResourceInput, arg2 ...request.Option) (*kms.TagResourceOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2636,7 +2637,7 @@ func (mr *MockKMSAPIMockRecorder) UntagResourceRequest(arg0 any) *gomock.Call {
 }
 
 // UntagResourceWithContext mocks base method.
-func (m *MockKMSAPI) UntagResourceWithContext(arg0 context.Context, arg1 *kms.UntagResourceInput, arg2 ...request.Option) (*kms.UntagResourceOutput, error) {
+func (m *MockKMSAPI) UntagResourceWithContext(arg0 aws.Context, arg1 *kms.UntagResourceInput, arg2 ...request.Option) (*kms.UntagResourceOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2686,7 +2687,7 @@ func (mr *MockKMSAPIMockRecorder) UpdateAliasRequest(arg0 any) *gomock.Call {
 }
 
 // UpdateAliasWithContext mocks base method.
-func (m *MockKMSAPI) UpdateAliasWithContext(arg0 context.Context, arg1 *kms.UpdateAliasInput, arg2 ...request.Option) (*kms.UpdateAliasOutput, error) {
+func (m *MockKMSAPI) UpdateAliasWithContext(arg0 aws.Context, arg1 *kms.UpdateAliasInput, arg2 ...request.Option) (*kms.UpdateAliasOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2736,7 +2737,7 @@ func (mr *MockKMSAPIMockRecorder) UpdateCustomKeyStoreRequest(arg0 any) *gomock.
 }
 
 // UpdateCustomKeyStoreWithContext mocks base method.
-func (m *MockKMSAPI) UpdateCustomKeyStoreWithContext(arg0 context.Context, arg1 *kms.UpdateCustomKeyStoreInput, arg2 ...request.Option) (*kms.UpdateCustomKeyStoreOutput, error) {
+func (m *MockKMSAPI) UpdateCustomKeyStoreWithContext(arg0 aws.Context, arg1 *kms.UpdateCustomKeyStoreInput, arg2 ...request.Option) (*kms.UpdateCustomKeyStoreOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2786,7 +2787,7 @@ func (mr *MockKMSAPIMockRecorder) UpdateKeyDescriptionRequest(arg0 any) *gomock.
 }
 
 // UpdateKeyDescriptionWithContext mocks base method.
-func (m *MockKMSAPI) UpdateKeyDescriptionWithContext(arg0 context.Context, arg1 *kms.UpdateKeyDescriptionInput, arg2 ...request.Option) (*kms.UpdateKeyDescriptionOutput, error) {
+func (m *MockKMSAPI) UpdateKeyDescriptionWithContext(arg0 aws.Context, arg1 *kms.UpdateKeyDescriptionInput, arg2 ...request.Option) (*kms.UpdateKeyDescriptionOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2836,7 +2837,7 @@ func (mr *MockKMSAPIMockRecorder) UpdatePrimaryRegionRequest(arg0 any) *gomock.C
 }
 
 // UpdatePrimaryRegionWithContext mocks base method.
-func (m *MockKMSAPI) UpdatePrimaryRegionWithContext(arg0 context.Context, arg1 *kms.UpdatePrimaryRegionInput, arg2 ...request.Option) (*kms.UpdatePrimaryRegionOutput, error) {
+func (m *MockKMSAPI) UpdatePrimaryRegionWithContext(arg0 aws.Context, arg1 *kms.UpdatePrimaryRegionInput, arg2 ...request.Option) (*kms.UpdatePrimaryRegionOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2901,7 +2902,7 @@ func (mr *MockKMSAPIMockRecorder) VerifyMacRequest(arg0 any) *gomock.Call {
 }
 
 // VerifyMacWithContext mocks base method.
-func (m *MockKMSAPI) VerifyMacWithContext(arg0 context.Context, arg1 *kms.VerifyMacInput, arg2 ...request.Option) (*kms.VerifyMacOutput, error) {
+func (m *MockKMSAPI) VerifyMacWithContext(arg0 aws.Context, arg1 *kms.VerifyMacInput, arg2 ...request.Option) (*kms.VerifyMacOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
@@ -2936,7 +2937,7 @@ func (mr *MockKMSAPIMockRecorder) VerifyRequest(arg0 any) *gomock.Call {
 }
 
 // VerifyWithContext mocks base method.
-func (m *MockKMSAPI) VerifyWithContext(arg0 context.Context, arg1 *kms.VerifyInput, arg2 ...request.Option) (*kms.VerifyOutput, error) {
+func (m *MockKMSAPI) VerifyWithContext(arg0 aws.Context, arg1 *kms.VerifyInput, arg2 ...request.Option) (*kms.VerifyOutput, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{arg0, arg1}
 	for _, a := range arg2 {
