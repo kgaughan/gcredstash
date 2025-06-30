@@ -53,7 +53,7 @@ func TestDeleteCommand(t *testing.T) {
 	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
 
 	args := []string{name}
-	if err := deleteImpl(nil, args, driver); err != nil {
+	if err := deleteImpl(nil, args, driver, nil); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 }

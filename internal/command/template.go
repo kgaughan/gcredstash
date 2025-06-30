@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -15,7 +16,7 @@ import (
 
 var inplace bool
 
-func templateImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
+func templateImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
 	tmplFile := args[0]
 
 	var content string
@@ -45,7 +46,7 @@ func templateImpl(cmd *cobra.Command, args []string, driver *internal.Driver) er
 		}
 	}
 
-	cmd.Print(buf.String())
+	fmt.Fprint(out, buf.String())
 	return nil
 }
 

@@ -2,12 +2,13 @@ package command
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/spf13/cobra"
 )
 
-func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
+func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
 	context, err := internal.ParseContext(args[0:])
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -31,7 +32,7 @@ func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver) erro
 		return fmt.Errorf("can't marshal credentials: %w", err)
 	}
 
-	cmd.Print(string(jsonString))
+	fmt.Fprint(out, string(jsonString))
 	return nil
 }
 
