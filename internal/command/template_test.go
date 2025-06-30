@@ -64,7 +64,7 @@ CMD_OUT={{sh "echo 100"}}`
 		cmd, out := testutils.NewDummyCommand()
 
 		args := []string{tmpfile.Name()}
-		if err := templateImpl(cmd, args, driver); err != nil {
+		if err := templateImpl(cmd, args, driver, out); err != nil {
 			t.Errorf("\nexpected: %v\ngot: %q\n", nil, err)
 		}
 

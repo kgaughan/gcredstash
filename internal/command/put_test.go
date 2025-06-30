@@ -68,12 +68,12 @@ func TestPutCommand(t *testing.T) {
 	}).Return(nil, nil)
 
 	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
-	cmd, _ := testutils.NewDummyCommand()
+	cmd, out := testutils.NewDummyCommand()
 
 	autoVersion = true
 
 	args := []string{name, secret}
-	if err := putImpl(cmd, args, driver); err != nil {
+	if err := putImpl(cmd, args, driver, out); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %q\n", nil, err)
 	}
 }

@@ -43,7 +43,7 @@ func TestListCommand(t *testing.T) {
 	cmd, out := testutils.NewDummyCommand()
 
 	args := []string{}
-	if err := listImpl(cmd, args, driver); err != nil {
+	if err := listImpl(cmd, args, driver, out); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 

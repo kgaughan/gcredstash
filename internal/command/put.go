@@ -2,6 +2,7 @@ package command
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/spf13/cobra"
@@ -12,7 +13,7 @@ var (
 	autoVersion bool
 )
 
-func putImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
+func putImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
 	context, err := internal.ParseContext(args[2:])
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -38,7 +39,7 @@ func putImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 		return fmt.Errorf("can't store secret: %w", err)
 	}
 
-	cmd.Printf("%v has been stored\n", credential)
+	fmt.Fprintf(out, "%v has been stored\n", credential)
 	return nil
 }
 
