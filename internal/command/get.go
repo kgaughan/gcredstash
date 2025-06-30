@@ -2,6 +2,7 @@ package command
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/kgaughan/gcredstash/internal"
@@ -14,7 +15,7 @@ var (
 	noErr bool
 )
 
-func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
+func getImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
 	context, err := internal.ParseContext(args[1:])
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -41,7 +42,7 @@ func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 		if err != nil {
 			return fmt.Errorf("can't marshal credential: %w", err)
 		}
-		cmd.Print(string(result))
+		fmt.Fprint(out, string(result))
 	} else {
 		value, err := driver.GetSecret(credential, version, table, context)
 		if err != nil {
@@ -51,9 +52,9 @@ func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 			return err //nolint:wrapcheck
 		}
 		if noNL {
-			cmd.Print(value)
+			fmt.Fprint(out, value)
 		} else {
-			cmd.Println(value)
+			fmt.Fprintln(out, value)
 		}
 	}
 	return nil
