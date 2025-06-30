@@ -1,11 +1,11 @@
 package command
 
 import (
-	"github.com/kgaughan/gcredstash/internal"
-	"github.com/spf13/cobra"
-
 	"io"
 	"os"
+
+	"github.com/kgaughan/gcredstash/internal"
+	"github.com/spf13/cobra"
 )
 
 func wrapWithDriver(fn func(*cobra.Command, []string, *internal.Driver, io.Writer) error) func(*cobra.Command, []string) error {

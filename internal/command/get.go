@@ -15,7 +15,7 @@ var (
 	noErr bool
 )
 
-func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+func getImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
 	context, err := internal.ParseContext(args[1:])
 	if err != nil {
 		return err //nolint:wrapcheck

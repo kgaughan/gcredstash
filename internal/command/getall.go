@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+func getAllImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
 	context, err := internal.ParseContext(args[0:])
 	if err != nil {
 		return err //nolint:wrapcheck

@@ -13,7 +13,7 @@ var (
 	autoVersion bool
 )
 
-func putImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+func putImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
 	context, err := internal.ParseContext(args[2:])
 	if err != nil {
 		return err //nolint:wrapcheck
