@@ -56,7 +56,7 @@ func TestGetCommand(t *testing.T) {
 	cmd, out := testutils.NewDummyCommand()
 
 	args := []string{name}
-	if err := getImpl(cmd, args, driver); err != nil {
+	if err := getImpl(cmd, args, driver, out); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %q\n", nil, err)
 	}
 
@@ -118,7 +118,7 @@ func TestGetCommandWithWildcard(t *testing.T) {
 	cmd, out := testutils.NewDummyCommand()
 
 	args := []string{"test.*"}
-	if err := getImpl(cmd, args, driver); err != nil {
+	if err := getImpl(cmd, args, driver, out); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %q\n", nil, err)
 	}
 
@@ -158,10 +158,10 @@ func TestGetCommandWithoutItem(t *testing.T) {
 	}, nil)
 
 	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
-	cmd, _ := testutils.NewDummyCommand()
+	cmd, out := testutils.NewDummyCommand()
 
 	args := []string{name}
-	err := getImpl(cmd, args, driver)
+	err := getImpl(cmd, args, driver, out)
 	if err == nil {
 		t.Errorf("expected error does not happen")
 	}

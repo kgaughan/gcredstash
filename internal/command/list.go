@@ -2,6 +2,7 @@ package command
 
 import (
 	"fmt"
+	"io"
 	"sort"
 	"strconv"
 
@@ -9,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func listImpl(cmd *cobra.Command, _ []string, driver *internal.Driver) error {
+func listImpl(cmd *cobra.Command, _ []string, driver *internal.Driver, out io.Writer) error {
 	items, err := driver.ListSecrets(table)
 	if err != nil {
 		return err //nolint:wrapcheck
@@ -27,7 +28,7 @@ func listImpl(cmd *cobra.Command, _ []string, driver *internal.Driver) error {
 	}
 	sort.Strings(lines)
 	for _, line := range lines {
-		cmd.Println(line)
+		fmt.Fprintln(out, line)
 	}
 	return nil
 }
