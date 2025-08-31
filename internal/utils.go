@@ -63,11 +63,11 @@ func JSONMarshal(t interface{}) ([]byte, error) {
 	return buffer.Bytes(), err
 }
 
-func MaxKeyLen(items map[*string]*string) int {
+func MaxKeyLen(items map[string]string) int {
 	maxlen := 0
 
 	for key := range items {
-		keyLen := len(*key)
+		keyLen := len(key)
 
 		if keyLen > maxlen {
 			maxlen = keyLen

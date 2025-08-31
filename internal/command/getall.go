@@ -8,23 +8,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getAllImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
-	context, err := internal.ParseContext(args[0:])
+func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+	ctx := cmd.Context()
+
+	encCtx, err := internal.ParseContext(args[0:])
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
 
 	creds := map[string]string{}
-	items, err := driver.ListSecrets(table)
+	items, err := driver.ListSecrets(ctx, table)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
 	for name := range items {
-		value, err := driver.GetSecret(*name, "", table, context)
+		value, err := driver.GetSecret(ctx, name, "", table, encCtx)
 		if err != nil {
 			continue
 		}
-		creds[*name] = value
+		creds[name] = value
 	}
 
 	jsonString, err := internal.JSONMarshal(creds)

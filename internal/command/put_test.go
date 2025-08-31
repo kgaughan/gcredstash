@@ -3,9 +3,10 @@ package command
 import (
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/kms"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	ddbtypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 	"github.com/kgaughan/gcredstash/internal/testutils"
@@ -13,11 +14,12 @@ import (
 )
 
 func TestPutCommand(t *testing.T) {
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mddb := mockaws.NewMockDynamoDBAPI(ctrl)
-	mkms := mockaws.NewMockKMSAPI(ctrl)
+	mddb := mockaws.NewMockDynamoDB(ctrl)
+	mkms := mockaws.NewMockKms(ctrl)
 
 	table := "credential-store"
 	secret := "100"
@@ -34,41 +36,50 @@ func TestPutCommand(t *testing.T) {
 		"version":  version,
 	}
 
-	mddb.EXPECT().Query(&dynamodb.QueryInput{
-		TableName:                aws.String(table),
-		Limit:                    aws.Int64(1),
-		ConsistentRead:           aws.Bool(true),
-		ScanIndexForward:         aws.Bool(false),
-		KeyConditionExpression:   aws.String("#name = :name"),
-		ExpressionAttributeNames: map[string]*string{"#name": aws.String("name")},
-		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":name": {S: aws.String(name)},
+	mddb.EXPECT().Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName:                aws.String(table),
+			Limit:                    aws.Int32(1),
+			ConsistentRead:           aws.Bool(true),
+			ScanIndexForward:         aws.Bool(false),
+			KeyConditionExpression:   aws.String("#name = :name"),
+			ExpressionAttributeNames: map[string]string{"#name": "name"},
+			ExpressionAttributeValues: map[string]ddbtypes.AttributeValue{
+				":name": &ddbtypes.AttributeValueMemberS{Value: name},
+			},
+			ProjectionExpression: aws.String("version"),
 		},
-		ProjectionExpression: aws.String("version"),
-	}).Return(&dynamodb.QueryOutput{
-		Count: aws.Int64(1),
-		Items: []map[string]*dynamodb.AttributeValue{testutils.MapToItem(item)},
+	).Return(&dynamodb.QueryOutput{
+		Count: 1,
+		Items: []map[string]ddbtypes.AttributeValue{testutils.MapToItem(item)},
 	}, nil)
 
 	item["version"] = newVersion
 
-	mkms.EXPECT().GenerateDataKey(&kms.GenerateDataKeyInput{
-		KeyId:         aws.String(kmsKey),
-		NumberOfBytes: aws.Int64(64),
-	}).Return(&kms.GenerateDataKeyOutput{
+	mkms.EXPECT().GenerateDataKey(
+		ctx,
+		&kms.GenerateDataKeyInput{
+			KeyId:         aws.String(kmsKey),
+			NumberOfBytes: aws.Int32(64),
+		},
+	).Return(&kms.GenerateDataKeyOutput{
 		CiphertextBlob: []byte{10, 32, 216, 214, 251, 17, 227, 158, 139, 17, 218, 11, 223, 237, 41, 248, 250, 211, 10, 87, 168, 170, 47, 236, 186, 214, 195, 124, 150, 77, 137, 68, 169, 166, 18, 203, 1, 1, 1, 1, 0, 120, 216, 214, 251, 17, 227, 158, 139, 17, 218, 11, 223, 237, 41, 248, 250, 211, 10, 87, 168, 170, 47, 236, 186, 214, 195, 124, 150, 77, 137, 68, 169, 166, 0, 0, 0, 162, 48, 129, 159, 6, 9, 42, 134, 72, 134, 247, 13, 1, 7, 6, 160, 129, 145, 48, 129, 142, 2, 1, 0, 48, 129, 136, 6, 9, 42, 134, 72, 134, 247, 13, 1, 7, 1, 48, 30, 6, 9, 96, 134, 72, 1, 101, 3, 4, 1, 46, 48, 17, 4, 12, 122, 174, 225, 231, 6, 109, 146, 229, 204, 240, 250, 113, 2, 1, 16, 128, 91, 172, 175, 24, 38, 192, 38, 239, 68, 230, 202, 77, 214, 199, 219, 43, 230, 107, 153, 13, 174, 12, 119, 108, 93, 224, 134, 107, 187, 166, 58, 186, 102, 19, 218, 163, 200, 25, 36, 1, 182, 97, 220, 48, 78, 247, 91, 142, 191, 240, 114, 79, 190, 187, 69, 188, 186, 214, 143, 234, 189, 59, 61, 239, 12, 243, 234, 20, 27, 5, 177, 138, 223, 87, 233, 76, 241, 124, 228, 122, 67, 135, 168, 91, 200, 54, 133, 21, 39, 112, 232, 5},
 		Plaintext:      []byte{145, 99, 240, 141, 84, 162, 135, 185, 20, 181, 81, 249, 15, 215, 56, 150, 222, 94, 65, 27, 27, 196, 165, 220, 49, 90, 199, 244, 14, 165, 188, 116, 135, 60, 104, 13, 136, 145, 109, 232, 87, 153, 237, 234, 174, 87, 7, 124, 131, 121, 67, 68, 239, 184, 174, 16, 197, 129, 97, 139, 146, 144, 89, 5},
 	}, nil)
 
-	mddb.EXPECT().PutItem(&dynamodb.PutItemInput{
-		TableName:                aws.String(table),
-		Item:                     testutils.MapToItem(item),
-		ConditionExpression:      aws.String("attribute_not_exists(#name)"),
-		ExpressionAttributeNames: map[string]*string{"#name": aws.String("name")},
-	}).Return(nil, nil)
+	mddb.EXPECT().PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName:                aws.String(table),
+			Item:                     testutils.MapToItem(item),
+			ConditionExpression:      aws.String("attribute_not_exists(#name)"),
+			ExpressionAttributeNames: map[string]string{"#name": "name"},
+		},
+	).Return(nil, nil)
 
 	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
-	cmd, out := testutils.NewDummyCommand()
+	cmd, out := testutils.NewDummyCommand(ctx)
 
 	autoVersion = true
 

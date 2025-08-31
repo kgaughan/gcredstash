@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func setupImpl(_ *cobra.Command, _ []string, driver *internal.Driver, _ io.Writer) error {
-	return driver.CreateDdbTable(table) //nolint:wrapcheck
+func setupImpl(cmd *cobra.Command, _ []string, driver *internal.Driver, _ io.Writer) error {
+	return driver.CreateDdbTable(cmd.Context(), table) //nolint:wrapcheck
 }
 
 func init() {

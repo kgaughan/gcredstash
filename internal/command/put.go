@@ -13,8 +13,10 @@ var (
 	autoVersion bool
 )
 
-func putImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
-	context, err := internal.ParseContext(args[2:])
+func putImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+	ctx := cmd.Context()
+
+	encCtx, err := internal.ParseContext(args[2:])
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -25,7 +27,7 @@ func putImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Wr
 	}
 
 	if autoVersion {
-		latestVersion, err := driver.GetHighestVersion(credential, table)
+		latestVersion, err := driver.GetHighestVersion(ctx, credential, table)
 		if err != nil {
 			return fmt.Errorf("can't fetch highest version: %w", err)
 		}
@@ -35,7 +37,7 @@ func putImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Wr
 		version = internal.VersionNumToStr(1)
 	}
 
-	if err := driver.PutSecret(credential, value, version, key, table, context); err != nil {
+	if err := driver.PutSecret(ctx, credential, value, version, key, table, encCtx); err != nil {
 		return fmt.Errorf("can't store secret: %w", err)
 	}
 

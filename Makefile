@@ -57,6 +57,6 @@ tests:
 
 .PHONY: mocks
 mocks:
-	go install go.uber.org/mock/mockgen@v0.5.2
-	mockgen -package mockaws -destination internal/mockaws/dynamodbmock.go github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface DynamoDBAPI
-	mockgen -package mockaws -destination internal/mockaws/kmsmock.go github.com/aws/aws-sdk-go/service/kms/kmsiface KMSAPI
+	go install go.uber.org/mock/mockgen@v0.6.0
+	mockgen -package mockaws -destination internal/mockaws/dynamodbmock.go github.com/kgaughan/gcredstash/internal DynamoDB
+	mockgen -package mockaws -destination internal/mockaws/kmsmock.go github.com/kgaughan/gcredstash/internal Kms
