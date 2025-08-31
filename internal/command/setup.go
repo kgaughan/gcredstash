@@ -1,13 +1,11 @@
 package command
 
 import (
-	"io"
-
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/spf13/cobra"
 )
 
-func setupImpl(cmd *cobra.Command, _ []string, driver *internal.Driver, _ io.Writer) error {
+func setupImpl(cmd *cobra.Command, _ []string, driver *internal.Driver) error {
 	return driver.CreateDdbTable(cmd.Context(), table) //nolint:wrapcheck
 }
 

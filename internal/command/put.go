@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/spf13/cobra"
@@ -13,8 +12,9 @@ var (
 	autoVersion bool
 )
 
-func putImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+func putImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	ctx := cmd.Context()
+	out := cmd.OutOrStdout()
 
 	encCtx, err := internal.ParseContext(args[2:])
 	if err != nil {

@@ -2,14 +2,14 @@ package command
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/spf13/cobra"
 )
 
-func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+func getAllImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	ctx := cmd.Context()
+	out := cmd.OutOrStdout()
 
 	encCtx, err := internal.ParseContext(args[0:])
 	if err != nil {
