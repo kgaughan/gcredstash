@@ -25,7 +25,7 @@ builds:
     tags:
       - netgo
 
-brews:
+homebrew_casks:
   - name: gcredstash
     ids:
       - archives
@@ -40,11 +40,16 @@ brews:
     description: "Manages credentials using AWS Key Management Service (KMS) and DynamoDB"
     license: "ASL 2.0"
     commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
-    install: |
-      bin.install "gcredstash"
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/gcredstash"]
+          end
 
 archives:
-  - format: tar.gz
+  - formats:
+      - tar.gz
     id: archives
     name_template: >-
       {{ .ProjectName }}_
@@ -57,7 +62,8 @@ archives:
     # use zip for windows archives
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
     files:
       - LICENSE
       - README.md
@@ -88,10 +94,10 @@ dockers:
 
 checksum:
   algorithm: sha256
-  name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+  name_template: "{{ .ProjectName }}_{{ .Version }}_SHA256SUMS"
 
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 
 changelog:
   sort: asc
@@ -99,6 +105,5 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
-
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
