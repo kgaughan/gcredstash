@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	ddbtypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 	"github.com/kgaughan/gcredstash/internal/testutils"
@@ -13,11 +14,12 @@ import (
 )
 
 func TestListCommand(t *testing.T) {
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mddb := mockaws.NewMockDynamoDBAPI(ctrl)
-	mkms := mockaws.NewMockKMSAPI(ctrl)
+	mddb := mockaws.NewMockDynamoDB(ctrl)
+	mkms := mockaws.NewMockKms(ctrl)
 
 	table := "credential-store"
 	name := "test.key"
@@ -31,16 +33,19 @@ func TestListCommand(t *testing.T) {
 		"version":  version,
 	}
 
-	mddb.EXPECT().Scan(&dynamodb.ScanInput{
-		TableName:                aws.String(table),
-		ProjectionExpression:     aws.String("#name,version"),
-		ExpressionAttributeNames: map[string]*string{"#name": aws.String("name")},
-	}).Return(&dynamodb.ScanOutput{
-		Items: []map[string]*dynamodb.AttributeValue{testutils.MapToItem(item)},
+	mddb.EXPECT().Scan(
+		ctx,
+		&dynamodb.ScanInput{
+			TableName:                aws.String(table),
+			ProjectionExpression:     aws.String("#name,version"),
+			ExpressionAttributeNames: map[string]string{"#name": "name"},
+		},
+	).Return(&dynamodb.ScanOutput{
+		Items: []map[string]ddbtypes.AttributeValue{testutils.MapToItem(item)},
 	}, nil)
 
 	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
-	cmd, out := testutils.NewDummyCommand()
+	cmd, out := testutils.NewDummyCommand(ctx)
 
 	args := []string{}
 	if err := listImpl(cmd, args, driver, out); err != nil {

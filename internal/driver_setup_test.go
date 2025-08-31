@@ -3,72 +3,81 @@ package internal
 import (
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	ddbtypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 	"go.uber.org/mock/gomock"
 )
 
 func TestCreateTable(t *testing.T) {
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mddb := mockaws.NewMockDynamoDBAPI(ctrl)
-	mkms := mockaws.NewMockKMSAPI(ctrl)
+	mddb := mockaws.NewMockDynamoDB(ctrl)
+	mkms := mockaws.NewMockKms(ctrl)
 	table := "credential-store"
 
-	mddb.EXPECT().CreateTable(&dynamodb.CreateTableInput{
-		TableName: aws.String(table),
-		KeySchema: []*dynamodb.KeySchemaElement{
-			{
-				AttributeName: aws.String("name"),
-				KeyType:       aws.String("HASH"),
+	mddb.EXPECT().CreateTable(
+		ctx,
+		&dynamodb.CreateTableInput{
+			TableName: aws.String(table),
+			KeySchema: []ddbtypes.KeySchemaElement{
+				{
+					AttributeName: aws.String("name"),
+					KeyType:       ddbtypes.KeyTypeHash,
+				},
+				{
+					AttributeName: aws.String("version"),
+					KeyType:       ddbtypes.KeyTypeRange,
+				},
 			},
-			{
-				AttributeName: aws.String("version"),
-				KeyType:       aws.String("RANGE"),
+			AttributeDefinitions: []ddbtypes.AttributeDefinition{
+				{
+					AttributeName: aws.String("name"),
+					AttributeType: ddbtypes.ScalarAttributeTypeS,
+				},
+				{
+					AttributeName: aws.String("version"),
+					AttributeType: ddbtypes.ScalarAttributeTypeS,
+				},
+			},
+			ProvisionedThroughput: &ddbtypes.ProvisionedThroughput{
+				ReadCapacityUnits:  aws.Int64(1),
+				WriteCapacityUnits: aws.Int64(1),
 			},
 		},
-		AttributeDefinitions: []*dynamodb.AttributeDefinition{
-			{
-				AttributeName: aws.String("name"),
-				AttributeType: aws.String("S"),
-			},
-			{
-				AttributeName: aws.String("version"),
-				AttributeType: aws.String("S"),
-			},
-		},
-		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
-			ReadCapacityUnits:  aws.Int64(1),
-			WriteCapacityUnits: aws.Int64(1),
-		},
-	}).Return(nil, nil)
+	).Return(nil, nil)
 
 	driver := &Driver{
 		Ddb: mddb,
 		Kms: mkms,
 	}
 
-	err := driver.CreateTable(table)
+	err := driver.CreateTable(ctx, table)
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 }
 
 func TestWaitUntilTableExists(t *testing.T) {
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mddb := mockaws.NewMockDynamoDBAPI(ctrl)
-	mkms := mockaws.NewMockKMSAPI(ctrl)
+	mddb := mockaws.NewMockDynamoDB(ctrl)
+	mkms := mockaws.NewMockKms(ctrl)
 	table := "credential-store"
 
-	mddb.EXPECT().DescribeTable(&dynamodb.DescribeTableInput{
-		TableName: aws.String(table),
-	}).Return(&dynamodb.DescribeTableOutput{
-		Table: &dynamodb.TableDescription{
-			TableStatus: aws.String("ACTIVE"),
+	mddb.EXPECT().DescribeTable(
+		ctx,
+		&dynamodb.DescribeTableInput{
+			TableName: aws.String(table),
+		},
+	).Return(&dynamodb.DescribeTableOutput{
+		Table: &ddbtypes.TableDescription{
+			TableStatus: ddbtypes.TableStatusActive,
 		},
 	}, nil)
 
@@ -77,18 +86,19 @@ func TestWaitUntilTableExists(t *testing.T) {
 		Kms: mkms,
 	}
 
-	err := driver.WaitUntilTableExists(table)
+	err := driver.WaitUntilTableExists(ctx, table)
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 }
 
 func TestIsTableExists(t *testing.T) {
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mddb := mockaws.NewMockDynamoDBAPI(ctrl)
-	mkms := mockaws.NewMockKMSAPI(ctrl)
+	mddb := mockaws.NewMockDynamoDB(ctrl)
+	mkms := mockaws.NewMockKms(ctrl)
 	table := "credential-store"
 
 	driver := &Driver{
@@ -96,12 +106,13 @@ func TestIsTableExists(t *testing.T) {
 		Kms: mkms,
 	}
 
-	mddb.EXPECT().ListTablesPages(
+	mddb.EXPECT().ListTables(
+		ctx,
 		&dynamodb.ListTablesInput{},
 		gomock.Any(),
-	).Return(nil)
+	).Return(&dynamodb.ListTablesOutput{}, nil)
 
-	isExist, err := driver.IsTableExists(table)
+	isExist, err := driver.IsTableExists(ctx, table)
 
 	if isExist {
 		t.Errorf("\nexpected: %v\ngot: %v\n", false, isExist)
@@ -113,51 +124,59 @@ func TestIsTableExists(t *testing.T) {
 }
 
 func TestCreateDdbTable(t *testing.T) {
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mddb := mockaws.NewMockDynamoDBAPI(ctrl)
-	mkms := mockaws.NewMockKMSAPI(ctrl)
+	mddb := mockaws.NewMockDynamoDB(ctrl)
+	mkms := mockaws.NewMockKms(ctrl)
 	table := "credential-store"
 
-	mddb.EXPECT().ListTablesPages(
+	mddb.EXPECT().ListTables(
+		ctx,
 		&dynamodb.ListTablesInput{},
 		gomock.Any(),
-	).Return(nil)
+	).Return(&dynamodb.ListTablesOutput{}, nil)
 
-	mddb.EXPECT().CreateTable(&dynamodb.CreateTableInput{
-		TableName: aws.String(table),
-		KeySchema: []*dynamodb.KeySchemaElement{
-			{
-				AttributeName: aws.String("name"),
-				KeyType:       aws.String("HASH"),
+	mddb.EXPECT().CreateTable(
+		ctx,
+		&dynamodb.CreateTableInput{
+			TableName: aws.String(table),
+			KeySchema: []ddbtypes.KeySchemaElement{
+				{
+					AttributeName: aws.String("name"),
+					KeyType:       ddbtypes.KeyTypeHash,
+				},
+				{
+					AttributeName: aws.String("version"),
+					KeyType:       ddbtypes.KeyTypeRange,
+				},
 			},
-			{
-				AttributeName: aws.String("version"),
-				KeyType:       aws.String("RANGE"),
+			AttributeDefinitions: []ddbtypes.AttributeDefinition{
+				{
+					AttributeName: aws.String("name"),
+					AttributeType: ddbtypes.ScalarAttributeTypeS,
+				},
+				{
+					AttributeName: aws.String("version"),
+					AttributeType: ddbtypes.ScalarAttributeTypeS,
+				},
+			},
+			ProvisionedThroughput: &ddbtypes.ProvisionedThroughput{
+				ReadCapacityUnits:  aws.Int64(1),
+				WriteCapacityUnits: aws.Int64(1),
 			},
 		},
-		AttributeDefinitions: []*dynamodb.AttributeDefinition{
-			{
-				AttributeName: aws.String("name"),
-				AttributeType: aws.String("S"),
-			},
-			{
-				AttributeName: aws.String("version"),
-				AttributeType: aws.String("S"),
-			},
-		},
-		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
-			ReadCapacityUnits:  aws.Int64(1),
-			WriteCapacityUnits: aws.Int64(1),
-		},
-	}).Return(nil, nil)
+	).Return(nil, nil)
 
-	mddb.EXPECT().DescribeTable(&dynamodb.DescribeTableInput{
-		TableName: aws.String(table),
-	}).Return(&dynamodb.DescribeTableOutput{
-		Table: &dynamodb.TableDescription{
-			TableStatus: aws.String("ACTIVE"),
+	mddb.EXPECT().DescribeTable(
+		ctx,
+		&dynamodb.DescribeTableInput{
+			TableName: aws.String(table),
+		},
+	).Return(&dynamodb.DescribeTableOutput{
+		Table: &ddbtypes.TableDescription{
+			TableStatus: ddbtypes.TableStatusActive,
 		},
 	}, nil)
 
@@ -166,7 +185,7 @@ func TestCreateDdbTable(t *testing.T) {
 		Kms: mkms,
 	}
 
-	err := driver.CreateDdbTable(table)
+	err := driver.CreateDdbTable(ctx, table)
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}

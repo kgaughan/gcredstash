@@ -11,7 +11,9 @@ import (
 )
 
 func listImpl(cmd *cobra.Command, _ []string, driver *internal.Driver, out io.Writer) error {
-	items, err := driver.ListSecrets(table)
+	ctx := cmd.Context()
+
+	items, err := driver.ListSecrets(ctx, table)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -19,11 +21,11 @@ func listImpl(cmd *cobra.Command, _ []string, driver *internal.Driver, out io.Wr
 	maxKeyLen := internal.MaxKeyLen(items)
 	lines := make([]string, 0, len(items))
 	for name, version := range items {
-		versionNum, err := strconv.Atoi(*version)
+		versionNum, err := strconv.Atoi(version)
 		if err != nil {
-			cmd.PrintErrf("bad version for %q: %q\n", *name, *version)
+			cmd.PrintErrf("bad version for %q: %q\n", name, version)
 		} else {
-			lines = append(lines, fmt.Sprintf("%-*s -- version: %d", maxKeyLen, *name, versionNum))
+			lines = append(lines, fmt.Sprintf("%-*s -- version: %d", maxKeyLen, name, versionNum))
 		}
 	}
 	sort.Strings(lines)

@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func deleteImpl(_ *cobra.Command, args []string, driver *internal.Driver, _ io.Writer) error {
-	return driver.DeleteSecrets(args[0], version, table) //nolint:wrapcheck
+func deleteImpl(cmd *cobra.Command, args []string, driver *internal.Driver, _ io.Writer) error {
+	return driver.DeleteSecrets(cmd.Context(), args[0], version, table) //nolint:wrapcheck
 }
 
 func init() {

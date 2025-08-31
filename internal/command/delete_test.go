@@ -3,8 +3,9 @@ package command
 import (
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	ddbtypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 	"github.com/kgaughan/gcredstash/internal/testutils"
@@ -12,11 +13,12 @@ import (
 )
 
 func TestDeleteCommand(t *testing.T) {
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mddb := mockaws.NewMockDynamoDBAPI(ctrl)
-	mkms := mockaws.NewMockKMSAPI(ctrl)
+	mddb := mockaws.NewMockDynamoDB(ctrl)
+	mkms := mockaws.NewMockKms(ctrl)
 	table := "credential-store"
 	name := "test.key"
 	version := "0000000000000000002"
@@ -29,31 +31,38 @@ func TestDeleteCommand(t *testing.T) {
 		"version":  version,
 	}
 
-	mddb.EXPECT().Query(&dynamodb.QueryInput{
-		TableName:                aws.String(table),
-		ConsistentRead:           aws.Bool(true),
-		KeyConditionExpression:   aws.String("#name = :name"),
-		ExpressionAttributeNames: map[string]*string{"#name": aws.String("name")},
-		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":name": {S: aws.String(name)},
+	mddb.EXPECT().Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName:                aws.String(table),
+			ConsistentRead:           aws.Bool(true),
+			KeyConditionExpression:   aws.String("#name = :name"),
+			ExpressionAttributeNames: map[string]string{"#name": "name"},
+			ExpressionAttributeValues: map[string]ddbtypes.AttributeValue{
+				":name": &ddbtypes.AttributeValueMemberS{Value: name},
+			},
 		},
-	}).Return(&dynamodb.QueryOutput{
-		Count: aws.Int64(1),
-		Items: []map[string]*dynamodb.AttributeValue{testutils.MapToItem(item)},
+	).Return(&dynamodb.QueryOutput{
+		Count: 1,
+		Items: []map[string]ddbtypes.AttributeValue{testutils.MapToItem(item)},
 	}, nil)
 
-	mddb.EXPECT().DeleteItem(&dynamodb.DeleteItemInput{
-		TableName: aws.String(table),
-		Key: map[string]*dynamodb.AttributeValue{
-			"name":    {S: aws.String(name)},
-			"version": {S: aws.String(version)},
+	mddb.EXPECT().DeleteItem(
+		ctx,
+		&dynamodb.DeleteItemInput{
+			TableName: aws.String(table),
+			Key: map[string]ddbtypes.AttributeValue{
+				"name":    &ddbtypes.AttributeValueMemberS{Value: name},
+				"version": &ddbtypes.AttributeValueMemberS{Value: version},
+			},
 		},
-	}).Return(nil, nil)
+	).Return(nil, nil)
 
 	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
 
 	args := []string{name}
-	if err := deleteImpl(nil, args, driver, nil); err != nil {
+	cmd, out := testutils.NewDummyCommand(ctx)
+	if err := deleteImpl(cmd, args, driver, out); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
 }

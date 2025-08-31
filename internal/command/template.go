@@ -2,6 +2,7 @@ package command
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"html/template"
 	"io"
@@ -16,7 +17,9 @@ import (
 
 var inplace bool
 
-func templateImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+func templateImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+	ctx := cmd.Context()
+
 	tmplFile := args[0]
 
 	var content string
@@ -30,7 +33,7 @@ func templateImpl(_ *cobra.Command, args []string, driver *internal.Driver, out 
 		}
 	}
 
-	tmpl, err := makeTemplate(driver, table).Parse(content)
+	tmpl, err := makeTemplate(ctx, driver, table).Parse(content)
 	if err != nil {
 		return fmt.Errorf("can't parse %q template: %w", tmplFile, err)
 	}
@@ -50,15 +53,15 @@ func templateImpl(_ *cobra.Command, args []string, driver *internal.Driver, out 
 	return nil
 }
 
-func makeTemplate(driver *internal.Driver, table string) *template.Template {
+func makeTemplate(ctx context.Context, driver *internal.Driver, table string) *template.Template {
 	return template.New("template").Funcs(template.FuncMap{
-		"get": func(credential string, cxt ...string) (string, error) {
-			context, err := internal.ParseContext(cxt)
+		"get": func(credential string, encCtxLines ...string) (string, error) {
+			encCtx, err := internal.ParseContext(encCtxLines)
 			if err != nil {
 				return "", fmt.Errorf("could not parse context: %w", err)
 			}
 
-			value, err := driver.GetSecret(credential, "", table, context)
+			value, err := driver.GetSecret(ctx, credential, "", table, encCtx)
 			if err != nil {
 				return "", fmt.Errorf("could not fetch credentials: %w", err)
 			}

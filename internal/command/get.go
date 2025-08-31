@@ -15,28 +15,30 @@ var (
 	noErr bool
 )
 
-func getImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
-	context, err := internal.ParseContext(args[1:])
+func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+	ctx := cmd.Context()
+
+	encCtx, err := internal.ParseContext(args[1:])
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
 
 	credential := args[0]
 	if strings.Contains(credential, "*") {
-		items, err := driver.ListSecrets(table)
+		items, err := driver.ListSecrets(ctx, table)
 		if err != nil {
 			return err //nolint:wrapcheck
 		}
 		creds := map[string]string{}
 		for name := range items {
-			if !glob.Glob(credential, *name) {
+			if !glob.Glob(credential, name) {
 				continue
 			}
-			value, err := driver.GetSecret(*name, version, table, context)
+			value, err := driver.GetSecret(ctx, name, version, table, encCtx)
 			if err != nil {
 				continue
 			}
-			creds[*name] = value
+			creds[name] = value
 		}
 		result, err := internal.JSONMarshal(creds)
 		if err != nil {
@@ -44,7 +46,7 @@ func getImpl(_ *cobra.Command, args []string, driver *internal.Driver, out io.Wr
 		}
 		fmt.Fprint(out, string(result))
 	} else {
-		value, err := driver.GetSecret(credential, version, table, context)
+		value, err := driver.GetSecret(ctx, credential, version, table, encCtx)
 		if err != nil {
 			if noErr {
 				return nil

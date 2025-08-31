@@ -48,7 +48,7 @@ func TestMaxKeyLen(t *testing.T) {
 	key2 := "123"
 	val2 := "barbaz"
 
-	m := map[*string]*string{&key1: &val1, &key2: &val2}
+	m := map[string]string{key1: val1, key2: val2}
 	expected := 3
 	actual := MaxKeyLen(m)
 

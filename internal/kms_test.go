@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/kms"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/kgaughan/gcredstash/internal/mockaws"
 	"go.uber.org/mock/gomock"
 )
 
 func TestKmsDecrypt(t *testing.T) {
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -19,16 +20,19 @@ func TestKmsDecrypt(t *testing.T) {
 	expectedDataKey := []byte("12345678901234567890123456789012")
 	expectedHmacKey := []byte("abc")
 
-	mkms := mockaws.NewMockKMSAPI(ctrl)
+	mkms := mockaws.NewMockKms(ctrl)
 
-	mkms.EXPECT().Decrypt(&kms.DecryptInput{
-		CiphertextBlob:    blob,
-		EncryptionContext: map[string]*string{"foo": aws.String("bar")},
-	}).Return(&kms.DecryptOutput{
+	mkms.EXPECT().Decrypt(
+		ctx,
+		&kms.DecryptInput{
+			CiphertextBlob:    blob,
+			EncryptionContext: map[string]string{"foo": "bar"},
+		},
+	).Return(&kms.DecryptOutput{
 		Plaintext: append(expectedDataKey, expectedHmacKey...),
 	}, nil)
 
-	dataKey, hmacKey, err := KmsDecrypt(mkms, blob, context)
+	dataKey, hmacKey, err := KmsDecrypt(ctx, mkms, blob, context)
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
@@ -43,6 +47,7 @@ func TestKmsDecrypt(t *testing.T) {
 }
 
 func TestKmsGenerateDataKey(t *testing.T) {
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -53,18 +58,20 @@ func TestKmsGenerateDataKey(t *testing.T) {
 	expectedHmacKey := []byte("abc")
 	expectedWrappedKey := []byte("blobData")
 
-	mkms := mockaws.NewMockKMSAPI(ctrl)
+	mkms := mockaws.NewMockKms(ctrl)
 
-	mkms.EXPECT().GenerateDataKey(&kms.GenerateDataKeyInput{
-		KeyId:             aws.String(keyID),
-		NumberOfBytes:     aws.Int64(64),
-		EncryptionContext: map[string]*string{"foo": aws.String("bar")},
-	}).Return(&kms.GenerateDataKeyOutput{
+	mkms.EXPECT().GenerateDataKey(
+		ctx,
+		&kms.GenerateDataKeyInput{
+			KeyId:             aws.String(keyID),
+			NumberOfBytes:     aws.Int32(64),
+			EncryptionContext: map[string]string{"foo": "bar"},
+		}).Return(&kms.GenerateDataKeyOutput{
 		Plaintext:      append(expectedDataKey, expectedHmacKey...),
 		CiphertextBlob: expectedWrappedKey,
 	}, nil)
 
-	dataKey, hmacKey, wrappedKey, err := KmsGenerateDataKey(mkms, keyID, context)
+	dataKey, hmacKey, wrappedKey, err := KmsGenerateDataKey(ctx, mkms, keyID, context)
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}
