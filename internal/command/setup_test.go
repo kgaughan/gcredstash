@@ -70,10 +70,10 @@ func TestSetupCommand(t *testing.T) {
 	}, nil)
 
 	driver := &internal.Driver{Ddb: mddb, Kms: mkms}
-	cmd, out := testutils.NewDummyCommand(ctx)
+	cmd, _ := testutils.NewDummyCommand(ctx)
 
 	args := []string{}
-	if err := setupImpl(cmd, args, driver, out); err != nil {
+	if err := setupImpl(cmd, args, driver); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %q\n", nil, err)
 	}
 }

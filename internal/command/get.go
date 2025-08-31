@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io"
 	"strings"
 
 	"github.com/kgaughan/gcredstash/internal"
@@ -15,8 +14,9 @@ var (
 	noErr bool
 )
 
-func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+func getImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	ctx := cmd.Context()
+	out := cmd.OutOrStdout()
 
 	encCtx, err := internal.ParseContext(args[1:])
 	if err != nil {

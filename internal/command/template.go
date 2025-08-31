@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -17,8 +16,9 @@ import (
 
 var inplace bool
 
-func templateImpl(cmd *cobra.Command, args []string, driver *internal.Driver, out io.Writer) error {
+func templateImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	ctx := cmd.Context()
+	out := cmd.OutOrStdout()
 
 	tmplFile := args[0]
 

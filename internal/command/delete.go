@@ -1,13 +1,11 @@
 package command
 
 import (
-	"io"
-
 	"github.com/kgaughan/gcredstash/internal"
 	"github.com/spf13/cobra"
 )
 
-func deleteImpl(cmd *cobra.Command, args []string, driver *internal.Driver, _ io.Writer) error {
+func deleteImpl(cmd *cobra.Command, args []string, driver *internal.Driver) error {
 	return driver.DeleteSecrets(cmd.Context(), args[0], version, table) //nolint:wrapcheck
 }
 

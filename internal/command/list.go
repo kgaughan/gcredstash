@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io"
 	"sort"
 	"strconv"
 
@@ -10,8 +9,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func listImpl(cmd *cobra.Command, _ []string, driver *internal.Driver, out io.Writer) error {
+func listImpl(cmd *cobra.Command, _ []string, driver *internal.Driver) error {
 	ctx := cmd.Context()
+	out := cmd.OutOrStdout()
 
 	items, err := driver.ListSecrets(ctx, table)
 	if err != nil {

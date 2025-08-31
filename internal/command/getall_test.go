@@ -74,7 +74,7 @@ func TestGetallCommand(t *testing.T) {
 	cmd, out := testutils.NewDummyCommand(ctx)
 
 	args := []string{}
-	if err := getAllImpl(cmd, args, driver, out); err != nil {
+	if err := getAllImpl(cmd, args, driver); err != nil {
 		t.Errorf("\nexpected: %v\ngot: %q\n", nil, err)
 	}
 
