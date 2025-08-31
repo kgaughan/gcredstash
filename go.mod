@@ -1,6 +1,6 @@
 module github.com/kgaughan/gcredstash
 
-go 1.23
+go 1.23.0
 
 toolchain go1.24.2
 
@@ -9,7 +9,7 @@ require (
 	github.com/mattn/go-shellwords v1.0.12
 	github.com/ryanuber/go-glob v1.0.0
 	github.com/spf13/cobra v1.9.1
-	go.uber.org/mock v0.5.2
+	go.uber.org/mock v0.6.0
 )
 
 require (
