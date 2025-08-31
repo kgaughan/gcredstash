@@ -1,39 +1,47 @@
----
+version: "2"
 linters:
-  disable-all: true
+  default: none
   enable:
-    # fast, autofix
-    - dupword
-    - godot
-    - gofumpt
-    - goimports
-    - whitespace
-
-    # fast, nofix
     - dupl
-    - gci
-    - ineffassign
-
-    # slow, nofix
+    - dupword
     - err113
     - errcheck
     - errname
     - errorlint
-    - gosimple
+    - godot
+    - gosec
     - govet
+    - ineffassign
     - nonamedreturns
     - revive
     - staticcheck
-    - typecheck
+    - tparallel
     - unconvert
     - unused
     - usetesting
+    - whitespace
     - wrapcheck
-
-    # Undecided
-    - tparallel
-    - gosec
-
-issues:
-  exclude-dirs:
-    - src/mockaws
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - src/mockaws
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - src/mockaws
+      - third_party$
+      - builtin$
+      - examples$
