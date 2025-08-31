@@ -39,7 +39,7 @@ homebrew_casks:
       email: k@stereochro.me
     description: "Manages credentials using AWS Key Management Service (KMS) and DynamoDB"
     license: "ASL 2.0"
-    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+    commit_msg_template: "Brew cask update for {{ .ProjectName }} version {{ .Tag }}"
     hooks:
       post:
         install: |
