@@ -26,6 +26,7 @@ func Crypt(contents, key []byte) []byte {
 
 	text := make([]byte, len(contents))
 
+	// See: https://github.com/fugue/credstash/issues/75
 	iv := []byte{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01}
 	stream := cipher.NewCTR(block, iv)
 	stream.XORKeyStream(text, contents)
