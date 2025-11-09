@@ -2,8 +2,12 @@
 name: Lint
 
 on:
-  - push
-  - pull_request
+  push:
+    branches-ignore:
+      - master
+    tags-ignore:
+      - "*"
+  pull_request: {}
 
 permissions:
   contents: read
@@ -13,17 +17,17 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-    - uses: actions/setup-go@v5
-      with:
-        go-version-file: go.mod
-        check-latest: true
-        cache: true
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: true
 
-    - name: Lint
-      uses: golangci/golangci-lint-action@v7
-      with:
-        version: v2.3.0
-        args: --issues-exit-code=0
-        only-new-issues: true
+      - name: Lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.3.0
+          args: --issues-exit-code=0
+          only-new-issues: true
