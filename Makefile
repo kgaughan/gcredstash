@@ -67,7 +67,7 @@ coverage.out: tests
 
 .PHONY: coverage-html
 coverage-html: coverage.out ## Generate HTML report from coverage data
-	go tool cover -html=coverage.out -o coverage.html
+	sed -E '/\/(mockaws|testutils)\//d' coverage.out | go tool cover -html=/dev/stdin -o coverage.html
 
 .PHONY: test-release
 test-release: ## Run `goreleaser release` without publishing anything
