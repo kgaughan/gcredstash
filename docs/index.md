@@ -18,7 +18,7 @@ abstract: |
 
 ## setup
 
-Setup the credential store.
+Set up the credential store.
 
 ## completion
 
