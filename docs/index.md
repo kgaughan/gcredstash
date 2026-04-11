@@ -49,3 +49,7 @@ Generate a file from a template, embedding credentials into it.
 Show help about a command.
 
 # Configuration
+
+# Colophon
+
+The site was built using [pandoc](http://pandoc.org/) using a custom theme inspired by that of [mdBook](https://rust-lang.github.io/mdBook/).
