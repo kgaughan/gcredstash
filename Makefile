@@ -2,6 +2,8 @@ NAME:=gcredstash
 
 SOURCE:=$(wildcard internal/*.go internal/*/*.go cmd/*/*.go)
 
+.DEFAULT_GOAL:=build
+
 .PHONY: help
 help: ## Show this help message
 	@echo "Usage: make [target]"
