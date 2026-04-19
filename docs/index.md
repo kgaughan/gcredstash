@@ -22,7 +22,7 @@ If you have the Go toolchain already configured, you can `go install` the binary
 go install github.com/kgaughan/goreleaser/cmd/@latest
 ```
 
-Alternatively, you can [download the latest release](https://github.com/kgaughan/mercury/releases/latest) where there are Linux (ARM64 and x86-64), macOS (ARM64 and x86-64), and Windows (ARM64 and x86-64) builds, or pull the latest container image and use that with:
+Alternatively, you can [download the latest release](https://github.com/kgaughan/gcredstash/releases/latest) where there are Linux (ARM64 and x86-64), macOS (ARM64 and x86-64), and Windows (ARM64 and x86-64) builds, or pull the latest container image and use that with:
 
 ```console
 $ docker pull ghcr.io/kgaughan/gcredstash:latest
@@ -150,8 +150,6 @@ Generate a file from a template, embedding credentials into it.
 ## help
 
 Show help about a command.
-
-# Configuration
 
 # Colophon
 
