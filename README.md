@@ -6,7 +6,7 @@ This is a port of [CredStash](https://github.com/fugue/credstash) to Go.
 
 gcredstash manages credentials using AWS Key Management Service (KMS) and DynamoDB.
 
-![build status](https://github.com/kgaughan/gcredstash/actions/workflows/go.yml/badge.svg)
+![build status](https://github.com/kgaughan/gcredstash/actions/workflows/build.yml/badge.svg)
 
 ## Usage
 
@@ -23,7 +23,7 @@ Available commands are:
     template    Parse a template file with credentials
 ```
 
-```
+```console
 $ gcredstash -h delete
 usage: gcredstash delete [-v VERSION] credential
 
@@ -48,7 +48,7 @@ usage: gcredstash template [-i] template_file
 
 ## Example
 
-```
+```console
 $ gcredstash put foo.bar 100
 foo.bar has been stored
 
@@ -88,13 +88,13 @@ $ gcredstash get foo.*
 
 ## Put from stdin
 
-```
+```console
 $ echo 300 | gcredstash put xxx.zzz -
 ```
 
 ## Put with increment version
 
-```
+```console
 $ gcredstash put foo.bar 100
 foo.bar has been stored
 
@@ -111,7 +111,7 @@ foo.bar -- version: 2
 
 ## Use template
 
-```
+```console
 $ gcredstash getall
 {
   "foo.bar": "100",
@@ -135,7 +135,7 @@ see https://golang.org/pkg/text/template/.
 
 ### `-i` option (edit file in-place)
 
-```
+```console
 $ gcredstash getall
 {
   "foo.bar": "100",

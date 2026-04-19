@@ -14,6 +14,109 @@ abstract: |
   With the advent of [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/), both credstash and gcredstash are less useful these days, but if you're still a heavy user of either, this fork might be for you.
 ---
 
+# Quickstart
+
+If you have the Go toolchain already configured, you can `go install` the binary:
+
+```console
+go install github.com/kgaughan/goreleaser/cmd/@latest
+```
+
+Alternatively, you can [download the latest release](https://github.com/kgaughan/mercury/releases/latest) where there are Linux (ARM64 and x86-64), macOS (ARM64 and x86-64), and Windows (ARM64 and x86-64) builds, or pull the latest container image and use that with:
+
+```console
+$ docker pull ghcr.io/kgaughan/gcredstash:latest
+```
+
+# Configuration
+
+## Environment
+
+Ensure you have `AWS_PROFILE` and `AWS_REGION` set correctly first if you're running this from your own machine. If you're running this from an AWS instance. Alternatively, you can ensure that `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` are exported within your environment.
+
+You can specify the DynamoDB table to query using either the `--table` flag or the `GCREDSTASH_TABLE` or `CREDSTASH_DEFAULT_TABLE` environment variables. The default table name is `credential-store`.
+
+The `get`, `getall`, `put`, and `template` subcommands expect you to specify a key if you're not using one with the default name/alias of `alias/credstash`. You can specify it with the `-k`/`--key` flag or the `GCREDSTASH_KMS_KEY` or `CREDSTASH_KMS_KEY` environment variables.
+
+## IAM policies
+
+Assuming your region is `us-east-1` and you're using the default table name of `credential-table`...
+
+### Setup
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "dynamodb:CreateTable",
+        "dynamodb:DescribeTable"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:dynamodb:us-west-1:<ACCOUNT NUMBER>:table/credential-store"
+    },
+    {
+      "Action": [
+        "dynamodb:ListTables"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+### Reader
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "kms:Decrypt"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:kms:us-east-1:AWSACCOUNTID:key/KEY-GUID"
+    },
+    {
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:dynamodb:us-east-1:AWSACCOUNTID:table/credential-store"
+    }
+  ]
+}
+```
+
+### Writer
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "kms:GenerateDataKey"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:kms:us-east-1:AWSACCOUNTID:key/KEY-GUID"
+    },
+    {
+      "Action": [
+        "dynamodb:PutItem"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:dynamodb:us-east-1:AWSACCOUNTID:table/credential-store"
+    }
+  ]
+}
+```
+
 # Commands
 
 ## setup
