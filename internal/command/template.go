@@ -84,10 +84,10 @@ func makeTemplate(ctx context.Context, driver *internal.Driver, table string) *t
 				out = []byte{}
 			case 1:
 				//nolint:gosec
-				out, err = exec.Command(cmd[0]).Output()
+				out, err = exec.CommandContext(ctx, cmd[0]).Output()
 			default:
 				//nolint:gosec
-				out, err = exec.Command(cmd[0], cmd[1:]...).Output()
+				out, err = exec.CommandContext(ctx, cmd[0], cmd[1:]...).Output()
 			}
 
 			if err != nil {

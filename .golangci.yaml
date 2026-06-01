@@ -12,6 +12,8 @@ linters:
     - gosec
     - govet
     - ineffassign
+    - modernize
+    - noctx
     - nonamedreturns
     - revive
     - staticcheck
@@ -21,6 +23,17 @@ linters:
     - usetesting
     - whitespace
     - wrapcheck
+  disable:
+    - depguard
+    - exhaustruct
+    - funlen
+    - gochecknoinits
+    - gochecknoglobals
+    - goconst
+    - lll
+    - noinlineerr
+    - paralleltest
+    - varnamelen
   exclusions:
     generated: lax
     presets:

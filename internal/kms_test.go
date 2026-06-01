@@ -66,7 +66,8 @@ func TestKmsGenerateDataKey(t *testing.T) {
 			KeyId:             aws.String(keyID),
 			NumberOfBytes:     aws.Int32(64),
 			EncryptionContext: map[string]string{"foo": "bar"},
-		}).Return(&kms.GenerateDataKeyOutput{
+		},
+	).Return(&kms.GenerateDataKeyOutput{
 		Plaintext:      append(expectedDataKey, expectedHmacKey...),
 		CiphertextBlob: expectedWrappedKey,
 	}, nil)
