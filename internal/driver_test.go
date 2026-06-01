@@ -322,7 +322,8 @@ func TestPutItem(t *testing.T) {
 		B64Decode(item["key"]),
 		B64Decode(item["contents"]),
 		HexDecode(item["hmac"]),
-		table)
+		table,
+	)
 	if err != nil {
 		t.Errorf("\nexpected: %v\ngot: %v\n", nil, err)
 	}

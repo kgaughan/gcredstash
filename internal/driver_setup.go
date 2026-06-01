@@ -82,7 +82,7 @@ func (driver *Driver) WaitUntilTableExists(ctx context.Context, table string) er
 		TableName: aws.String(table),
 	}
 
-	for i := 0; i < maxAttempts; i++ {
+	for range maxAttempts {
 		resp, err := driver.Ddb.DescribeTable(ctx, params)
 		if err != nil {
 			return fmt.Errorf("can't describe %q: %w", table, err)

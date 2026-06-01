@@ -357,8 +357,7 @@ func (driver *Driver) PutSecret(ctx context.Context, name, secret, version, kmsK
 		if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
 			latestVersion, err := driver.GetHighestVersion(ctx, name, table)
 			if err != nil {
-				//nolint:wrapcheck
-				return err
+				return err //nolint:wrapcheck
 			}
 
 			return fmt.Errorf("%w (name: %q, version: %d)", ErrVersionExists, name, latestVersion)

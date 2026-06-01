@@ -54,7 +54,7 @@ func ReadFile(filename string) (string, error) {
 	return string(content), nil
 }
 
-func JSONMarshal(t interface{}) ([]byte, error) {
+func JSONMarshal(t any) ([]byte, error) {
 	buffer := &bytes.Buffer{}
 	encoder := json.NewEncoder(buffer)
 	encoder.SetEscapeHTML(false)
