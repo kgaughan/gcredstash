@@ -7,7 +7,7 @@ toolchain go1.24.2
 require (
 	github.com/aws/aws-sdk-go-v2 v1.41.12
 	github.com/aws/aws-sdk-go-v2/config v1.32.23
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.57.6
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.58.0
 	github.com/aws/aws-sdk-go-v2/service/kms v1.53.2
 	github.com/mattn/go-shellwords v1.0.13
 	github.com/ryanuber/go-glob v1.0.0
@@ -22,7 +22,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.28 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.29 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.12.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.12.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.28 // indirect
 	github.com/aws/aws-sdk-go-v2/service/signin v1.1.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.31.2 // indirect
