@@ -28,8 +28,7 @@ jobs:
         with:
           just-version: 1.40.0
 
-      - run: |
-          just mocks
+      - run: just mocks
 
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
