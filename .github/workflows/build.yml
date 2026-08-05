@@ -5,6 +5,7 @@ on:
   push:
     branches-ignore:
       - master
+      - main
     tags-ignore:
       - "*"
   pull_request: {}
