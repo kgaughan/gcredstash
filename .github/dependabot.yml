@@ -21,15 +21,15 @@ updates:
       semver-minor-days: 7
       semver-patch-days: 3
     groups:
+      aws-sdk:
+        patterns:
+          - "github.com/aws/aws-sdk-go-v2*"
       gomod-minor-patch:
         patterns:
           - "*"
         update-types:
           - "minor"
           - "patch"
-      aws-sdk:
-        patterns:
-          - "github.com/aws/aws-sdk-go-v2*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
