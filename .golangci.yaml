@@ -26,14 +26,23 @@ linters:
   disable:
     - depguard
     - exhaustruct
+    - exhaustruct_v5
     - funlen
-    - gochecknoinits
     - gochecknoglobals
+    - gochecknoinits
     - goconst
+    - gomodguard
+    - gomodguard_v2
     - lll
+    - mnd
+    - nlreturn
     - noinlineerr
+    - nolintlint
     - paralleltest
+    - testpackage
     - varnamelen
+    - wsl
+    - wsl_v5
   exclusions:
     generated: lax
     presets:
